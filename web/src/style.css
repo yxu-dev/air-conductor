@@ -1,0 +1,11 @@
+:root {
+  font-family: system-ui, sans-serif;
+  color: #e4eaf3;
+  background: #111827;
+}
+body { margin: 0; }
+main { max-width: 680px; margin: 12vh auto; padding: 24px; }
+h1 { font-size: clamp(2rem, 6vw, 3.5rem); }
+p { color: #aebbd0; }
+dl { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+dd { margin: 0; color: #aebbd0; }

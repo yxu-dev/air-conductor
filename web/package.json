@@ -1,0 +1,21 @@
+{
+  "name": "air-conductor-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "sync:wasm": "node scripts/sync-wasm.mjs",
+    "prebuild": "npm run sync:wasm",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@mediapipe/tasks-vision": "1.0.1",
+    "@tonejs/midi": "2.0.28",
+    "tone": "15.1.22"
+  },
+  "devDependencies": {
+    "vite": "8.3.2"
+  }
+}

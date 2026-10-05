@@ -1,0 +1,24 @@
+# Frontend dependencies and generated build output
+web/node_modules/
+web/dist/
+
+# Python and local environments
+__pycache__/
+*.py[cod]
+.venv/
+.conda/
+
+# Arduino build products
+arduino/**/build/
+
+# Generated diagnostics; keep the directory in Git
+recordings/*
+!recordings/.gitkeep
+
+# Local-only files
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+Thumbs.db
