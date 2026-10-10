@@ -1,0 +1,4 @@
+timestamp_ms,intensity,emitted_ms,release_delay_ms,host_s,phase
+30916,0.47104505,31056,140,32.672,down
+34616,0.5085001,34786,170,36.391,down
+38566,0.55771375,38746,180,40.36,down

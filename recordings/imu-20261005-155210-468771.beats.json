@@ -1,0 +1,41 @@
+{
+  "recording": "D:\\Documents\\Arduino\\INFOSCI-201\\Final\\air-conductor\\recordings\\imu-20261005-155210-468771.csv",
+  "beats": 12,
+  "invalid_beats": 0,
+  "unmatched_peak_timestamps": 0,
+  "by_peak_phase": {
+    "calibration": {
+      "beats": 0,
+      "median_interval_ms": null,
+      "median_bpm": null,
+      "intervals_below_280ms": 0
+    },
+    "rest": {
+      "beats": 0,
+      "median_interval_ms": null,
+      "median_bpm": null,
+      "intervals_below_280ms": 0
+    },
+    "prepare_60": {
+      "beats": 0,
+      "median_interval_ms": null,
+      "median_bpm": null,
+      "intervals_below_280ms": 0
+    },
+    "tempo_60": {
+      "beats": 12,
+      "median_interval_ms": 930,
+      "median_bpm": 64.51612903225806,
+      "intervals_below_280ms": 0
+    },
+    "final_rest": {
+      "beats": 0,
+      "median_interval_ms": null,
+      "median_bpm": null,
+      "intervals_below_280ms": 0
+    }
+  },
+  "receipt_delay_median_s": 0.125,
+  "receipt_delay_max_s": 0.26599999999999824,
+  "note": "Phases use raw samples at the reported peak, not the later BEAT receipt. Host instructions are not observed beat ground truth."
+}

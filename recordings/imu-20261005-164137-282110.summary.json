@@ -1,0 +1,180 @@
+{
+  "port": "COM3",
+  "baud": 115200,
+  "recording": "D:\\Documents\\Arduino\\INFOSCI-201\\Final\\air-conductor\\recordings\\imu-20261005-164137-282110.csv",
+  "duration_s": 55.31300000002375,
+  "ready": true,
+  "calibration": "CALIBRATION,2.47719,-4.10815,-8.52092,-0.00253,0.00261,-0.01583,0.05573,0.01198",
+  "stream_stopped": true,
+  "detector_started": true,
+  "detector_stopped": true,
+  "beat_count": 3,
+  "events": {
+    "BOOT": 1,
+    "INFO": 1,
+    "STATUS": 3,
+    "STREAM": 2,
+    "DETECT": 3,
+    "IMU": 3640,
+    "CALIBRATION": 1,
+    "READY": 1,
+    "HOST_CUE": 10,
+    "BEAT": 3
+  },
+  "invalid_frames": 0,
+  "incomplete_final_frame": false,
+  "error": null,
+  "imu_samples": 3640,
+  "device_rate_hz": 100.0,
+  "device_timestamp_resets": 0,
+  "duplicate_timestamps": 0,
+  "max_interval_ms": 12,
+  "intervals_over_30ms": 0,
+  "axes": {
+    "ax": {
+      "mean": 2.2230582417582427,
+      "std": 0.7115884143331939,
+      "min": -3.541,
+      "max": 4.7022
+    },
+    "ay": {
+      "mean": -3.257906318681309,
+      "std": 1.4127791951775923,
+      "min": -4.853,
+      "max": 0.9122
+    },
+    "az": {
+      "mean": -8.786036978022013,
+      "std": 1.225285740703219,
+      "min": -15.7826,
+      "max": -2.5426
+    },
+    "gx": {
+      "mean": 0.002794780219780199,
+      "std": 0.31131644223442917,
+      "min": -2.1061,
+      "max": 1.7642
+    },
+    "gy": {
+      "mean": 0.0018151373626373655,
+      "std": 0.16622336767918094,
+      "min": -1.926,
+      "max": 1.344
+    },
+    "gz": {
+      "mean": -0.014228269230769253,
+      "std": 0.16300740748353393,
+      "min": -1.0142,
+      "max": 1.1642
+    }
+  },
+  "guide": {
+    "hand": "right",
+    "orientation": "unknown",
+    "completed": true,
+    "timing_missed": false,
+    "labels": "host instructions, not verified movement ground truth",
+    "events": [
+      {
+        "scheduled_s": 0,
+        "actual_s": 0.0,
+        "lateness_s": 0.0,
+        "phase": "rest",
+        "index": 0,
+        "frequency": 0,
+        "instruction": "Keep still for six seconds.",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 6,
+        "actual_s": 6.0,
+        "lateness_s": 0.0,
+        "phase": "prepare_isolated",
+        "index": 0,
+        "frequency": 0,
+        "instruction": "Raise your hand. Low tone: move down and hold. High tone: lift back up and hold. Only move at the tones.",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 14,
+        "actual_s": 14.0,
+        "lateness_s": 0.0,
+        "phase": "down",
+        "index": 1,
+        "frequency": 700,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 16,
+        "actual_s": 16.0,
+        "lateness_s": 0.0,
+        "phase": "return",
+        "index": 1,
+        "frequency": 1400,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 18,
+        "actual_s": 18.0,
+        "lateness_s": 0.0,
+        "phase": "down",
+        "index": 2,
+        "frequency": 700,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 20,
+        "actual_s": 20.0,
+        "lateness_s": 0.0,
+        "phase": "return",
+        "index": 2,
+        "frequency": 1400,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 22,
+        "actual_s": 22.0,
+        "lateness_s": 0.0,
+        "phase": "down",
+        "index": 3,
+        "frequency": 700,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 24,
+        "actual_s": 24.0,
+        "lateness_s": 0.0,
+        "phase": "return",
+        "index": 3,
+        "frequency": 1400,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 26,
+        "actual_s": 26.0,
+        "lateness_s": 0.0,
+        "phase": "final_rest",
+        "index": 0,
+        "frequency": 0,
+        "instruction": "Stop moving. Keep still for eight seconds.",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 34,
+        "actual_s": 34.0,
+        "lateness_s": 0.0,
+        "phase": "done",
+        "index": 0,
+        "frequency": 0,
+        "instruction": "Direction check complete. Thank you.",
+        "skipped": false
+      }
+    ]
+  }
+}

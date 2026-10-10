@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-05",
+  "source": "User opened local Chrome /tests/audio-browser.html and returned the JSON result after the fractional-tick fix.",
+  "passed": 4,
+  "reports": [
+    {
+      "check": "fixed tempo, pitch and note-off",
+      "pass": true,
+      "slowHz": 440.00000000000006,
+      "fastHz": 440.00000000000006,
+      "slowSustainRms": 0.023276331798142622,
+      "fastAfterReleaseRms": 0
+    },
+    {
+      "check": "tempo change during held note",
+      "pass": true,
+      "sustainRms": 0.023277257669818183,
+      "afterReleaseRms": 0
+    },
+    {
+      "check": "loop boundary release and restart",
+      "pass": true,
+      "thirdLoopRms": 0.023276330735327422
+    },
+    {
+      "check": "real Tone fractional-tick pause/resume",
+      "pass": true,
+      "pausedTick": 351.0857142857126,
+      "resumedTick": 351.0857142857126
+    }
+  ]
+}

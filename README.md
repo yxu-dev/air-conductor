@@ -51,7 +51,7 @@ arduino/AirConductor/   Firmware and stroke detector
 web/                   Browser app, local assets, and tests
 diagnostics/           Optional Python capture and analysis tools
 docs/                  Development records and technical references
-recordings/            Local captures, excluded from Git
+recordings/            Captures and analysis archived on development branches
 environment.yml        Python diagnostic environment specification
 ```
 
@@ -71,4 +71,4 @@ conda activate infosci201-physical
 python -m unittest discover -s diagnostics/tests -v
 ```
 
-Development records remain available in [architecture](docs/architecture.md), [testing](docs/testing.md), [camera controls](docs/camera-control.md), and [music playback](docs/music-playback.md). They are retained during development and will be removed from the final delivery when requested; their history remains in Git. Third-party asset sources and licensing are recorded in [assets](docs/assets.md).
+Development records remain available in [architecture](docs/architecture.md), [testing](docs/testing.md), [camera controls](docs/camera-control.md), and [music playback](docs/music-playback.md). Both `docs/` and `recordings/` are committed and uploaded on development branches. At release, remove these directories from the release tree and ignore them there; the complete development history stays in Git and on development branches. The final delivery contains code, required runtime assets, and one short English README, with required attribution included there. Current asset sources and licensing are recorded in [assets](docs/assets.md).

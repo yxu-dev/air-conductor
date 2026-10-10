@@ -11,9 +11,9 @@ __pycache__/
 # Arduino build products
 arduino/**/build/
 
-# Generated diagnostics; keep the directory in Git
-recordings/*
-!recordings/.gitkeep
+# Development recordings are tracked on development branches.
+# Final release only: remove docs/ and recordings/ from the release tree
+# and add /docs/ and /recordings/ here; keep their development history.
 
 # Local-only files
 .env

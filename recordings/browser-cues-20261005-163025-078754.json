@@ -1,0 +1,446 @@
+{
+  "events": [
+    {
+      "scheduled_s": 0,
+      "actual_s": 0.0,
+      "utc": "2026-10-05T08:30:25.114019+00:00",
+      "phase": "initial_rest",
+      "index": 0,
+      "instruction": "Keep still. The browser should already be detecting.",
+      "frequency": 0,
+      "skipped": false
+    },
+    {
+      "scheduled_s": 6.0,
+      "actual_s": 6.0,
+      "utc": "2026-10-05T08:30:31.107693+00:00",
+      "phase": "prepare_60",
+      "index": 0,
+      "instruction": "60 beats per minute. One down stroke per tone. Return between tones.",
+      "frequency": 0,
+      "skipped": false
+    },
+    {
+      "scheduled_s": 14.0,
+      "actual_s": 14.0,
+      "utc": "2026-10-05T08:30:39.114498+00:00",
+      "phase": "tempo_60",
+      "index": 1,
+      "instruction": "",
+      "frequency": 900,
+      "skipped": false
+    },
+    {
+      "scheduled_s": 15.0,
+      "actual_s": 15.0,
+      "utc": "2026-10-05T08:30:40.113997+00:00",
+      "phase": "tempo_60",
+      "index": 2,
+      "instruction": "",
+      "frequency": 900,
+      "skipped": false
+    },
+    {
+      "scheduled_s": 16.0,
+      "actual_s": 16.0,
+      "utc": "2026-10-05T08:30:41.112187+00:00",
+      "phase": "tempo_60",
+      "index": 3,
+      "instruction": "",
+      "frequency": 900,
+      "skipped": false
+    },
+    {
+      "scheduled_s": 17.0,
+      "actual_s": 17.0,
+      "utc": "2026-10-05T08:30:42.105265+00:00",
+      "phase": "tempo_60",
+      "index": 4,
+      "instruction": "",
+      "frequency": 900,
+      "skipped": false
+    },
+    {
+      "scheduled_s": 18.0,
+      "actual_s": 18.0,
+      "utc": "2026-10-05T08:30:43.111409+00:00",
+      "phase": "tempo_60",
+      "index": 5,
+      "instruction": "",
+      "frequency": 900,
+      "skipped": false
+    },
+    {
+      "scheduled_s": 19.0,
+      "actual_s": 19.0,
+      "utc": "2026-10-05T08:30:44.114134+00:00",
+      "phase": "tempo_60",
+      "index": 6,
+      "instruction": "",
+      "frequency": 900,
+      "skipped": false
+    },
+    {
+      "scheduled_s": 20.0,
+      "actual_s": 20.0,
+      "utc": "2026-10-05T08:30:45.108178+00:00",
+      "phase": "tempo_60",
+      "index": 7,
+      "instruction": "",
+      "frequency": 900,
+      "skipped": false
+    },
+    {
+      "scheduled_s": 21.0,
+      "actual_s": 21.0,
+      "utc": "2026-10-05T08:30:46.111421+00:00",
+      "phase": "tempo_60",
+      "index": 8,
+      "instruction": "",
+      "frequency": 900,
+      "skipped": false
+    },
+    {
+      "scheduled_s": 22.0,
+      "actual_s": 22.0,
+      "utc": "2026-10-05T08:30:47.107257+00:00",
+      "phase": "tempo_60",
+      "index": 9,
+      "instruction": "",
+      "frequency": 900,
+      "skipped": false
+    },
+    {
+      "scheduled_s": 23.0,
+      "actual_s": 23.0,
+      "utc": "2026-10-05T08:30:48.112587+00:00",
+      "phase": "tempo_60",
+      "index": 10,
+      "instruction": "",
+      "frequency": 900,
+      "skipped": false
+    },
+    {
+      "scheduled_s": 24.0,
+      "actual_s": 24.0,
+      "utc": "2026-10-05T08:30:49.108837+00:00",
+      "phase": "tempo_60",
+      "index": 11,
+      "instruction": "",
+      "frequency": 900,
+      "skipped": false
+    },
+    {
+      "scheduled_s": 25.0,
+      "actual_s": 25.0,
+      "utc": "2026-10-05T08:30:50.109252+00:00",
+      "phase": "tempo_60",
+      "index": 12,
+      "instruction": "",
+      "frequency": 900,
+      "skipped": false
+    },
+    {
+      "scheduled_s": 26.0,
+      "actual_s": 26.0,
+      "utc": "2026-10-05T08:30:51.105968+00:00",
+      "phase": "rest_60",
+      "index": 0,
+      "instruction": "Stop moving. Check the browser tempo, then wait.",
+      "frequency": 0,
+      "skipped": false
+    },
+    {
+      "scheduled_s": 32.0,
+      "actual_s": 32.0,
+      "utc": "2026-10-05T08:30:57.111764+00:00",
+      "phase": "prepare_90",
+      "index": 0,
+      "instruction": "90 beats per minute. One down stroke per tone. Return between tones.",
+      "frequency": 0,
+      "skipped": false
+    },
+    {
+      "scheduled_s": 40.0,
+      "actual_s": 40.0,
+      "utc": "2026-10-05T08:31:05.112144+00:00",
+      "phase": "tempo_90",
+      "index": 1,
+      "instruction": "",
+      "frequency": 900,
+      "skipped": false
+    },
+    {
+      "scheduled_s": 40.666666666666664,
+      "actual_s": 40.67099999997299,
+      "utc": "2026-10-05T08:31:05.777757+00:00",
+      "phase": "tempo_90",
+      "index": 2,
+      "instruction": "",
+      "frequency": 900,
+      "skipped": false
+    },
+    {
+      "scheduled_s": 41.33333333333333,
+      "actual_s": 41.34299999999348,
+      "utc": "2026-10-05T08:31:06.453448+00:00",
+      "phase": "tempo_90",
+      "index": 3,
+      "instruction": "",
+      "frequency": 900,
+      "skipped": false
+    },
+    {
+      "scheduled_s": 41.99999999999999,
+      "actual_s": 42.0,
+      "utc": "2026-10-05T08:31:07.107537+00:00",
+      "phase": "tempo_90",
+      "index": 4,
+      "instruction": "",
+      "frequency": 900,
+      "skipped": false
+    },
+    {
+      "scheduled_s": 42.66666666666666,
+      "actual_s": 42.67099999997299,
+      "utc": "2026-10-05T08:31:07.776453+00:00",
+      "phase": "tempo_90",
+      "index": 5,
+      "instruction": "",
+      "frequency": 900,
+      "skipped": false
+    },
+    {
+      "scheduled_s": 43.33333333333332,
+      "actual_s": 43.34299999999348,
+      "utc": "2026-10-05T08:31:08.450853+00:00",
+      "phase": "tempo_90",
+      "index": 6,
+      "instruction": "",
+      "frequency": 900,
+      "skipped": false
+    },
+    {
+      "scheduled_s": 43.999999999999986,
+      "actual_s": 44.0,
+      "utc": "2026-10-05T08:31:09.114905+00:00",
+      "phase": "tempo_90",
+      "index": 7,
+      "instruction": "",
+      "frequency": 900,
+      "skipped": false
+    },
+    {
+      "scheduled_s": 44.66666666666665,
+      "actual_s": 44.67099999997299,
+      "utc": "2026-10-05T08:31:09.781829+00:00",
+      "phase": "tempo_90",
+      "index": 8,
+      "instruction": "",
+      "frequency": 900,
+      "skipped": false
+    },
+    {
+      "scheduled_s": 45.333333333333314,
+      "actual_s": 45.34299999999348,
+      "utc": "2026-10-05T08:31:10.452248+00:00",
+      "phase": "tempo_90",
+      "index": 9,
+      "instruction": "",
+      "frequency": 900,
+      "skipped": false
+    },
+    {
+      "scheduled_s": 45.99999999999998,
+      "actual_s": 46.0,
+      "utc": "2026-10-05T08:31:11.105133+00:00",
+      "phase": "tempo_90",
+      "index": 10,
+      "instruction": "",
+      "frequency": 900,
+      "skipped": false
+    },
+    {
+      "scheduled_s": 46.66666666666664,
+      "actual_s": 46.67099999997299,
+      "utc": "2026-10-05T08:31:11.777976+00:00",
+      "phase": "tempo_90",
+      "index": 11,
+      "instruction": "",
+      "frequency": 900,
+      "skipped": false
+    },
+    {
+      "scheduled_s": 47.33333333333331,
+      "actual_s": 47.34299999999348,
+      "utc": "2026-10-05T08:31:12.453162+00:00",
+      "phase": "tempo_90",
+      "index": 12,
+      "instruction": "",
+      "frequency": 900,
+      "skipped": false
+    },
+    {
+      "scheduled_s": 47.99999999999997,
+      "actual_s": 48.0,
+      "utc": "2026-10-05T08:31:13.112349+00:00",
+      "phase": "rest_90",
+      "index": 0,
+      "instruction": "Stop moving. Check the browser tempo, then wait.",
+      "frequency": 0,
+      "skipped": false
+    },
+    {
+      "scheduled_s": 53.99999999999997,
+      "actual_s": 54.0,
+      "utc": "2026-10-05T08:31:19.113480+00:00",
+      "phase": "prepare_120",
+      "index": 0,
+      "instruction": "120 beats per minute. One down stroke per tone. Return between tones.",
+      "frequency": 0,
+      "skipped": false
+    },
+    {
+      "scheduled_s": 61.99999999999997,
+      "actual_s": 62.0,
+      "utc": "2026-10-05T08:31:27.107477+00:00",
+      "phase": "tempo_120",
+      "index": 1,
+      "instruction": "",
+      "frequency": 900,
+      "skipped": false
+    },
+    {
+      "scheduled_s": 62.49999999999997,
+      "actual_s": 62.5,
+      "utc": "2026-10-05T08:31:27.613695+00:00",
+      "phase": "tempo_120",
+      "index": 2,
+      "instruction": "",
+      "frequency": 900,
+      "skipped": false
+    },
+    {
+      "scheduled_s": 62.99999999999997,
+      "actual_s": 63.0,
+      "utc": "2026-10-05T08:31:28.106662+00:00",
+      "phase": "tempo_120",
+      "index": 3,
+      "instruction": "",
+      "frequency": 900,
+      "skipped": false
+    },
+    {
+      "scheduled_s": 63.49999999999997,
+      "actual_s": 63.5,
+      "utc": "2026-10-05T08:31:28.614140+00:00",
+      "phase": "tempo_120",
+      "index": 4,
+      "instruction": "",
+      "frequency": 900,
+      "skipped": false
+    },
+    {
+      "scheduled_s": 63.99999999999997,
+      "actual_s": 64.0,
+      "utc": "2026-10-05T08:31:29.106466+00:00",
+      "phase": "tempo_120",
+      "index": 5,
+      "instruction": "",
+      "frequency": 900,
+      "skipped": false
+    },
+    {
+      "scheduled_s": 64.49999999999997,
+      "actual_s": 64.5,
+      "utc": "2026-10-05T08:31:29.613870+00:00",
+      "phase": "tempo_120",
+      "index": 6,
+      "instruction": "",
+      "frequency": 900,
+      "skipped": false
+    },
+    {
+      "scheduled_s": 64.99999999999997,
+      "actual_s": 65.0,
+      "utc": "2026-10-05T08:31:30.111645+00:00",
+      "phase": "tempo_120",
+      "index": 7,
+      "instruction": "",
+      "frequency": 900,
+      "skipped": false
+    },
+    {
+      "scheduled_s": 65.49999999999997,
+      "actual_s": 65.5,
+      "utc": "2026-10-05T08:31:30.611995+00:00",
+      "phase": "tempo_120",
+      "index": 8,
+      "instruction": "",
+      "frequency": 900,
+      "skipped": false
+    },
+    {
+      "scheduled_s": 65.99999999999997,
+      "actual_s": 66.0,
+      "utc": "2026-10-05T08:31:31.112436+00:00",
+      "phase": "tempo_120",
+      "index": 9,
+      "instruction": "",
+      "frequency": 900,
+      "skipped": false
+    },
+    {
+      "scheduled_s": 66.49999999999997,
+      "actual_s": 66.5,
+      "utc": "2026-10-05T08:31:31.614220+00:00",
+      "phase": "tempo_120",
+      "index": 10,
+      "instruction": "",
+      "frequency": 900,
+      "skipped": false
+    },
+    {
+      "scheduled_s": 66.99999999999997,
+      "actual_s": 67.0,
+      "utc": "2026-10-05T08:31:32.106741+00:00",
+      "phase": "tempo_120",
+      "index": 11,
+      "instruction": "",
+      "frequency": 900,
+      "skipped": false
+    },
+    {
+      "scheduled_s": 67.49999999999997,
+      "actual_s": 67.5,
+      "utc": "2026-10-05T08:31:32.608960+00:00",
+      "phase": "tempo_120",
+      "index": 12,
+      "instruction": "",
+      "frequency": 900,
+      "skipped": false
+    },
+    {
+      "scheduled_s": 67.99999999999997,
+      "actual_s": 68.0,
+      "utc": "2026-10-05T08:31:33.113007+00:00",
+      "phase": "rest_120",
+      "index": 0,
+      "instruction": "Stop moving. Check the browser tempo, then wait.",
+      "frequency": 0,
+      "skipped": false
+    },
+    {
+      "scheduled_s": 73.99999999999997,
+      "actual_s": 74.0,
+      "utc": "2026-10-05T08:31:39.107984+00:00",
+      "phase": "done",
+      "index": 0,
+      "instruction": "Test complete. Stop detection and export the beat record.",
+      "frequency": 0,
+      "skipped": false
+    }
+  ],
+  "interrupted": false,
+  "note": "Cue times are instructions, not observed hand motion."
+}

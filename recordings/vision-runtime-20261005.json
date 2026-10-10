@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-05",
+  "source": "User opened /tests/vision-browser.html in Chrome and returned the result. No webcam permission or hand motion was involved.",
+  "passed": 2,
+  "reports": [
+    {
+      "check": "local model and WASM in classic Worker",
+      "pass": true,
+      "loadMs": 378.60000002384186
+    },
+    {
+      "check": "two real blank-image inference frames",
+      "pass": true,
+      "inferenceMs": [94.60000002384186, 21.600000023841858]
+    }
+  ]
+}

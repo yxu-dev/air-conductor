@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "events": [
+    "BOOT,1",
+    "INFO,IMU,MPU6500,104",
+    "STATUS,UNCALIBRATED",
+    "ERROR,NOT_CALIBRATED",
+    "DETECT,OFF",
+    "STREAM,ON",
+    "ERROR,SCAN_BUSY",
+    "DETECT,OFF",
+    "STREAM,OFF",
+    "I2C,0x68",
+    "WHO_AM_I,0x68,0x70",
+    "I2C,DONE",
+    "STATUS,UNCALIBRATED"
+  ]
+}

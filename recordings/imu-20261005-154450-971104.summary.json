@@ -1,0 +1,240 @@
+{
+  "port": "COM3",
+  "baud": 115200,
+  "recording": "D:\\Documents\\Arduino\\INFOSCI-201\\Final\\air-conductor\\recordings\\imu-20261005-154450-971104.csv",
+  "duration_s": 57.07799999997951,
+  "ready": true,
+  "calibration": "CALIBRATION,-2.10165,7.63132,-5.55286,0.00514,0.00563,-0.01309,0.05470,0.01665",
+  "stream_stopped": true,
+  "detector_started": true,
+  "detector_stopped": true,
+  "beat_count": 14,
+  "events": {
+    "BOOT": 1,
+    "INFO": 1,
+    "STATUS": 3,
+    "STREAM": 2,
+    "IMU": 3839,
+    "DETECT": 3,
+    "CALIBRATION": 1,
+    "READY": 1,
+    "HOST_CUE": 16,
+    "BEAT": 14
+  },
+  "invalid_frames": 0,
+  "incomplete_final_frame": false,
+  "error": null,
+  "imu_samples": 3839,
+  "device_rate_hz": 100.0,
+  "device_timestamp_resets": 0,
+  "duplicate_timestamps": 0,
+  "max_interval_ms": 13,
+  "intervals_over_30ms": 0,
+  "axes": {
+    "ax": {
+      "mean": -2.2848363896848163,
+      "std": 1.5645475179226858,
+      "min": -11.4347,
+      "max": 4.3934
+    },
+    "ay": {
+      "mean": 5.108674993487892,
+      "std": 3.2750749916159947,
+      "min": -7.1443,
+      "max": 13.9606
+    },
+    "az": {
+      "mean": -6.962786064079174,
+      "std": 3.5304067567659927,
+      "min": -29.6067,
+      "max": 1.3982
+    },
+    "gx": {
+      "mean": 0.015266866371450884,
+      "std": 0.9788363838180165,
+      "min": -3.7465,
+      "max": 4.3367
+    },
+    "gy": {
+      "mean": 0.0032027871841625506,
+      "std": 0.8341899011139013,
+      "min": -4.6021,
+      "max": 3.8219
+    },
+    "gz": {
+      "mean": -0.006290101588955429,
+      "std": 0.7349622893666038,
+      "min": -3.0339,
+      "max": 3.439
+    }
+  },
+  "guide": {
+    "hand": "right",
+    "orientation": "unknown",
+    "completed": true,
+    "timing_missed": false,
+    "labels": "host instructions, not verified movement ground truth",
+    "events": [
+      {
+        "scheduled_s": 0,
+        "actual_s": 0.0,
+        "lateness_s": 0.0,
+        "phase": "rest",
+        "index": 0,
+        "frequency": 0,
+        "instruction": "Keep still for eight seconds.",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 8.0,
+        "actual_s": 8.0,
+        "lateness_s": 0.0,
+        "phase": "prepare_60",
+        "index": 0,
+        "frequency": 0,
+        "instruction": "Rest. Then one down stroke per tone, at 60 beats per minute. Return between tones.",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 16.0,
+        "actual_s": 16.0,
+        "lateness_s": 0.0,
+        "phase": "tempo_60",
+        "index": 1,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 17.0,
+        "actual_s": 17.0,
+        "lateness_s": 0.0,
+        "phase": "tempo_60",
+        "index": 2,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 18.0,
+        "actual_s": 18.0,
+        "lateness_s": 0.0,
+        "phase": "tempo_60",
+        "index": 3,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 19.0,
+        "actual_s": 19.0,
+        "lateness_s": 0.0,
+        "phase": "tempo_60",
+        "index": 4,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 20.0,
+        "actual_s": 20.0,
+        "lateness_s": 0.0,
+        "phase": "tempo_60",
+        "index": 5,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 21.0,
+        "actual_s": 21.0,
+        "lateness_s": 0.0,
+        "phase": "tempo_60",
+        "index": 6,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 22.0,
+        "actual_s": 22.0,
+        "lateness_s": 0.0,
+        "phase": "tempo_60",
+        "index": 7,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 23.0,
+        "actual_s": 23.0,
+        "lateness_s": 0.0,
+        "phase": "tempo_60",
+        "index": 8,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 24.0,
+        "actual_s": 24.0,
+        "lateness_s": 0.0,
+        "phase": "tempo_60",
+        "index": 9,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 25.0,
+        "actual_s": 25.0,
+        "lateness_s": 0.0,
+        "phase": "tempo_60",
+        "index": 10,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 26.0,
+        "actual_s": 26.0,
+        "lateness_s": 0.0,
+        "phase": "tempo_60",
+        "index": 11,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 27.0,
+        "actual_s": 27.0,
+        "lateness_s": 0.0,
+        "phase": "tempo_60",
+        "index": 12,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 28.0,
+        "actual_s": 28.0,
+        "lateness_s": 0.0,
+        "phase": "final_rest",
+        "index": 0,
+        "frequency": 0,
+        "instruction": "Stop moving. Keep still for eight seconds.",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 36.0,
+        "actual_s": 36.0,
+        "lateness_s": 0.0,
+        "phase": "done",
+        "index": 0,
+        "frequency": 0,
+        "instruction": "Recording complete. Thank you.",
+        "skipped": false
+      }
+    ]
+  }
+}

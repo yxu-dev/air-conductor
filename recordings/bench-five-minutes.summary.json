@@ -1,0 +1,64 @@
+{
+  "port": "COM3",
+  "baud": 115200,
+  "recording": "D:\\Documents\\Arduino\\INFOSCI-201\\Final\\air-conductor\\recordings\\bench-five-minutes.csv",
+  "duration_s": 305.0,
+  "ready": true,
+  "calibration": "CALIBRATION,-3.89265,0.32212,-8.76285,0.00294,0.00527,-0.01412,0.01070,0.00065",
+  "events": {
+    "BOOT": 1,
+    "INFO": 1,
+    "STATUS": 3,
+    "STREAM": 1,
+    "IMU": 30179,
+    "CALIBRATION": 1,
+    "READY": 1
+  },
+  "invalid_frames": 0,
+  "incomplete_final_frame": true,
+  "error": null,
+  "imu_samples": 30179,
+  "device_rate_hz": 100.0003313683192,
+  "device_timestamp_resets": 0,
+  "duplicate_timestamps": 0,
+  "max_interval_ms": 12,
+  "intervals_over_30ms": 0,
+  "axes": {
+    "ax": {
+      "mean": -3.9842125020709855,
+      "std": 0.12909900743879746,
+      "min": -4.7669,
+      "max": -3.5434
+    },
+    "ay": {
+      "mean": 0.2923804002783403,
+      "std": 0.06677148237184746,
+      "min": -0.6177,
+      "max": 0.8092
+    },
+    "az": {
+      "mean": -8.723929444315626,
+      "std": 0.06441447977213698,
+      "min": -8.9687,
+      "max": -8.0254
+    },
+    "gx": {
+      "mean": 0.00370825408396566,
+      "std": 0.006976448678875731,
+      "min": -0.2753,
+      "max": 0.1516
+    },
+    "gy": {
+      "mean": 0.0050706782862255445,
+      "std": 0.010889229322444183,
+      "min": -0.3781,
+      "max": 0.2753
+    },
+    "gz": {
+      "mean": -0.014369382683322777,
+      "std": 0.010633985948561233,
+      "min": -0.7357,
+      "max": 0.1585
+    }
+  }
+}

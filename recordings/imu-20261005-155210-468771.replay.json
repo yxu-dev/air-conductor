@@ -1,0 +1,10 @@
+{
+  "recording": "D:\\Documents\\Arduino\\INFOSCI-201\\Final\\air-conductor\\recordings\\imu-20261005-155210-468771.csv",
+  "beats": 12,
+  "by_host_phase": {
+    "tempo_60": 12
+  },
+  "release_delay_median_ms": 124.5,
+  "release_delay_max_ms": 260,
+  "note": "Same C++ state machine; host-side features use printed calibration/raw values. Phase counts are cue windows, not beat accuracy."
+}

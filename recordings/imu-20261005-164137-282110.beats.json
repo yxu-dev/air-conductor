@@ -1,0 +1,53 @@
+{
+  "recording": "D:\\Documents\\Arduino\\INFOSCI-201\\Final\\air-conductor\\recordings\\imu-20261005-164137-282110.csv",
+  "beats": 3,
+  "invalid_beats": 0,
+  "unmatched_peak_timestamps": 0,
+  "by_peak_phase": {
+    "calibration": {
+      "beats": 0,
+      "median_interval_ms": null,
+      "median_bpm": null,
+      "intervals_below_280ms": 0
+    },
+    "rest": {
+      "beats": 0,
+      "median_interval_ms": null,
+      "median_bpm": null,
+      "intervals_below_280ms": 0
+    },
+    "prepare_isolated": {
+      "beats": 0,
+      "median_interval_ms": null,
+      "median_bpm": null,
+      "intervals_below_280ms": 0
+    },
+    "down": {
+      "beats": 3,
+      "median_interval_ms": 3825.0,
+      "median_bpm": 15.686274509803921,
+      "intervals_below_280ms": 0
+    },
+    "return": {
+      "beats": 0,
+      "median_interval_ms": null,
+      "median_bpm": null,
+      "intervals_below_280ms": 0
+    },
+    "final_rest": {
+      "beats": 0,
+      "median_interval_ms": null,
+      "median_bpm": null,
+      "intervals_below_280ms": 0
+    },
+    "done": {
+      "beats": 0,
+      "median_interval_ms": null,
+      "median_bpm": null,
+      "intervals_below_280ms": 0
+    }
+  },
+  "receipt_delay_median_s": 0.17200000000000415,
+  "receipt_delay_max_s": 0.1869999999999976,
+  "note": "Phases use raw samples at the reported peak, not the later BEAT receipt. Host instructions are not observed beat ground truth."
+}

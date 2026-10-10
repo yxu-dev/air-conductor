@@ -1,0 +1,804 @@
+{
+  "port": "COM3",
+  "baud": 115200,
+  "recording": "D:\\Documents\\Arduino\\INFOSCI-201\\Final\\air-conductor\\recordings\\imu-20261005-151642-673039.csv",
+  "duration_s": 118.125,
+  "ready": true,
+  "calibration": "CALIBRATION,-4.43699,5.01210,-6.87098,0.00360,0.00351,-0.01376,0.02840,0.00818",
+  "stream_stopped": true,
+  "events": {
+    "BOOT": 1,
+    "INFO": 1,
+    "STATUS": 3,
+    "STREAM": 2,
+    "IMU": 10413,
+    "CALIBRATION": 1,
+    "READY": 1
+  },
+  "invalid_frames": 0,
+  "incomplete_final_frame": false,
+  "error": null,
+  "imu_samples": 10413,
+  "device_rate_hz": 100.0,
+  "device_timestamp_resets": 0,
+  "duplicate_timestamps": 0,
+  "max_interval_ms": 13,
+  "intervals_over_30ms": 0,
+  "axes": {
+    "ax": {
+      "mean": -3.446907192931899,
+      "std": 2.453573103674326,
+      "min": -20.1783,
+      "max": 7.501
+    },
+    "ay": {
+      "mean": 4.42550382214539,
+      "std": 3.0453830193068265,
+      "min": -8.327,
+      "max": 13.6326
+    },
+    "az": {
+      "mean": -6.756447114184195,
+      "std": 4.571905199113569,
+      "min": -34.0575,
+      "max": 10.3717
+    },
+    "gx": {
+      "mean": 0.016242840679919268,
+      "std": 1.4664736293418343,
+      "min": -5.702,
+      "max": 8.652
+    },
+    "gy": {
+      "mean": -0.009954768078363586,
+      "std": 0.591355326304978,
+      "min": -6.5369,
+      "max": 6.6141
+    },
+    "gz": {
+      "mean": 0.011359339287429167,
+      "std": 0.7245699781213674,
+      "min": -4.7883,
+      "max": 2.448
+    }
+  },
+  "guide": {
+    "hand": "right",
+    "orientation": "unknown",
+    "completed": true,
+    "timing_missed": false,
+    "labels": "host instructions, not verified movement ground truth",
+    "events": [
+      {
+        "scheduled_s": 0,
+        "actual_s": 0.0,
+        "lateness_s": 0.0,
+        "phase": "rest",
+        "index": 0,
+        "frequency": 0,
+        "instruction": "Keep still for eight seconds.",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 8.0,
+        "actual_s": 8.0,
+        "lateness_s": 0.0,
+        "phase": "prepare_isolated",
+        "index": 0,
+        "frequency": 0,
+        "instruction": "Low tone: down. High tone: return. Wait between movements.",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 16.0,
+        "actual_s": 16.0,
+        "lateness_s": 0.0,
+        "phase": "down",
+        "index": 1,
+        "frequency": 700,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 17.5,
+        "actual_s": 17.5,
+        "lateness_s": 0.0,
+        "phase": "return",
+        "index": 1,
+        "frequency": 1400,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 19.0,
+        "actual_s": 19.0,
+        "lateness_s": 0.0,
+        "phase": "down",
+        "index": 2,
+        "frequency": 700,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 20.5,
+        "actual_s": 20.5,
+        "lateness_s": 0.0,
+        "phase": "return",
+        "index": 2,
+        "frequency": 1400,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 22.0,
+        "actual_s": 22.0,
+        "lateness_s": 0.0,
+        "phase": "down",
+        "index": 3,
+        "frequency": 700,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 23.5,
+        "actual_s": 23.5,
+        "lateness_s": 0.0,
+        "phase": "return",
+        "index": 3,
+        "frequency": 1400,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 25.0,
+        "actual_s": 25.0,
+        "lateness_s": 0.0,
+        "phase": "down",
+        "index": 4,
+        "frequency": 700,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 26.5,
+        "actual_s": 26.5,
+        "lateness_s": 0.0,
+        "phase": "return",
+        "index": 4,
+        "frequency": 1400,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 28.0,
+        "actual_s": 28.0,
+        "lateness_s": 0.0,
+        "phase": "down",
+        "index": 5,
+        "frequency": 700,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 29.5,
+        "actual_s": 29.5,
+        "lateness_s": 0.0,
+        "phase": "return",
+        "index": 5,
+        "frequency": 1400,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 31.0,
+        "actual_s": 31.0,
+        "lateness_s": 0.0,
+        "phase": "down",
+        "index": 6,
+        "frequency": 700,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 32.5,
+        "actual_s": 32.5,
+        "lateness_s": 0.0,
+        "phase": "return",
+        "index": 6,
+        "frequency": 1400,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 34.0,
+        "actual_s": 34.0,
+        "lateness_s": 0.0,
+        "phase": "prepare_60",
+        "index": 0,
+        "frequency": 0,
+        "instruction": "Rest. Then one down stroke per tone, at 60 beats per minute. Return between tones.",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 42.0,
+        "actual_s": 42.0,
+        "lateness_s": 0.0,
+        "phase": "tempo_60",
+        "index": 1,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 43.0,
+        "actual_s": 43.0,
+        "lateness_s": 0.0,
+        "phase": "tempo_60",
+        "index": 2,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 44.0,
+        "actual_s": 44.0,
+        "lateness_s": 0.0,
+        "phase": "tempo_60",
+        "index": 3,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 45.0,
+        "actual_s": 45.0,
+        "lateness_s": 0.0,
+        "phase": "tempo_60",
+        "index": 4,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 46.0,
+        "actual_s": 46.0,
+        "lateness_s": 0.0,
+        "phase": "tempo_60",
+        "index": 5,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 47.0,
+        "actual_s": 47.0,
+        "lateness_s": 0.0,
+        "phase": "tempo_60",
+        "index": 6,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 48.0,
+        "actual_s": 48.0,
+        "lateness_s": 0.0,
+        "phase": "tempo_60",
+        "index": 7,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 49.0,
+        "actual_s": 49.0,
+        "lateness_s": 0.0,
+        "phase": "tempo_60",
+        "index": 8,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 50.0,
+        "actual_s": 50.0,
+        "lateness_s": 0.0,
+        "phase": "tempo_60",
+        "index": 9,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 51.0,
+        "actual_s": 51.0,
+        "lateness_s": 0.0,
+        "phase": "tempo_60",
+        "index": 10,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 52.0,
+        "actual_s": 52.0,
+        "lateness_s": 0.0,
+        "phase": "tempo_60",
+        "index": 11,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 53.0,
+        "actual_s": 53.0,
+        "lateness_s": 0.0,
+        "phase": "tempo_60",
+        "index": 12,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 54.0,
+        "actual_s": 54.0,
+        "lateness_s": 0.0,
+        "phase": "prepare_90",
+        "index": 0,
+        "frequency": 0,
+        "instruction": "Rest. Then one down stroke per tone, at 90 beats per minute. Return between tones.",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 62.0,
+        "actual_s": 62.0,
+        "lateness_s": 0.0,
+        "phase": "tempo_90",
+        "index": 1,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 62.666666666666664,
+        "actual_s": 62.67199999996228,
+        "lateness_s": 0.0053333332956171375,
+        "phase": "tempo_90",
+        "index": 2,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 63.33333333333333,
+        "actual_s": 63.34399999998277,
+        "lateness_s": 0.010666666649441936,
+        "phase": "tempo_90",
+        "index": 3,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 63.99999999999999,
+        "actual_s": 64.0,
+        "lateness_s": 7.105427357601002e-15,
+        "phase": "tempo_90",
+        "index": 4,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 64.66666666666666,
+        "actual_s": 64.67199999996228,
+        "lateness_s": 0.005333333295624243,
+        "phase": "tempo_90",
+        "index": 5,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 65.33333333333333,
+        "actual_s": 65.34399999998277,
+        "lateness_s": 0.010666666649441936,
+        "phase": "tempo_90",
+        "index": 6,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 66.0,
+        "actual_s": 66.0,
+        "lateness_s": 0.0,
+        "phase": "tempo_90",
+        "index": 7,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 66.66666666666667,
+        "actual_s": 66.67199999996228,
+        "lateness_s": 0.005333333295610032,
+        "phase": "tempo_90",
+        "index": 8,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 67.33333333333334,
+        "actual_s": 67.34399999998277,
+        "lateness_s": 0.010666666649427725,
+        "phase": "tempo_90",
+        "index": 9,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 68.00000000000001,
+        "actual_s": 68.01600000000326,
+        "lateness_s": 0.016000000003245418,
+        "phase": "tempo_90",
+        "index": 10,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 68.66666666666669,
+        "actual_s": 68.67199999996228,
+        "lateness_s": 0.005333333295595821,
+        "phase": "tempo_90",
+        "index": 11,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 69.33333333333336,
+        "actual_s": 69.34399999998277,
+        "lateness_s": 0.010666666649413514,
+        "phase": "tempo_90",
+        "index": 12,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 70.00000000000003,
+        "actual_s": 70.01600000000326,
+        "lateness_s": 0.016000000003231207,
+        "phase": "tempo_90",
+        "index": 13,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 70.6666666666667,
+        "actual_s": 70.67199999996228,
+        "lateness_s": 0.00533333329558161,
+        "phase": "tempo_90",
+        "index": 14,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 71.33333333333337,
+        "actual_s": 71.34399999998277,
+        "lateness_s": 0.010666666649399303,
+        "phase": "tempo_90",
+        "index": 15,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 72.00000000000004,
+        "actual_s": 72.01600000000326,
+        "lateness_s": 0.016000000003216996,
+        "phase": "tempo_90",
+        "index": 16,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 72.66666666666671,
+        "actual_s": 72.67199999996228,
+        "lateness_s": 0.0053333332955673995,
+        "phase": "tempo_90",
+        "index": 17,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 73.33333333333339,
+        "actual_s": 73.34399999998277,
+        "lateness_s": 0.010666666649385093,
+        "phase": "tempo_90",
+        "index": 18,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 74.00000000000006,
+        "actual_s": 74.01600000000326,
+        "lateness_s": 0.016000000003202786,
+        "phase": "prepare_120",
+        "index": 0,
+        "frequency": 0,
+        "instruction": "Rest. Then one down stroke per tone, at 120 beats per minute. Return between tones.",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 82.00000000000006,
+        "actual_s": 82.01600000000326,
+        "lateness_s": 0.016000000003202786,
+        "phase": "tempo_120",
+        "index": 1,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 82.50000000000006,
+        "actual_s": 82.51600000000326,
+        "lateness_s": 0.016000000003202786,
+        "phase": "tempo_120",
+        "index": 2,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 83.00000000000006,
+        "actual_s": 83.01600000000326,
+        "lateness_s": 0.016000000003202786,
+        "phase": "tempo_120",
+        "index": 3,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 83.50000000000006,
+        "actual_s": 83.51600000000326,
+        "lateness_s": 0.016000000003202786,
+        "phase": "tempo_120",
+        "index": 4,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 84.00000000000006,
+        "actual_s": 84.01600000000326,
+        "lateness_s": 0.016000000003202786,
+        "phase": "tempo_120",
+        "index": 5,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 84.50000000000006,
+        "actual_s": 84.51600000000326,
+        "lateness_s": 0.016000000003202786,
+        "phase": "tempo_120",
+        "index": 6,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 85.00000000000006,
+        "actual_s": 85.01600000000326,
+        "lateness_s": 0.016000000003202786,
+        "phase": "tempo_120",
+        "index": 7,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 85.50000000000006,
+        "actual_s": 85.51600000000326,
+        "lateness_s": 0.016000000003202786,
+        "phase": "tempo_120",
+        "index": 8,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 86.00000000000006,
+        "actual_s": 86.01600000000326,
+        "lateness_s": 0.016000000003202786,
+        "phase": "tempo_120",
+        "index": 9,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 86.50000000000006,
+        "actual_s": 86.51600000000326,
+        "lateness_s": 0.016000000003202786,
+        "phase": "tempo_120",
+        "index": 10,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 87.00000000000006,
+        "actual_s": 87.01600000000326,
+        "lateness_s": 0.016000000003202786,
+        "phase": "tempo_120",
+        "index": 11,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 87.50000000000006,
+        "actual_s": 87.51600000000326,
+        "lateness_s": 0.016000000003202786,
+        "phase": "tempo_120",
+        "index": 12,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 88.00000000000006,
+        "actual_s": 88.01600000000326,
+        "lateness_s": 0.016000000003202786,
+        "phase": "tempo_120",
+        "index": 13,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 88.50000000000006,
+        "actual_s": 88.51600000000326,
+        "lateness_s": 0.016000000003202786,
+        "phase": "tempo_120",
+        "index": 14,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 89.00000000000006,
+        "actual_s": 89.01600000000326,
+        "lateness_s": 0.016000000003202786,
+        "phase": "tempo_120",
+        "index": 15,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 89.50000000000006,
+        "actual_s": 89.51600000000326,
+        "lateness_s": 0.016000000003202786,
+        "phase": "tempo_120",
+        "index": 16,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 90.00000000000006,
+        "actual_s": 90.01600000000326,
+        "lateness_s": 0.016000000003202786,
+        "phase": "tempo_120",
+        "index": 17,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 90.50000000000006,
+        "actual_s": 90.51600000000326,
+        "lateness_s": 0.016000000003202786,
+        "phase": "tempo_120",
+        "index": 18,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 91.00000000000006,
+        "actual_s": 91.01600000000326,
+        "lateness_s": 0.016000000003202786,
+        "phase": "tempo_120",
+        "index": 19,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 91.50000000000006,
+        "actual_s": 91.51600000000326,
+        "lateness_s": 0.016000000003202786,
+        "phase": "tempo_120",
+        "index": 20,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 92.00000000000006,
+        "actual_s": 92.01600000000326,
+        "lateness_s": 0.016000000003202786,
+        "phase": "tempo_120",
+        "index": 21,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 92.50000000000006,
+        "actual_s": 92.51600000000326,
+        "lateness_s": 0.016000000003202786,
+        "phase": "tempo_120",
+        "index": 22,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 93.00000000000006,
+        "actual_s": 93.01600000000326,
+        "lateness_s": 0.016000000003202786,
+        "phase": "tempo_120",
+        "index": 23,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 93.50000000000006,
+        "actual_s": 93.51600000000326,
+        "lateness_s": 0.016000000003202786,
+        "phase": "tempo_120",
+        "index": 24,
+        "frequency": 900,
+        "instruction": "",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 94.00000000000006,
+        "actual_s": 94.01600000000326,
+        "lateness_s": 0.016000000003202786,
+        "phase": "final_rest",
+        "index": 0,
+        "frequency": 0,
+        "instruction": "Stop moving. Keep still for eight seconds.",
+        "skipped": false
+      },
+      {
+        "scheduled_s": 102.00000000000006,
+        "actual_s": 102.01600000000326,
+        "lateness_s": 0.016000000003202786,
+        "phase": "done",
+        "index": 0,
+        "frequency": 0,
+        "instruction": "Recording complete. Thank you.",
+        "skipped": false
+      }
+    ]
+  }
+}

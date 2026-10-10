@@ -47,7 +47,9 @@ Stage E requires an explicit camera button and a stable, user-confirmed physical
 
 The core-control checkpoint is on `dev-1`; frontend and interaction development continues on `dev-2`. The next work covers guided setup, the presentation layout, fading left-hand trails, beat/intensity feedback, and clear pause/resume/end/reset behavior. Preserve the verified firmware, serial, tempo and audio contracts.
 
-The final user interface and repository README must be in English. Development records may keep their existing language and remain available for now. At the user's explicit final cleanup request, remove development journals, validation logs and implementation-planning documents from the delivered tree; preserve their committed history. Keep concise operating instructions and required third-party attribution in the delivered project. Do not modify the proposal.
+The final user interface and repository README must be in English. Development records may keep their existing language and remain available for now. Track and upload all recordings and associated metadata on development branches, alongside the existing documentation. Browser exports from `Final/tmp` are archived under `recordings/browser/`.
+
+At the user's explicit final release request, remove the entire `docs/` and `recordings/` directories from the release tree and add `/docs/` and `/recordings/` to the release `.gitignore`. Ignore rules alone do not remove already tracked files. Preserve the complete commit history and the development branches; do not rewrite their history. The final tree contains application code, required runtime assets and one short English README, without other standalone development documents. Include operating instructions and required attribution in the README. Do not modify the proposal.
 
 Complete and validate one feature, commit it, then proceed to the next. Participant testing requires an advance report and an explicit start from the user. The user declined additional crossing/occlusion tests; they are deferred and do not block frontend development.
 

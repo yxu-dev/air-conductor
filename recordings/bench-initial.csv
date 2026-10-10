@@ -1,0 +1,4 @@
+received_utc,host_elapsed_s,type,timestamp_ms,ax,ay,az,gx,gy,gz,payload
+2026-10-05T06:47:25.840852+00:00,1.609000,BOOT,,,,,,,,"BOOT,1"
+2026-10-05T06:47:25.845482+00:00,1.609000,ERROR,,,,,,,,"ERROR,MPU6050_NOT_FOUND"
+2026-10-05T06:47:25.845482+00:00,1.609000,STATUS,,,,,,,,"STATUS,SENSOR_ERROR"
