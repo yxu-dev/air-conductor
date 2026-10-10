@@ -32,6 +32,7 @@ export function renderStatus(root, state, { supported = true, now = performance.
     root.querySelector('.stage-center').insertAdjacentHTML('beforeend', '<a id="setup-link" class="stage-setup-link" href="#setup">Prepare your hands ↓</a>');
     root.querySelector('.stage-hand').insertAdjacentHTML('afterend', '<div id="stage-gesture" class="stage-gesture"><span id="stage-gesture-label"></span><progress id="stage-gesture-progress" value="0" max="1" aria-label="Playback gesture confirmation"></progress></div>');
     root.querySelector('.setup').insertAdjacentHTML('beforeend', '<a id="studio-link" class="ready-link" href="#studio" hidden>You’re ready. Back to the studio ↑</a>');
+    root.querySelector('#guide').insertAdjacentHTML('beforebegin', `<details id="visual-settings" class="settings"><summary><span>Visual atmosphere</span><span class="summary-meta">MAKE IT YOURS</span></summary><div class="visual-settings-body"><label for="scene-theme">Scene palette<select id="scene-theme"><option value="aurora">Aurora · jade & gold</option><option value="nocturne">Nocturne · lilac & ice</option></select></label><div><label class="check-label"><input id="reduce-motion" type="checkbox">Reduce visual motion</label><p id="motion-preference" class="micro">Keep the scene still while retaining hand position feedback.</p></div><p id="scene-reading" class="micro" role="status"></p></div></details>`);
     v = Object.fromEntries([...root.querySelectorAll('[id]')].map(el => [el.id, el]));
     views.set(root, v);
   }
@@ -42,6 +43,13 @@ export function renderStatus(root, state, { supported = true, now = performance.
   const paused = state.playbackState === 'paused';
   const busy = state.performanceBusy || state.audioBusy;
   root.dataset.mode = state.experienceMode; root.dataset.playback = state.playbackState;
+  root.dataset.motion = state.visualReducedMotion || state.systemReducedMotion ? 'reduced' : 'full';
+  v.stage.dataset.theme = state.sceneTheme; v.stage.dataset.scene = state.scenePhase;
+  v['scene-theme'].value = state.sceneTheme;
+  v['reduce-motion'].checked = state.visualReducedMotion || state.systemReducedMotion;
+  v['reduce-motion'].disabled = state.systemReducedMotion;
+  text(v['motion-preference'], state.systemReducedMotion ? 'Your system’s reduced-motion preference is active.' : 'Keep the scene still while retaining hand position feedback.');
+  text(v['scene-reading'], state.scenePhase === 'ready' ? 'A living scene, shaped by your tempo, strokes and volume.' : state.scenePhase === 'loading' ? 'Preparing your visual space…' : state.scenePhase === 'lost' ? 'Visual effects are recovering. Music controls remain available.' : state.sceneError ?? 'Enhanced visuals are unavailable. Music controls remain available.');
   for (const mode of ['conduct', 'manual']) {
     v[`mode-${mode}`].setAttribute('aria-pressed', String(state.experienceMode === mode));
     v[`mode-${mode}`].disabled = state.performanceActive || busy;
@@ -81,7 +89,7 @@ export function renderStatus(root, state, { supported = true, now = performance.
   v.volume.value = String(state.volumeDb); v.volume.disabled = state.volumeSource !== 'manual'; text(v['volume-value'], `${state.volumeDb.toFixed(0)} dB`);
   text(v['volume-help'], state.volumeSource === 'manual' ? 'Softer ← → Louder' : state.handTracked ? 'Following your left hand’s height' : state.leftHandBound ? 'Volume holds until your left hand returns' : 'Confirm your left hand to control volume');
   v.play.disabled = busy || playing || state.musicLoadState === 'loading' || (!ready.ready && state.musicLoadState !== 'error');
-  text(v.play, busy ? 'Getting ready…' : state.musicLoadState === 'error' ? 'Retry music' : paused ? 'Resume' : manual ? 'Play music →' : 'Start performance →');
+  text(v.play, busy ? 'Getting ready…' : state.musicLoadState === 'error' ? 'Retry music' : playing ? 'Playing' : paused ? 'Resume' : manual ? 'Play music →' : 'Start performance →');
   v.pause.disabled = !playing || busy; v.stop.disabled = !busy && !state.performanceActive && state.playbackState === 'stopped' && !state.detectionActive; text(v.stop, manual ? 'Stop & rewind' : 'End performance');
   text(v['playback-status'], playing ? 'Playing' : paused ? 'Paused' : 'Stopped'); text(v['music-position'], state.musicInfo ? `Bar ${state.musicBar} / ${state.musicInfo.bars} · Beat ${state.musicBeat}` : 'Preparing music'); v['music-progress'].value = state.musicProgress;
   text(v['audio-status'], state.audioReady ? 'Pause keeps your place. End returns to the start.' : 'Sound starts only when you press play.');
@@ -108,6 +116,6 @@ export function renderStatus(root, state, { supported = true, now = performance.
 }
 
 export function pulseBeat(view) {
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches || view.studio.closest('#app').dataset.motion === 'reduced') return;
   view['beat-pulse'].animate([{ transform: 'scale(1)', opacity: 1 }, { transform: 'scale(2.4)', opacity: .2 }, { transform: 'scale(1)', opacity: 1 }], { duration: 380 });
 }

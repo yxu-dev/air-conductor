@@ -6,10 +6,10 @@ import { createMusicSession } from './audio.js';
 import { HandControl } from './hand-control.js';
 import { VisionSession } from './vision.js';
 import { Experience } from './experience.js';
-import { MotionStage } from './motion-stage.js';
 
 const root = document.querySelector('#app');
 let view, stage, experience;
+let disposed = false, pageHidden = false;
 const music = createMusicSession(state, { onEvent: (kind, data) => session.recordMusicEvent(kind, data) });
 const session = new ConductorSession({ state,
   onBeat: beat => { music.tick(); if (view) pulseBeat(view); stage?.pulse(beat.intensity); },
@@ -27,10 +27,21 @@ const vision = new VisionSession({ state, control, video: view['camera-video'], 
 experience = new Experience({ state, session, music, control, vision, onChange: update,
   onEvent: (kind, data) => {
     session.recordHostEvent('EXPERIENCE', kind, data);
-    if (kind === 'START') { view.settings.open = false; view.studio.scrollIntoView({ block: 'start' }); }
+    if (kind === 'START') { view.settings.open = false; view.studio.scrollIntoView({ block: 'start', behavior: state.visualReducedMotion || state.systemReducedMotion ? 'instant' : 'auto' }); }
   } });
 experience.setMode('conduct');
-stage = new MotionStage(view['motion-canvas'], state);
+// Visuals load independently, so a delayed or unavailable GPU cannot block playback.
+void import('./motion-stage.js').then(({ MotionStage }) => {
+  if (disposed) return;
+  stage = new MotionStage(view['motion-canvas'], state);
+  if (pageHidden) stage.stop();
+  update();
+}).catch(() => {
+  if (disposed) return;
+  state.scenePhase = 'fallback';
+  state.sceneError = 'Enhanced visuals are unavailable. Music and hand controls remain available.';
+  update();
+});
 void music.load().finally(update).catch(() => {});
 
 async function action(callback, target = 'error') {
@@ -57,6 +68,14 @@ view['manual-tempo'].addEventListener('input', event => { music.setManualBpm(Num
 view.volume.addEventListener('input', event => { control.setManualVolume(Number(event.target.value)); update(); });
 view['volume-source'].addEventListener('change', event => { control.setVolumeSource(event.target.value); update(); });
 view['gesture-controls'].addEventListener('change', event => { control.setGestureControls(event.target.checked); update(); });
+view['scene-theme'].addEventListener('change', event => {
+  state.sceneTheme = event.target.value;
+  session.recordHostEvent('VISUAL', 'THEME', { theme: state.sceneTheme }); update();
+});
+view['reduce-motion'].addEventListener('change', event => {
+  state.visualReducedMotion = event.target.checked;
+  session.recordHostEvent('VISUAL', 'REDUCE_MOTION', { enabled: state.visualReducedMotion }); update();
+});
 view['camera-toggle'].addEventListener('click', () => { void action(async () => {
   if (['starting', 'running'].includes(state.cameraPhase)) vision.stop();
   else { view.settings.open = true; await vision.start(); }
@@ -96,12 +115,13 @@ view.export.addEventListener('click', () => {
 });
 
 let refresh = setInterval(update, 150);
-const pageHide = () => { clearInterval(refresh); refresh = null; stage.stop(); vision.stop(); music.stop(); state.performanceActive = false; void session.disconnect(); };
-const pageShow = () => { if (refresh === null) { update(); stage.start(); refresh = setInterval(update, 150); } };
+const pageHide = () => { pageHidden = true; clearInterval(refresh); refresh = null; stage?.stop(); vision.stop(); music.stop(); state.performanceActive = false; void session.disconnect(); };
+const pageShow = () => { pageHidden = false; if (refresh === null) { update(); stage?.start(); refresh = setInterval(update, 150); } };
 window.addEventListener('pagehide', pageHide);
 window.addEventListener('pageshow', pageShow);
 if (import.meta.hot) import.meta.hot.dispose(() => {
+  disposed = true;
   clearInterval(refresh); window.removeEventListener('pagehide', pageHide); window.removeEventListener('pageshow', pageShow);
   document.removeEventListener('fullscreenchange', fullscreenChange);
-  stage.dispose(); music.dispose(); vision.dispose(); void session.transport.dispose();
+  stage?.dispose(); music.dispose(); vision.dispose(); void session.transport.dispose();
 });

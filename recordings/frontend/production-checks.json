@@ -1,6 +1,6 @@
 {
-  "checkedAt": "2026-10-10T16:31:52.583Z",
-  "passed": 5,
+  "checkedAt": "2026-10-10T17:01:02.578Z",
+  "passed": 7,
   "headless": true,
   "audioMuted": true,
   "physicalDevicesOpened": false,
@@ -10,7 +10,15 @@
       "pass": true
     },
     {
+      "check": "built lazy-loaded Three.js scene creates a real WebGL renderer",
+      "pass": true
+    },
+    {
       "check": "built music, model, Worker and WASM assets are served locally",
+      "pass": true
+    },
+    {
+      "check": "built palette and reduced-motion controls leave real audio playing",
       "pass": true
     },
     {

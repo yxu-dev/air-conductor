@@ -18,6 +18,8 @@ try {
   await page.locator('#music-info').filter({ hasText: '16 bars' }).waitFor();
   assert.equal(await page.locator('#play').isDisabled(), true);
   reports.push({ check: 'built studio starts silently and gates Conduct', pass: true });
+  await page.locator('#motion-canvas[data-renderer="three"]').waitFor();
+  reports.push({ check: 'built lazy-loaded Three.js scene creates a real WebGL renderer', pass: true });
 
   for (const [url, minimum] of [['/midi/ode.mid', 100], ['/models/gesture_recognizer.task', 100000], ['/mediapipe/vision_bundle.js', 100000], ['/mediapipe/vision-worker.js', 100], ['/mediapipe/wasm/vision_wasm_internal.wasm', 100000]]) {
     const response = await page.request.get(`http://127.0.0.1:5175${url}`);
@@ -30,6 +32,14 @@ try {
   await page.locator('#mode-manual').click();
   await page.locator('#play').click();
   await page.waitForFunction(() => document.querySelector('#music-progress').value > .03);
+  await page.locator('#visual-settings > summary').click();
+  await page.locator('#scene-theme').selectOption('nocturne');
+  await page.locator('#motion-canvas').scrollIntoViewIfNeeded();
+  await page.waitForFunction(() => document.querySelector('#motion-canvas').dataset.sceneTheme === 'nocturne');
+  await page.locator('#reduce-motion').check();
+  assert.equal(await page.locator('#app').getAttribute('data-motion'), 'reduced');
+  assert.equal(await page.locator('#playback-status').textContent(), 'Playing');
+  reports.push({ check: 'built palette and reduced-motion controls leave real audio playing', pass: true });
   await page.locator('#pause').click();
   const paused = await page.locator('#music-progress').evaluate(p => p.value);
   await page.waitForTimeout(250);

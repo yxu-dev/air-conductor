@@ -12,6 +12,56 @@
   --font-sans: Arial, Helvetica, sans-serif;
 }
 
+@layer components {
+  .stage {
+    --scene-glow: #3b695233;
+    --scene-dark: #11231e;
+    background: radial-gradient(ellipse at 50% 38%, var(--scene-glow), transparent 65%), var(--scene-dark);
+  }
+  .stage[data-theme=nocturne] {
+    --scene-glow: #56548055;
+    --scene-dark: #171b32;
+    --accent: #d4d0ff;
+    background-color: var(--scene-dark);
+  }
+  .stage-center h2 { text-shadow: 0 3px 24px #0c1b15cc; }
+  #app[data-playback=playing] .stage-center {
+    @apply justify-end pb-[154px];
+  }
+  #app[data-playback=playing] .stage-center h2 {
+    @apply text-[36px] mb-[10px] max-w-none;
+  }
+  #app[data-playback=playing] .stage-center .eyebrow {
+    @apply mb-[5px];
+  }
+  .visual-settings-body {
+    @apply grid grid-cols-[1fr_1fr] gap-6 pb-6 pt-1;
+  }
+  .visual-settings-body>label { @apply text-xs; }
+  .visual-settings-body select {
+    @apply mt-3 block w-full rounded-lg border border-line bg-paper px-3 py-2.5 text-xs text-ink;
+  }
+  .visual-settings-body>div { @apply self-center; }
+  .visual-settings-body .check-label { @apply text-xs; }
+  .visual-settings-body>#scene-reading { @apply col-span-2 mt-0; }
+  .stage[data-scene=fallback]:before,.stage[data-scene=lost]:before {
+    content: '';
+    @apply absolute left-1/2 top-[42%] w-[70%] aspect-square -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10 pointer-events-none;
+    box-shadow: 0 0 70px #b5d8a317, inset 0 0 60px #b5d8a317;
+  }
+  #app[data-motion=reduced] *,#app[data-motion=reduced] *:before,#app[data-motion=reduced] *:after {
+    animation: none!important;
+    transition: none!important;
+  }
+  @media(max-width:600px) {
+    .visual-settings-body { @apply grid-cols-1; }
+    .visual-settings-body>#scene-reading { @apply col-span-1; }
+    #app[data-playback=playing] .stage-center { @apply pb-[127px]; }
+    #app[data-playback=playing] .stage-center h2 { @apply text-[29px]; }
+    #app[data-playback=playing] .stage-center .eyebrow { @apply hidden; }
+  }
+}
+
 /* Components use Tailwind utilities; custom declarations handle native controls and the scene. */
 @layer components {
 :root {
@@ -94,11 +144,12 @@ button:not(:disabled):active {
 }
 
 .skip-link {
-  @apply fixed z-[20] top-[10px] left-[10px] bg-ink text-white p-[12px];
+  @apply fixed z-[20] top-[10px] left-[10px] bg-ink text-white p-[12px] opacity-0 pointer-events-none;
   transform: translateY(-150%);
 }
 
 .skip-link:focus {
+  @apply opacity-100 pointer-events-auto;
   transform: none;
 }
 
@@ -208,7 +259,7 @@ button:not(:disabled):active {
 }
 
 .stage {
-  @apply relative min-h-[600px] overflow-hidden bg-[#1b2420] text-[#f0f2df];
+  @apply relative min-h-[600px] overflow-hidden text-[#f0f2df];
 }
 
 .stage canvas {

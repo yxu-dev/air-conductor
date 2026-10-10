@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { mkdir } from 'node:fs/promises';
+import { mkdir, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import AxeBuilder from '@axe-core/playwright';
 
@@ -8,9 +8,11 @@ test.beforeAll(async () => { await mkdir(captures, { recursive: true }); });
 test.beforeEach(async ({ page }) => {
   const errors = [];
   page.on('pageerror', e => errors.push(e.message));
+  page.on('console', message => { if (message.type() === 'error' && message.text().includes('THREE.WebGLProgram')) errors.push(message.text()); });
   page.__errors = errors;
   await page.goto('/');
   await expect(page.locator('#music-info')).toContainText('16 bars');
+  await expect(page.locator('#motion-canvas')).toHaveAttribute('data-renderer', 'three');
 });
 test.afterEach(async ({ page }) => { expect(page.__errors).toEqual([]); });
 
@@ -23,6 +25,10 @@ test('English guided entry is silent, gated and visually complete', async ({ pag
   await expect(page.locator('#playback-status')).toHaveText('Stopped');
   await expect(page.locator('#settings')).not.toHaveAttribute('open', '');
   expect(await page.locator('body').innerText()).not.toMatch(/[\u4e00-\u9fff]/);
+  await page.locator('.skip-link').focus();
+  await expect(page.locator('.skip-link')).toHaveCSS('opacity', '1');
+  await page.locator('#mode-conduct').focus();
+  await expect(page.locator('.skip-link')).toHaveCSS('opacity', '0');
   await page.screenshot({ path: resolve(captures, 'studio-desktop.png'), fullPage: true });
 });
 
@@ -149,4 +155,95 @@ test('small phone and tablet layouts remain within their viewport', async ({ pag
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     await expect(page.locator('#play')).toBeVisible();
   }
+});
+
+test('Three scene themes and reduced motion do not change music playback', async ({ page }) => {
+  await page.locator('#mode-manual').click(); await page.locator('#play').click();
+  await expect(page.locator('#playback-status')).toHaveText('Playing');
+  await page.locator('#visual-settings > summary').click();
+  await page.locator('#scene-theme').selectOption('nocturne');
+  await page.locator('#motion-canvas').scrollIntoViewIfNeeded();
+  await expect(page.locator('#motion-canvas')).toHaveAttribute('data-scene-theme', 'nocturne');
+  await expect(page.locator('#music-bpm')).toHaveText('100');
+  await expect(page.locator('#playback-status')).toHaveText('Playing');
+  await page.screenshot({ path: resolve(captures, 'studio-nocturne.png'), fullPage: true });
+  await page.locator('#reduce-motion').check();
+  await expect(page.locator('#app')).toHaveAttribute('data-motion', 'reduced');
+  await page.locator('#motion-canvas').scrollIntoViewIfNeeded();
+  await page.waitForTimeout(200);
+  const first = await page.locator('#motion-canvas').screenshot();
+  await page.waitForTimeout(250);
+  expect((await page.locator('#motion-canvas').screenshot()).equals(first)).toBe(true);
+  await expect(page.locator('#playback-status')).toHaveText('Playing');
+});
+
+test('system reduced motion is respected in the actual 3D scene', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.locator('#visual-settings > summary').click();
+  await expect(page.locator('#reduce-motion')).toBeChecked();
+  await expect(page.locator('#reduce-motion')).toBeDisabled();
+  await expect(page.locator('#app')).toHaveAttribute('data-motion', 'reduced');
+});
+
+test('GPU context loss and restoration leave audio available', async ({ page }) => {
+  await page.locator('#mode-manual').click(); await page.locator('#play').click();
+  await expect(page.locator('#playback-status')).toHaveText('Playing');
+  await page.evaluate(() => {
+    window.contextLoss = document.querySelector('#motion-canvas').getContext('webgl2').getExtension('WEBGL_lose_context');
+    window.contextLoss.loseContext();
+  });
+  await expect(page.locator('#motion-canvas')).toHaveAttribute('data-renderer', 'lost');
+  await expect(page.locator('#playback-status')).toHaveText('Playing');
+  await page.waitForTimeout(250);
+  await page.evaluate(() => window.contextLoss.restoreContext());
+  await expect(page.locator('#motion-canvas')).toHaveAttribute('data-renderer', 'three', { timeout: 10000 });
+  await expect(page.locator('#playback-status')).toHaveText('Playing');
+});
+
+test('unavailable WebGL degrades to a static view while real Listen audio works', async ({ page }) => {
+  await page.addInitScript(() => {
+    const getContext = HTMLCanvasElement.prototype.getContext;
+    HTMLCanvasElement.prototype.getContext = function(type, ...args) {
+      return type.startsWith('webgl') ? null : getContext.call(this, type, ...args);
+    };
+  });
+  await page.reload();
+  await expect(page.locator('#stage')).toHaveAttribute('data-scene', 'fallback');
+  await page.locator('#mode-manual').click(); await page.locator('#play').click();
+  await expect(page.locator('#playback-status')).toHaveText('Playing');
+  await page.locator('#pause').click();
+  await expect(page.locator('#playback-status')).toHaveText('Paused');
+});
+
+test('synthetic left frames and sensor beats render a real GPU ribbon, then release resources', async ({ page }) => {
+  const report = await page.evaluate(async () => {
+    const { MotionStage } = await import('/src/motion-stage.js');
+    const { createState } = await import('/src/state.js');
+    const host = document.createElement('div');
+    host.style.cssText = 'position:fixed;left:10px;top:10px;width:600px;height:440px;z-index:100;background:#11231e;';
+    const canvas = document.createElement('canvas'); canvas.id = 'synthetic-motion'; canvas.style.cssText = 'width:100%;height:100%;'; host.append(canvas); document.body.append(host);
+    const state = { ...createState(), cameraReady: true, leftHandBound: true, leftHandLabel: 'Left', handTracked: true, playbackState: 'playing', palmX: .25, palmY: .7 };
+    const stage = new MotionStage(canvas, state); const renderer = stage.renderer;
+    stage.pulse(.9);
+    const now = performance.now();
+    for (let i = 0; i < 12; i++) {
+      state.cameraFrames++; state.palmX = .25 + i * .035; state.palmY = .65 - Math.sin(i * .25) * .3;
+      stage.draw(now + i * 40);
+    }
+    const report = { renderer: canvas.dataset.renderer, trailIndices: stage.ribbonTrail.geometry.drawRange.count,
+      triangles: renderer.info.render.triangles, error: renderer.getContext().getError() };
+    stage.running = false; stage.cancel();
+    window.syntheticScene = { stage, renderer, host };
+    return report;
+  });
+  expect(report.renderer).toBe('three'); expect(report.trailIndices).toBeGreaterThan(0);
+  expect(report.triangles).toBeGreaterThan(0); expect(report.error).toBe(0);
+  await page.locator('#synthetic-motion').screenshot({ path: resolve(captures, 'synthetic-motion.png') });
+  report.geometriesAfterDispose = await page.evaluate(() => {
+    const { stage, renderer, host } = window.syntheticScene;
+    stage.dispose(); host.remove(); delete window.syntheticScene;
+    return renderer.info.memory.geometries;
+  });
+  expect(report.geometriesAfterDispose).toBe(0);
+  await writeFile(resolve(captures, 'scene-checks.json'), JSON.stringify({ checkedAt: new Date().toISOString(), syntheticInput: true, physicalDevicesOpened: false, ...report }, null, 2) + '\n');
 });

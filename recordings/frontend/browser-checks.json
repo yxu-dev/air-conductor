@@ -127,12 +127,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 847,
+                  "duration": 1658,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-10T16:45:22.784Z",
+                  "startTime": "2026-10-10T17:00:57.977Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -142,7 +142,7 @@
           ],
           "id": "3324084181281abe3b7c-73029e24ef91c018c03b",
           "file": "studio.spec.js",
-          "line": 17,
+          "line": 19,
           "column": 1
         },
         {
@@ -161,12 +161,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 3901,
+                  "duration": 3724,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-10T16:45:23.831Z",
+                  "startTime": "2026-10-10T17:00:59.840Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -176,7 +176,7 @@
           ],
           "id": "3324084181281abe3b7c-5f65f32a68a35f8c068b",
           "file": "studio.spec.js",
-          "line": 29,
+          "line": 35,
           "column": 1
         },
         {
@@ -195,12 +195,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 510,
+                  "duration": 709,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-10T16:45:27.744Z",
+                  "startTime": "2026-10-10T17:01:03.576Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -210,7 +210,7 @@
           ],
           "id": "3324084181281abe3b7c-4e0acab52540893f5a75",
           "file": "studio.spec.js",
-          "line": 58,
+          "line": 64,
           "column": 1
         },
         {
@@ -229,12 +229,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 758,
+                  "duration": 742,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-10T16:45:28.282Z",
+                  "startTime": "2026-10-10T17:01:04.304Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -244,7 +244,7 @@
           ],
           "id": "3324084181281abe3b7c-f478786579f659997881",
           "file": "studio.spec.js",
-          "line": 69,
+          "line": 75,
           "column": 1
         },
         {
@@ -263,12 +263,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 755,
+                  "duration": 598,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-10T16:45:29.058Z",
+                  "startTime": "2026-10-10T17:01:05.060Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -278,7 +278,7 @@
           ],
           "id": "3324084181281abe3b7c-6df5e7f6de0c617e0473",
           "file": "studio.spec.js",
-          "line": 83,
+          "line": 89,
           "column": 1
         },
         {
@@ -297,12 +297,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 622,
+                  "duration": 611,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-10T16:45:29.826Z",
+                  "startTime": "2026-10-10T17:01:05.669Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -312,11 +312,283 @@
           ],
           "id": "3324084181281abe3b7c-4969df5f85f2589f3552",
           "file": "studio.spec.js",
-          "line": 94,
+          "line": 100,
           "column": 1
         },
         {
           "title": "synthetic tracking state exposes readiness and held-volume messaging",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 615,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-10T17:01:06.289Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3324084181281abe3b7c-715f728064dc23da4cff",
+          "file": "studio.spec.js",
+          "line": 111,
+          "column": 1
+        },
+        {
+          "title": "studio, settings and diagnostics have no automated accessibility violations",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1271,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-10T17:01:06.912Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3324084181281abe3b7c-4a94c25c6b446cfb7107",
+          "file": "studio.spec.js",
+          "line": 123,
+          "column": 1
+        },
+        {
+          "title": "fullscreen studio enters and exits without changing playback",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 790,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-10T17:01:08.192Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3324084181281abe3b7c-70b1a42667e4433c15ec",
+          "file": "studio.spec.js",
+          "line": 134,
+          "column": 1
+        },
+        {
+          "title": "small phone and tablet layouts remain within their viewport",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 509,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-10T17:01:08.995Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3324084181281abe3b7c-302e7d0870e35c155346",
+          "file": "studio.spec.js",
+          "line": 152,
+          "column": 1
+        },
+        {
+          "title": "Three scene themes and reduced motion do not change music playback",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2465,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-10T17:01:09.515Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3324084181281abe3b7c-62c259ff142092317d89",
+          "file": "studio.spec.js",
+          "line": 160,
+          "column": 1
+        },
+        {
+          "title": "system reduced motion is respected in the actual 3D scene",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 585,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-10T17:01:11.990Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3324084181281abe3b7c-10190a76aaa998b7e530",
+          "file": "studio.spec.js",
+          "line": 180,
+          "column": 1
+        },
+        {
+          "title": "GPU context loss and restoration leave audio available",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 847,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-10T17:01:12.583Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3324084181281abe3b7c-b761838209b10ecb4469",
+          "file": "studio.spec.js",
+          "line": 188,
+          "column": 1
+        },
+        {
+          "title": "unavailable WebGL degrades to a static view while real Listen audio works",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1006,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-10T17:01:13.443Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3324084181281abe3b7c-33b5f1d8cc38aadcbc18",
+          "file": "studio.spec.js",
+          "line": 203,
+          "column": 1
+        },
+        {
+          "title": "synthetic left frames and sensor beats render a real GPU ribbon, then release resources",
           "ok": true,
           "tags": [],
           "tests": [
@@ -336,7 +608,7 @@
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-10T16:45:30.468Z",
+                  "startTime": "2026-10-10T17:01:14.457Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -344,111 +616,9 @@
               "status": "expected"
             }
           ],
-          "id": "3324084181281abe3b7c-715f728064dc23da4cff",
+          "id": "3324084181281abe3b7c-f93179aa8b2200c3e5ed",
           "file": "studio.spec.js",
-          "line": 105,
-          "column": 1
-        },
-        {
-          "title": "studio, settings and diagnostics have no automated accessibility violations",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 30000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 0,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1951,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-10-10T16:45:31.057Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "3324084181281abe3b7c-4a94c25c6b446cfb7107",
-          "file": "studio.spec.js",
-          "line": 117,
-          "column": 1
-        },
-        {
-          "title": "fullscreen studio enters and exits without changing playback",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 30000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 0,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 964,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-10-10T16:45:33.029Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "3324084181281abe3b7c-70b1a42667e4433c15ec",
-          "file": "studio.spec.js",
-          "line": 128,
-          "column": 1
-        },
-        {
-          "title": "small phone and tablet layouts remain within their viewport",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 30000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 0,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 621,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-10-10T16:45:34.014Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "3324084181281abe3b7c-302e7d0870e35c155346",
-          "file": "studio.spec.js",
-          "line": 146,
+          "line": 218,
           "column": 1
         }
       ]
@@ -456,9 +626,9 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-10-10T16:45:20.329Z",
-    "duration": 15099.666000000001,
-    "expected": 10,
+    "startTime": "2026-10-10T17:00:55.478Z",
+    "duration": 20103.072,
+    "expected": 15,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0
