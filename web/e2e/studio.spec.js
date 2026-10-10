@@ -50,7 +50,7 @@ test('English initialization opens silently with no camera or serial request', a
 test('compiled Tailwind bounds icons, glass surfaces and desktop content', async ({ page }) => {
   await expect(page.locator('#studio')).toHaveCSS('display', 'grid');
   expect(Math.max(...await page.locator('svg').evaluateAll(icons => icons.map(icon => icon.getBoundingClientRect().width)))).toBeLessThanOrEqual(30);
-  await expect(page.locator('#settings')).toHaveCSS('backdrop-filter', 'blur(20px) saturate(1.35)');
+  await expect(page.locator('#settings')).toHaveCSS('backdrop-filter', 'blur(26px) saturate(1.45)');
   await closeSetup(page);
   expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(1050);
 });

@@ -250,9 +250,9 @@ export class MotionStage {
     this.core.rotation.y = this.phase * .4;
     this.ribbons.forEach((mesh, i) => {
       mesh.rotation.z = i * .35 + this.phase * (i % 2 ? -.16 : .22);
-      mesh.material.opacity = clamp((playing ? .6 : .28) + gain * .15 + energy * .25);
+      mesh.material.opacity = clamp((playing ? .67 : .4) + gain * .15 + energy * .25);
     });
-    this.aura.material.opacity = (playing ? .27 : .12) + gain * .06 + energy * .25;
+    this.aura.material.opacity = (playing ? .3 : .16) + gain * .06 + energy * .25;
     this.core.material.opacity = playing ? .1 : .06;
     this.pulseMeshes.forEach((mesh, i) => {
       const p = pulses[i]; mesh.visible = Boolean(p);

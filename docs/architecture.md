@@ -57,6 +57,8 @@ Stage E requires an explicit camera button and a stable, user-confirmed physical
 
 The light blue/silver background, Tailwind glass surfaces and Glacier/Iris palettes replace the dev-3 visual theme. The Three.js scene retains lazy loading, its framebuffer cap, loss recovery and fallback. Opening a window pauses only background scene rendering; camera inference and control sessions continue. Reset remains accessible even when setup is incomplete. A narrow footer stacks reset/progress to keep Back/Continue reachable on 320-pixel screens.
 
+The glass polish retains this layout and introduces stronger static blue/lilac background fields, layered glass reflections, white edge highlights and soft shadows. Header, transport and dialog surfaces use separate translucent fills and blur strengths (22/20/26 px); dialogs no longer override glass with a 91%-opaque fill. The modal scrim darkens the page slightly without flattening its color. Buttons lift subtly on hover, press feedback is immediate, and dialogs enter with a short eased transform. System/user reduced-motion settings continue to disable transitions. Orbit/aura opacity is slightly stronger; no new geometry, render passes, continuously animated backgrounds or full-page blur are added. Playback completion no longer closes a settings window opened while audio activation was pending.
+
 Synthetic and muted headless checks validate the new presentation. Earlier participant results describe the unchanged control core; no new physical trial was started for dev-4. Development documents and all previous/new recordings remain tracked pending explicit final release cleanup.
 
 ### Previous interface checkpoints

@@ -34,7 +34,6 @@ const vision = new VisionSession({ state, control, video: view['camera-video'], 
 experience = new Experience({ state, session, music, control, vision, onChange: update,
   onEvent: (kind, data) => {
     session.recordHostEvent('EXPERIENCE', kind, data);
-    if (kind === 'START') windows?.close();
   } });
 experience.setMode('conduct');
 windows = new StudioWindows({ root, view, state, supported: session.transport.supported, onChange: update });
