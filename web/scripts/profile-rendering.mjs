@@ -3,7 +3,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import assert from 'node:assert/strict';
 const browser = await chromium.launch({ channel: 'chrome', headless: true, args: ['--mute-audio'] });
 try {
-  await mkdir('../recordings/frontend', { recursive: true });
+  await mkdir('../recordings/frontend/dev-4', { recursive: true });
   const page = await browser.newPage({ viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 2 });
   await page.addInitScript(() => {
     window.renderProfile = { longTasks: [], gaps: [], samples: 0 };
@@ -24,16 +24,19 @@ try {
     widestIcon: Math.max(...[...document.querySelectorAll('svg')].map(svg => svg.getBoundingClientRect().width)) }));
   assert.equal(layout.display, 'grid');
   assert.ok(layout.widestIcon <= 30, 'An SVG icon has expanded unexpectedly.');
-  await page.screenshot({ path: '../recordings/frontend/live-server-desktop.png', fullPage: true });
+  await page.screenshot({ path: '../recordings/frontend/dev-4/live-initialization.png', fullPage: true });
   const startupLongestTaskMs = await page.evaluate(() => {
     const longest = Math.max(0, ...window.renderProfile.longTasks);
     window.renderProfile.longTasks = []; window.renderProfile.gaps = []; window.renderProfile.samples = 0;
     return longest;
   });
   await page.locator('#mode-manual').click();
+  await page.locator('#setup-next').click();
+  await page.locator('#setup-next').click();
+  await page.screenshot({ path: '../recordings/frontend/dev-4/live-server-desktop.png', fullPage: true });
   await page.locator('#play').click();
   await page.locator('#motion-canvas').scrollIntoViewIfNeeded();
-  await page.screenshot({ path: '../recordings/frontend/live-server-playing.png', fullPage: true });
+  await page.screenshot({ path: '../recordings/frontend/dev-4/live-server-playing.png', fullPage: true });
   await page.waitForTimeout(5000);
   const clickStart = performance.now();
   await page.locator('#pause').click();

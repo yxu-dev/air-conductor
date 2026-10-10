@@ -8,6 +8,7 @@ export function createState() { return {
   sceneTheme: 'aurora',
   scenePhase: 'loading',
   sceneError: null,
+  sceneSuspended: false,
   visualReducedMotion: false,
   systemReducedMotion: false,
   serialPhase: 'disconnected',

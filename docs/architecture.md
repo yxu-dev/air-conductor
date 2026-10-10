@@ -49,6 +49,18 @@ Stage E requires an explicit camera button and a stable, user-confirmed physical
 
 ## Frontend development handoff
 
+### dev-4 glass studio
+
+`dev-4` branches from `dev-3` checkpoint `7638240`; `dev-2` remains at `98d935b`. Both earlier branch heads and their remote references are preserved. Firmware, diagnostics and eleven device/music/vision control modules have identical Git blobs across all three branches and the dev-4 working tree. These are complete interface variants sharing the established control implementation.
+
+`studio-markup.js` defines the English minimal studio and native Devices, Settings, Help and Diagnostics dialogs. `studio-windows.js` owns setup steps, readiness gates, modal replacement, focus return and Escape handling. Initialization opens on every page load without requesting serial/camera permissions or playing music. Conduct follows Mode / Right hand / Left hand / Ready; Listen skips device steps. Enter studio closes setup; Play remains a separate explicit audio activation. Closing or switching windows preserves running audio, connections and hand binding. Existing source overrides, gesture gate, CSV export, raw stream and frozen copyable snapshots remain available in separate windows.
+
+The light blue/silver background, Tailwind glass surfaces and Glacier/Iris palettes replace the dev-3 visual theme. The Three.js scene retains lazy loading, its framebuffer cap, loss recovery and fallback. Opening a window pauses only background scene rendering; camera inference and control sessions continue. Reset remains accessible even when setup is incomplete. A narrow footer stacks reset/progress to keep Back/Continue reachable on 320-pixel screens.
+
+Synthetic and muted headless checks validate the new presentation. Earlier participant results describe the unchanged control core; no new physical trial was started for dev-4. Development documents and all previous/new recordings remain tracked pending explicit final release cleanup.
+
+### Previous interface checkpoints
+
 The core-control checkpoint is on `dev-1`; the product studio is implemented on `dev-2`. Conduct guides connection, calibration, camera access and left confirmation before one Start action. Listen requires only the local score. Starting unlocks audio directly from the click before serial awaits; failure rolls back detection. End silences immediately and stops detection, disconnecting if commands cannot finish. Reset also releases camera and binding. Device loss pauses audio and blocks gesture resume until a new explicit start; camera loss preserves volume-hold behavior. Active pause/resume retains source overrides. Mode changes require ending the performance.
 
 The visual upgrade is on `dev-3`, using Tailwind CSS 4.3.3 and Three.js 0.186.1. Aurora and Nocturne are presentation palettes. A user preference or system reduced-motion setting freezes ambient animation and suppresses trails/pulses while retaining the real hand cursor. WebGL initialization failure selects a static scene; context loss/recovery leaves audio available. Geometry, materials, textures, observers and listeners are released on disposal. Render scheduling pauses offscreen or in hidden documents and caps at roughly 30 FPS. Lightweight unlit materials avoid physical-lighting passes; pixel ratio is at most 1 and the framebuffer is bounded to 600,000 pixels. The scene is a separate lazy chunk, about 141 kB gzip; music/UI initialization does not wait for it.

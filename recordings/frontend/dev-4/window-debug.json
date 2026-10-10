@@ -1,0 +1,8 @@
+{
+  "issue": "Setting checkboxes reverted before their change event",
+  "observedEvents": ["pointerdown unchecked", "pointerup unchecked", "click checked", "input unchecked", "change unchecked"],
+  "cause": "A delegated setup-step selector matched the app root's presentation data-setup-step attribute and refreshed all inputs during every click.",
+  "fix": "Limit step actions to button[data-setup-step].",
+  "scope": "Synthetic browser interaction; no physical camera or device was opened",
+  "screenshot": "checkbox-debug.png"
+}

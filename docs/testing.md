@@ -1,5 +1,14 @@
 # Verification plan
 
+## dev-4 glass studio (2026-10-11)
+
+- All 68 Node checks, 19 headless browser checks and 7 built-app checks pass. Browser checks use actual muted Tone playback, real local WebGL and synthetic device/hand readiness; camera and serial access are stubbed and never open physical devices.
+- Initialization opens silently, readiness gates each Conduct step, and Listen skips hardware. Closing setup keeps binding/connections. Switching dialogs maintains one modal, focus trapping and Escape return. Background WebGL frames stop while a dialog is open, while musical progress continues.
+- Coverage includes source and gesture switches, retained pause position, rewind, reset availability, denied permission recovery, loss/volume-hold feedback, selectable snapshots/CSV, keyboard input, fullscreen exit after readiness loss, system/user reduced motion, palettes, GPU loss/restore, static fallback and resource disposal. The delegated setup-step selector is restricted to buttons so clicking a checkbox cannot trigger an unrelated status refresh before its change event.
+- Desktop plus 320/390/768/1024-pixel layouts and bounded accessibility audits pass. Captures, browser JSON, scene results, production results, rendering measurements and branch/core identity metadata are under `recordings/frontend/dev-4/`. Failed intermediate checkbox diagnostics are retained as development history.
+- The live service on 5173 serves compiled Tailwind with bounded icons and a 360,000-pixel canvas. The latest muted headless sample measured a 16.9 ms p95 animation callback gap, a 74 ms longest task during the steady sampling window and approximately 57 ms pause response. Its startup window included a 1,085 ms task; cold browser/GPU initialization remains a separate cost. These are local headless observations, not physical-device or end-to-end timing guarantees.
+- Git blob checks verify identical firmware, diagnostics and eleven core control modules on dev-2, dev-3 and dev-4. dev-2 (`98d935b`) and dev-3 (`7638240`) remain unchanged and match their remote heads. No participant action/cue session was started.
+
 ## dev-3 Three.js and Tailwind CSS
 
 ### Rendering repair after the initial dev-3 checkpoint

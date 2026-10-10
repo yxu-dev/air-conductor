@@ -4,7 +4,7 @@ export default defineConfig({
   testDir: './e2e',
   fullyParallel: false,
   workers: 1,
-  reporter: [['list'], ['json', { outputFile: '../recordings/frontend/browser-checks.json' }]],
+  reporter: [['list'], ['json', { outputFile: '../recordings/frontend/dev-4/browser-checks.json' }]],
   outputDir: './test-results',
   use: {
     baseURL: 'http://127.0.0.1:5174',

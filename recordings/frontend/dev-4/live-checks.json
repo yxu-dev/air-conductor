@@ -1,0 +1,18 @@
+{
+  "samples": 343,
+  "longTasks": 1,
+  "longestTaskMs": 74,
+  "p95FrameGapMs": 16.90000000000009,
+  "canvasPixels": 360000,
+  "renderThread": "main",
+  "sceneQuality": "fixed",
+  "checkedAt": "2026-10-10T18:10:10.144Z",
+  "url": "http://127.0.0.1:5173/",
+  "compiledTailwind": true,
+  "display": "grid",
+  "widestIcon": 24,
+  "startupLongestTaskMs": 1085,
+  "pauseResponseMs": 56.96360000000095,
+  "headless": true,
+  "physicalDevicesOpened": false
+}

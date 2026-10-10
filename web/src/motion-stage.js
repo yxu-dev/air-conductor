@@ -3,8 +3,8 @@ import { MotionTrail, BeatPulses } from './motion-trail.js';
 export { MotionTrail } from './motion-trail.js';
 
 const palettes = {
-  aurora: { ribbon: '#bfe889', secondary: '#63d8cd', pearl: '#f4e3bb', background: '#11231e' },
-  nocturne: { ribbon: '#bab2ff', secondary: '#80ddeb', pearl: '#f6bbdb', background: '#171b32' },
+  aurora: { ribbon: '#477ddd', secondary: '#8da4d8', pearl: '#4876b5' },
+  nocturne: { ribbon: '#8d70dc', secondary: '#6395dc', pearl: '#9272be' },
 };
 const clamp = value => Math.max(0, Math.min(1, value));
 
@@ -31,7 +31,7 @@ function orbitPoints(radius, warp = 0) {
 
 export class MotionStage {
   constructor(canvas, state) {
-    Object.assign(this, { canvas, state, frame: null, running: false, disposed: false, contextLost: false, visible: true, phase: 0 });
+    Object.assign(this, { canvas, state, frame: null, running: false, disposed: false, contextLost: false, visible: true, phase: 0, suspended: state.sceneSuspended });
     this.trail = new MotionTrail();
     this.pulses = new BeatPulses();
     this.motionQuery = matchMedia('(prefers-reduced-motion: reduce)');
@@ -93,9 +93,9 @@ export class MotionStage {
       this.ribbons.push(mesh); this.rig.add(mesh);
     }
     this.orbits = [];
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < 4; i++) {
       const line = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(orbitPoints(1.9 + i * .14)),
-        new THREE.LineBasicMaterial({ color: '#a6d5b2', transparent: true, opacity: .14, blending: THREE.AdditiveBlending, depthWrite: false }));
+        new THREE.LineBasicMaterial({ color: '#a6d5b2', transparent: true, opacity: .14, blending: THREE.NormalBlending, depthWrite: false }));
       line.rotation.set(.55 + i * .12, -.3, i * .17);
       this.orbits.push(line); this.rig.add(line);
     }
@@ -107,31 +107,31 @@ export class MotionStage {
     this.core.add(wire);
     this.glow = glowTexture();
     this.aura = new THREE.Sprite(new THREE.SpriteMaterial({ map: this.glow, color: '#bfe889', transparent: true,
-      opacity: .23, depthWrite: false, blending: THREE.AdditiveBlending }));
+      opacity: .23, depthWrite: false, blending: THREE.NormalBlending }));
     this.aura.scale.set(5.5, 5.5, 1); this.rig.add(this.aura);
 
     let seed = 27;
     const random = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
-    const positions = new Float32Array(240 * 3);
-    for (let i = 0; i < 240; i++) {
+    const positions = new Float32Array(96 * 3);
+    for (let i = 0; i < 96; i++) {
       const t = random() * Math.PI * 2, r = 1.8 + random() * 1.6;
       positions.set([Math.cos(t) * r, Math.sin(t) * r * .8, (random() - .5) * 2.6], i * 3);
     }
     const geometry = new THREE.BufferGeometry(); geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     this.stars = new THREE.Points(geometry, new THREE.PointsMaterial({ color: '#def7ca', size: .055, map: this.glow,
-      transparent: true, opacity: .7, depthWrite: false, blending: THREE.AdditiveBlending }));
+      transparent: true, opacity: .7, depthWrite: false, blending: THREE.NormalBlending }));
     scene.add(this.stars);
 
     const pulseGeometry = new THREE.TorusGeometry(1, .009, 4, 96);
     this.pulseMeshes = Array.from({ length: this.pulses.limit }, () => {
       const mesh = new THREE.Mesh(pulseGeometry, new THREE.MeshBasicMaterial({ color: '#d4ed91', transparent: true,
-        opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending }));
+        opacity: 0, depthWrite: false, blending: THREE.NormalBlending }));
       mesh.position.y = .35; mesh.visible = false; scene.add(mesh); return mesh;
     });
     this.cursor = new THREE.Group(); scene.add(this.cursor);
     const bead = new THREE.Mesh(new THREE.SphereGeometry(.045, 12, 8), new THREE.MeshBasicMaterial({ color: '#e5ffcc' }));
     const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: this.glow, color: '#c0ef8f', transparent: true,
-      opacity: .9, depthWrite: false, blending: THREE.AdditiveBlending }));
+      opacity: .9, depthWrite: false, blending: THREE.NormalBlending }));
     halo.scale.set(.5, .5, 1); this.cursor.add(bead, halo);
     this.cursor.visible = false;
     this.buildTrail();
@@ -146,7 +146,7 @@ export class MotionStage {
     geometry.setIndex(new THREE.BufferAttribute(new Uint16Array((this.trail.limit - 1) * 6), 1).setUsage(THREE.DynamicDrawUsage));
     geometry.setDrawRange(0, 0);
     const material = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, depthTest: false,
-      side: THREE.DoubleSide, blending: THREE.AdditiveBlending, uniforms: { uColor: { value: new THREE.Color('#c7ed98') } },
+      side: THREE.DoubleSide, blending: THREE.NormalBlending, uniforms: { uColor: { value: new THREE.Color('#c7ed98') } },
       vertexShader: `attribute float aSide; attribute float aOpacity; varying float vSide; varying float vOpacity;
         void main() { vSide = aSide; vOpacity = aOpacity; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
       fragmentShader: `uniform vec3 uColor; varying float vSide; varying float vOpacity;
@@ -217,11 +217,16 @@ export class MotionStage {
   }
 
   pulse(intensity) { if (!this.reduced && this.renderer && !this.contextLost) this.pulses.add(intensity, performance.now()); }
+  setSuspended(value) {
+    if (this.renderer && this.theme !== this.state.sceneTheme) this.setTheme(this.state.sceneTheme);
+    this.suspended = value;
+    if (value) { this.cancel(); this.lastTime = null; } else this.schedule();
+  }
   start() { if (this.disposed) return; this.running = true; this.lastDraw = -Infinity; this.lastTime = null; this.schedule(); }
   cancel() { cancelAnimationFrame(this.frame); this.frame = null; }
   stop() { this.running = false; this.cancel(); this.trail.reset(); this.pulses.reset(); }
   schedule() {
-    if (!this.running || !this.renderer || this.frame !== null || this.contextLost || this.disposed || !this.visible || document.hidden) return;
+    if (!this.running || this.suspended || !this.renderer || this.frame !== null || this.contextLost || this.disposed || !this.visible || document.hidden) return;
     this.frame = requestAnimationFrame(now => {
       this.frame = null;
       if (now - (this.lastDraw ?? -Infinity) >= 32) { this.draw(now); this.lastDraw = now; }
@@ -248,7 +253,7 @@ export class MotionStage {
       mesh.material.opacity = clamp((playing ? .6 : .28) + gain * .15 + energy * .25);
     });
     this.aura.material.opacity = (playing ? .27 : .12) + gain * .06 + energy * .25;
-    this.core.material.opacity = playing ? .14 : .06;
+    this.core.material.opacity = playing ? .1 : .06;
     this.pulseMeshes.forEach((mesh, i) => {
       const p = pulses[i]; mesh.visible = Boolean(p);
       if (!p) return;
@@ -259,6 +264,7 @@ export class MotionStage {
     this.cursor.visible = this.state.handTracked && this.state.leftHandBound && this.state.cameraReady && this.state.experienceMode === 'conduct' && Number.isFinite(this.state.palmX) && Number.isFinite(this.state.palmY);
     if (this.cursor.visible) this.cursor.position.copy(this.worldPoint(1 - this.state.palmX, this.state.palmY));
     this.renderer.render(this.scene, this.camera);
+    this.canvas.dataset.frame = String(this.renderer.info.render.frame);
   }
 
   release() {

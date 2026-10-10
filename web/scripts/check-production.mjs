@@ -5,7 +5,7 @@ import { chromium } from '@playwright/test';
 import { preview } from 'vite';
 
 // Isolated built-app check. Never requests camera access or a serial port.
-const output = resolve('../recordings/frontend');
+const output = resolve('../recordings/frontend/dev-4');
 const reports = [];
 const server = await preview({ preview: { host: '127.0.0.1', port: 5175, strictPort: true } });
 let browser;
@@ -17,7 +17,8 @@ try {
   await page.goto('http://127.0.0.1:5175/');
   await page.locator('#music-info').filter({ hasText: '16 bars' }).waitFor();
   assert.equal(await page.locator('#play').isDisabled(), true);
-  reports.push({ check: 'built studio starts silently and gates Conduct', pass: true });
+  assert.equal(await page.locator('#settings').evaluate(dialog => dialog.open), true);
+  reports.push({ check: 'built initialization opens silently and gates Conduct', pass: true });
   await page.locator('#motion-canvas[data-renderer="three"]').waitFor();
   reports.push({ check: 'built lazy-loaded Three.js scene creates a real WebGL renderer', pass: true });
 
@@ -30,15 +31,17 @@ try {
   reports.push({ check: 'built music, model, Worker and WASM assets are served locally', pass: true });
 
   await page.locator('#mode-manual').click();
+  await page.locator('#setup-next').click();
+  await page.locator('#setup-next').click();
   await page.locator('#play').click();
   await page.waitForFunction(() => document.querySelector('#music-progress').value > .03);
-  await page.locator('#visual-settings > summary').click();
+  await page.locator('#open-preferences').click();
   await page.locator('#scene-theme').selectOption('nocturne');
-  await page.locator('#motion-canvas').scrollIntoViewIfNeeded();
   await page.waitForFunction(() => document.querySelector('#motion-canvas').dataset.sceneTheme === 'nocturne');
   await page.locator('#reduce-motion').check();
   assert.equal(await page.locator('#app').getAttribute('data-motion'), 'reduced');
   assert.equal(await page.locator('#playback-status').textContent(), 'Playing');
+  await page.keyboard.press('Escape');
   reports.push({ check: 'built palette and reduced-motion controls leave real audio playing', pass: true });
   await page.locator('#pause').click();
   const paused = await page.locator('#music-progress').evaluate(p => p.value);

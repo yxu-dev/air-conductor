@@ -7,11 +7,12 @@ import { HandControl } from './hand-control.js';
 import { VisionSession } from './vision.js';
 import { Experience } from './experience.js';
 import { requireStudioStyles } from './style-readiness.js';
+import { StudioWindows } from './studio-windows.js';
 
 const root = document.querySelector('#app');
 requireStudioStyles(root);
 const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
-let view, stage, experience;
+let view, stage, experience, windows;
 let disposed = false, pageHidden = false;
 const music = createMusicSession(state, { onEvent: (kind, data) => session.recordMusicEvent(kind, data) });
 const session = new ConductorSession({ state,
@@ -24,6 +25,8 @@ const update = () => {
   state.systemReducedMotion = motionPreference.matches;
   session.tick(); music.tick(); experience?.tick(); control.tick();
   view = renderStatus(root, state, { supported: session.transport.supported });
+  windows?.refresh();
+  stage?.setSuspended(state.sceneSuspended);
 };
 update();
 const vision = new VisionSession({ state, control, video: view['camera-video'], overlay: view['camera-overlay'],
@@ -31,9 +34,11 @@ const vision = new VisionSession({ state, control, video: view['camera-video'], 
 experience = new Experience({ state, session, music, control, vision, onChange: update,
   onEvent: (kind, data) => {
     session.recordHostEvent('EXPERIENCE', kind, data);
-    if (kind === 'START') { view.settings.open = false; view.studio.scrollIntoView({ block: 'start', behavior: state.visualReducedMotion || state.systemReducedMotion ? 'instant' : 'auto' }); }
+    if (kind === 'START') windows?.close();
   } });
 experience.setMode('conduct');
+windows = new StudioWindows({ root, view, state, supported: session.transport.supported, onChange: update });
+update();
 // Visuals load independently, so a delayed or unavailable GPU cannot block playback.
 void import('./motion-stage.js').then(({ MotionStage }) => {
   if (disposed) return;
@@ -82,7 +87,7 @@ view['reduce-motion'].addEventListener('change', event => {
 });
 view['camera-toggle'].addEventListener('click', () => { void action(async () => {
   if (['starting', 'running'].includes(state.cameraPhase)) vision.stop();
-  else { view.settings.open = true; await vision.start(); }
+  else { windows.open('settings', 'left'); await vision.start(); }
 }, 'cameraError'); });
 view['bind-left'].addEventListener('click', () => { void action(() => control.bindLeft(), 'cameraError'); });
 view.focus.addEventListener('click', () => { void action(async () => {
@@ -127,5 +132,6 @@ if (import.meta.hot) import.meta.hot.dispose(() => {
   disposed = true;
   clearInterval(refresh); window.removeEventListener('pagehide', pageHide); window.removeEventListener('pageshow', pageShow);
   document.removeEventListener('fullscreenchange', fullscreenChange);
+  windows?.dispose();
   stage?.dispose(); music.dispose(); vision.dispose(); void session.transport.dispose();
 });
