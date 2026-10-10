@@ -1,6 +1,10 @@
 import { config } from './config.js';
 
 export function createState() { return {
+  experienceMode: 'conduct',
+  performanceActive: false,
+  performanceBusy: false,
+  performanceError: null,
   serialPhase: 'disconnected',
   serialConnected: false,
   calibrationState: 'not-started',
@@ -17,7 +21,7 @@ export function createState() { return {
   invalidFrames: 0,
   rawSamples: 0,
   lastImu: null,
-  notice: '连接设备后，保持右手静止完成校准。',
+  notice: 'Connect your device, then rest your right hand to calibrate.',
   error: null,
   eventLog: [],
   cameraReady: false,

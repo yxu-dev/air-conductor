@@ -15,7 +15,7 @@ export class SerialConnection {
     this.connecting = this.closing = false;
     this.disconnectListener = (event) => {
       if ((event.port ?? event.target) === this.port) {
-        this.onError('设备已断开，请重新连接并校准。');
+        this.onError('The device disconnected. Reconnect and calibrate.');
         void this.disconnect({ notifyDevice: false });
       }
     };
@@ -25,8 +25,8 @@ export class SerialConnection {
   get supported() { return Boolean(this.serial); }
 
   async connect() {
-    if (!this.serial) throw new Error('当前浏览器不支持串口连接，请使用支持 Web Serial 的 Chrome 或 Edge。');
-    if (this.port || this.connecting || this.closing) throw new Error('串口连接正在使用，请先断开。');
+    if (!this.serial) throw new Error('Use Chrome or Edge with Web Serial support to connect the device.');
+    if (this.port || this.connecting || this.closing) throw new Error('A device connection is already in use. Disconnect first.');
     this.connecting = true;
     const generation = ++this.generation;
     this.onState('connecting');
@@ -68,7 +68,7 @@ export class SerialConnection {
         }
       }
     } catch (error) {
-      if (!this.closing && generation === this.generation) this.onError(`串口读取中断：${error.message}`);
+      if (!this.closing && generation === this.generation) this.onError(`Device connection interrupted: ${error.message}`);
     } finally {
       reader.releaseLock();
       if (this.reader === reader) this.reader = null;
@@ -79,12 +79,12 @@ export class SerialConnection {
   }
 
   send(command) {
-    if (!commands.has(command)) return Promise.reject(new Error('不支持的串口命令。'));
+    if (!commands.has(command)) return Promise.reject(new Error('Unsupported device command.'));
     return this.enqueue(`${command}\n`);
   }
 
   enqueue(text, allowClosing = false) {
-    if (!this.writer || (this.closing && !allowClosing)) return Promise.reject(new Error('串口尚未连接。'));
+    if (!this.writer || (this.closing && !allowClosing)) return Promise.reject(new Error('The device is not connected.'));
     const writer = this.writer;
     const task = this.writeTail.catch(() => {}).then(() => writer.write(new TextEncoder().encode(text)));
     this.writeTail = task;
@@ -110,7 +110,7 @@ export class SerialConnection {
     try {
       const writes = notifyDevice ? this.enqueue('DETECT,OFF\nSTREAM,OFF\n', true) : this.writeTail;
       await Promise.race([writes, new Promise((_, reject) => {
-        timeout = setTimeout(() => reject(new Error('停止命令写入超时')), 1000);
+        timeout = setTimeout(() => reject(new Error('Timed out while stopping the device.')), 1000);
       })]);
     } catch {
       if (this.writer) await this.writer.abort().catch(() => {});

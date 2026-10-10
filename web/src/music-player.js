@@ -29,7 +29,7 @@ export class MusicPlayer {
   }
 
   play() {
-    if (this.disposed) throw new Error('音乐播放器已关闭。');
+    if (this.disposed) throw new Error('The music player has been closed.');
     if (this.state === 'playing') return;
     const offset = this.state === 'paused' ? this.pausedTick : 0;
     this.backend.createVoices();
@@ -68,7 +68,7 @@ export class MusicPlayer {
   }
 
   setTempo(bpm) {
-    if (!Number.isFinite(bpm)) throw new Error('音乐速度必须是有效数值。');
+    if (!Number.isFinite(bpm)) throw new Error('Tempo must be a finite number.');
     const value = Math.min(config.maxBpm, Math.max(config.minBpm, bpm));
     const parameter = this.backend.transport.bpm;
     if (this.state === 'playing') parameter.rampTo(value, config.tempoRampSeconds);

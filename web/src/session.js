@@ -4,12 +4,12 @@ import { TempoEstimator } from './tempo.js';
 import { createState } from './state.js';
 
 const errorText = {
-  CALIBRATION_NOT_STILL: '校准时检测到移动。请支撑右手，保持静止后重试。',
-  IMU_INIT_FAILED: '传感器初始化失败，请检查接线后重新连接。',
-  IMU_READ_FAILED: '传感器读取失败，请检查接线后重新连接。',
-  SENSOR_UNAVAILABLE: '传感器不可用，请检查接线后重新连接。',
-  NOT_CALIBRATED: '请先完成静止校准。',
-  CALIBRATION_BUSY: '设备正在校准，请稍候。',
+  CALIBRATION_NOT_STILL: 'Movement detected during calibration. Rest your right hand and try again.',
+  IMU_INIT_FAILED: 'The sensor could not initialize. Check its wiring and reconnect.',
+  IMU_READ_FAILED: 'The sensor could not be read. Check its wiring and reconnect.',
+  SENSOR_UNAVAILABLE: 'The sensor is unavailable. Check its wiring and reconnect.',
+  NOT_CALIBRATED: 'Complete stationary calibration first.',
+  CALIBRATION_BUSY: 'Calibration is in progress. Please wait.',
 };
 
 export class ConductorSession {
@@ -88,15 +88,15 @@ export class ConductorSession {
   }
 
   waitFor(kind, enabled, timeoutMs) {
-    if (this.pending) throw new Error('请等待当前操作完成。');
+    if (this.pending) throw new Error('Wait for the current operation to finish.');
     const epoch = this.epoch;
     const promise = new Promise((resolve, reject) => {
       const timeout = this.defer(() => {
         if (epoch !== this.epoch) return;
         if (kind === 'CALIBRATION') this.state.calibrationState = 'uncalibrated';
         this.state.calibrationCountdown = null;
-        this.failPending(new Error('设备回应超时，请重新连接并校准。'));
-        this.showError('设备回应超时，请重新连接并校准。');
+        this.failPending(new Error('The device did not respond in time. Reconnect and calibrate.'));
+        this.showError('The device did not respond in time. Reconnect and calibrate.');
       }, timeoutMs);
       this.pending = { kind, enabled, resolve, reject, timeout, sent: false };
     });
@@ -105,7 +105,7 @@ export class ConductorSession {
   }
 
   beginHandshake() {
-    this.failPending(new Error('设备重新初始化，当前操作已取消。'));
+    this.failPending(new Error('The device restarted. The current operation was cancelled.'));
     this.clearTimers();
     const epoch = ++this.epoch;
     this.awaitingProbe = false;
@@ -125,29 +125,29 @@ export class ConductorSession {
     this.defer(() => {
       if (epoch === this.epoch && this.state.serialPhase === 'initializing') {
         this.state.serialPhase = 'unresponsive';
-        this.showError('设备未回应，请断开后重新连接。');
+        this.showError('The device is not responding. Disconnect and reconnect.');
       }
     }, this.startupMs + 4000);
   }
 
   connectionState(phase) {
-    this.log(`串口：${phase}`);
+    this.log(`Device: ${phase}`);
     this.state.serialConnected = phase === 'connected';
     if (phase === 'connected') {
       this.state.error = null;
-      this.state.notice = '设备正在启动，请稍候。';
+      this.state.notice = 'The device is starting. Please wait.';
       this.beginHandshake();
     } else {
       this.state.serialPhase = phase;
       if (phase === 'disconnected' || phase === 'disconnecting') {
-        this.failPending(new Error('连接已断开，当前操作已取消。'));
+        this.failPending(new Error('The device disconnected. The current operation was cancelled.'));
         this.clearTimers();
         ++this.epoch;
         this.awaitingProbe = false;
         this.resetTempo();
         Object.assign(this.state, { calibrationState: 'not-started', calibrationCountdown: null,
           detectionActive: false, rawStreamActive: false, deviceModel: null });
-        this.state.notice = '连接设备后，请重新保持静止完成校准。';
+        this.state.notice = 'Reconnect the device, then rest your right hand and recalibrate.';
       }
       if (phase === 'connecting') {
         this.state.error = null;
@@ -169,7 +169,7 @@ export class ConductorSession {
       case 'BOOT':
         state.deviceModel = null;
         state.receivedBeatCount = state.ignoredBeatCount = 0;
-        state.notice = '设备已启动，请完成静止校准。';
+        state.notice = 'The device is ready for stationary calibration.';
         this.beginHandshake();
         break;
       case 'INFO': state.deviceModel = message.model; break;
@@ -177,7 +177,7 @@ export class ConductorSession {
         if (this.awaitingProbe) {
           this.awaitingProbe = false;
           state.serialPhase = 'connected';
-          state.notice = '设备已连接。请支撑右手，完成静止校准。';
+          state.notice = 'Device connected. Rest your right hand and calibrate.';
         }
         if (state.calibrationState !== 'preparing') this.applyCalibrationStatus(message.value);
         break;
@@ -189,7 +189,7 @@ export class ConductorSession {
         state.detectionActive = message.enabled;
         this.resetTempo();
         if (this.pending?.kind === 'DETECT' && this.pending.enabled === message.enabled) this.completePending();
-        if (message.enabled) state.notice = '检测已开始。每次明显下挥计一拍，抬手回位。';
+        if (message.enabled) state.notice = 'Detection is active. Stroke downward for each beat, then raise your hand to reset.';
         break;
       case 'STREAM':
         state.rawStreamActive = message.enabled;
@@ -210,7 +210,7 @@ export class ConductorSession {
         }
         break;
       case 'ERROR': {
-        const text = errorText[message.code] ?? `设备报告错误：${message.code}`;
+        const text = errorText[message.code] ?? `Device error: ${message.code}`;
         if (message.code === 'CALIBRATION_NOT_STILL' || message.code === 'NOT_CALIBRATED') this.applyCalibrationStatus('UNCALIBRATED');
         if (['IMU_INIT_FAILED', 'IMU_READ_FAILED', 'SENSOR_UNAVAILABLE'].includes(message.code)) this.applyCalibrationStatus('SENSOR_ERROR');
         state.calibrationCountdown = null;
@@ -229,14 +229,14 @@ export class ConductorSession {
     if (value === 'SENSOR_ERROR') this.state.rawStreamActive = false;
     if (value === 'READY') {
       this.state.calibrationCountdown = null;
-      this.state.notice = '校准完成，可以开始检测。';
+      this.state.notice = 'Calibration complete. Ready to conduct.';
       if (this.pending?.kind === 'CALIBRATION' && this.pending.sent) this.completePending();
     }
   }
 
   requireReadyConnection() {
-    if (this.state.serialPhase !== 'connected') throw new Error('请先连接设备并等待启动完成。');
-    if (this.state.actionPending) throw new Error('请等待当前操作完成。');
+    if (this.state.serialPhase !== 'connected') throw new Error('Connect the device and wait for it to finish starting.');
+    if (this.state.actionPending) throw new Error('Wait for the current operation to finish.');
   }
 
   async connect() { return this.transport.connect(); }
@@ -254,7 +254,7 @@ export class ConductorSession {
     this.state.calibrationState = 'preparing';
     this.preparationEnds = this.clock() + this.preparationMs;
     this.state.calibrationCountdown = Math.ceil(this.preparationMs / 1000);
-    this.state.notice = '请支撑右手，保持静止直到显示校准完成。';
+    this.state.notice = 'Rest your right hand and stay still until calibration completes.';
     this.onChange();
     try {
       await this.transport.send('DETECT,OFF');
@@ -274,7 +274,7 @@ export class ConductorSession {
 
   async setDetection(enabled) {
     this.requireReadyConnection();
-    if (enabled && this.state.calibrationState !== 'ready') throw new Error('请先完成静止校准。');
+    if (enabled && this.state.calibrationState !== 'ready') throw new Error('Complete stationary calibration first.');
     const completion = this.waitFor('DETECT', enabled, 3000);
     completion.catch(() => {});
     this.state.error = null;

@@ -250,7 +250,7 @@ test('cancel while permission is pending stops a stream granted later', async ()
 test('permission rejection, Worker failure and bitmap failure clean up and permit retry', async () => {
   const rejected = cameraFixture({ media: { getUserMedia: async () => { throw Object.assign(new Error('denied'), { name: 'NotAllowedError' }); } } });
   await assert.rejects(rejected.vision.start());
-  assert.match(rejected.state.cameraError, /权限/);
+  assert.match(rejected.state.cameraError, /permission/);
   const f = cameraFixture(); await f.vision.start();
   f.workers[0].onerror({ message: 'worker failed' });
   assert.equal(f.state.cameraPhase, 'error');

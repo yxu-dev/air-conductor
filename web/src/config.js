@@ -30,7 +30,7 @@ export const config = Object.freeze({
   gestureMinVolumeDb: -30,
   visionWorkerUrl: '/mediapipe/vision-worker.js',
   midiUrl: '/midi/ode.mid',
-  midiTitle: '欢乐颂',
+  midiTitle: 'Ode to Joy',
   gestureModelUrl: '/models/gesture_recognizer.task',
   visionWasmUrl: '/mediapipe/wasm',
 });

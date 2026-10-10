@@ -52,7 +52,7 @@ export function createMusicSession(state, { onEvent = () => {} } = {}) {
   return new MusicSession({ state, onEvent, unlock: () => Tone.start(),
     loadScore: async ({ signal }) => {
       const response = await fetch(config.midiUrl, { signal: AbortSignal.any([signal, AbortSignal.timeout(10000)]) });
-      if (!response.ok) throw new Error(`本地 MIDI 请求失败（${response.status}）。`);
+      if (!response.ok) throw new Error(`Local MIDI request failed (${response.status}).`);
       return compileScore(new Midi(await response.arrayBuffer()));
     },
     createPlayer: score => new MusicPlayer({ score, backend: new ToneBackend(score) }) });

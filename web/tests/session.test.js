@@ -21,7 +21,7 @@ test('handshake stops old output, calibration gates detection, and beats reach B
   await session.connect();
   await until(() => session.state.serialPhase === 'connected');
   assert.deepEqual(port.commands.slice(0, 3), ['DETECT,OFF', 'STREAM,OFF', 'STATUS']);
-  await assert.rejects(session.setDetection(true), /校准/);
+  await assert.rejects(session.setDetection(true), /calibration/);
   await session.calibrate();
   assert.equal(session.state.calibrationState, 'ready');
   assert.equal(session.state.detectionActive, false);
@@ -40,7 +40,7 @@ test('failed calibration stays disabled and can retry', async () => {
   const { session } = setup({ calibrationFails: true });
   await session.connect();
   await until(() => session.state.serialPhase === 'connected');
-  await assert.rejects(session.calibrate(), /移动/);
+  await assert.rejects(session.calibrate(), /Movement/);
   assert.equal(session.state.calibrationState, 'uncalibrated');
   assert.equal(session.state.detectionActive, false);
   assert.equal(session.state.actionPending, false);

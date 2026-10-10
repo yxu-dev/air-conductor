@@ -18,7 +18,7 @@ export class VisionSession {
 
   async start() {
     if (this.disposed || ['starting', 'running'].includes(this.state.cameraPhase)) return;
-    if (!this.media?.getUserMedia) throw new Error('当前浏览器无法开启摄像头，请使用本机 Chrome 或 Edge。');
+    if (!this.media?.getUserMedia) throw new Error('Camera access is unavailable. Open this local page in Chrome or Edge.');
     const epoch = ++this.epoch;
     Object.assign(this.state, { cameraPhase: 'starting', cameraReady: false, cameraError: null,
       cameraFrames: 0, cameraInferenceMs: null });
@@ -29,20 +29,20 @@ export class VisionSession {
       if (epoch !== this.epoch) { stream.getTracks().forEach(track => track.stop()); return; }
       this.stream = stream;
       for (const track of stream.getTracks()) track.addEventListener('ended', () => {
-        if (epoch === this.epoch) this.fail(new Error('摄像头已断开，可以重新开启。'));
+        if (epoch === this.epoch) this.fail(new Error('The camera disconnected. Enable it again to resume tracking.'));
       });
       this.video.srcObject = stream;
       await this.video.play();
       if (epoch !== this.epoch) return;
       this.worker = this.makeWorker();
       const ready = new Promise((resolve, reject) => {
-        const timeout = setTimeout(() => reject(new Error('本地手势模型加载超时，请重试。')), 20000);
+        const timeout = setTimeout(() => reject(new Error('The hand model took too long to load. Try enabling the camera again.')), 20000);
         this.starting = { reject, timeout };
         this.worker.onmessage = ({ data }) => {
           if (epoch !== this.epoch) return;
           if (data.type === 'READY') { clearTimeout(timeout); this.starting = null; resolve(); }
           else if (data.type === 'ERROR') {
-            const error = new Error(`手势识别失败：${data.message}`);
+            const error = new Error(`Hand tracking failed: ${data.message}`);
             if (this.starting) { clearTimeout(timeout); this.starting = null; reject(error); }
             else this.fail(error);
           } else if (data.type === 'RESULT') {
@@ -56,7 +56,7 @@ export class VisionSession {
           }
         };
         this.worker.onerror = event => {
-          const error = new Error(event.message || '摄像头识别线程异常。');
+          const error = new Error(event.message || 'The hand tracking worker stopped unexpectedly.');
           if (this.starting) { clearTimeout(timeout); this.starting = null; reject(error); }
           else this.fail(error);
         };
@@ -116,7 +116,7 @@ export class VisionSession {
     ++this.epoch;
     if (this.frameId !== null) this.cancelFrame(this.frameId);
     this.frameId = null;
-    if (this.starting) { clearTimeout(this.starting.timeout); this.starting.reject(new Error('摄像头启动已取消。')); this.starting = null; }
+    if (this.starting) { clearTimeout(this.starting.timeout); this.starting.reject(new Error('Camera startup cancelled.')); this.starting = null; }
     this.worker?.terminate(); this.worker = null;
     this.stream?.getTracks().forEach(track => track.stop()); this.stream = null;
     this.video.pause(); this.video.srcObject = null;
@@ -131,8 +131,8 @@ export class VisionSession {
 }
 
 function cameraErrorText(error) {
-  if (error.name === 'NotAllowedError') return '摄像头权限未开启，请允许此页面使用摄像头后重试。';
-  if (error.name === 'NotFoundError') return '未找到摄像头，请检查连接后重试。';
-  if (error.name === 'NotReadableError') return '摄像头可能被其他程序占用，请关闭占用程序后重试。';
-  return error.message || '摄像头发生异常，可以重新开启。';
+  if (error.name === 'NotAllowedError') return 'Camera permission was denied. Allow camera access in your browser, then try again.';
+  if (error.name === 'NotFoundError') return 'No camera was found. Connect a camera and try again.';
+  if (error.name === 'NotReadableError') return 'The camera is busy. Close other apps using it, then try again.';
+  return error.message || 'The camera stopped. Try enabling it again.';
 }

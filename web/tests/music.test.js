@@ -69,8 +69,8 @@ test('same-pitch overlaps merge, adjacent notes retrigger and percussion is excl
   assert.equal(heldNotes(result, 500).length, 1);
   assert.equal(heldNotes(result, 960).length, 0);
   const drumOnly = { header: { ppq: 480 }, tracks: [{ instrument: { percussion: true }, notes: [] }] };
-  assert.throws(() => compileScore(drumOnly), /没有可播放/);
-  assert.throws(() => score([{ ticks: 0, durationTicks: -1, midi: 60, velocity: .5 }]), /无效音符/);
+  assert.throws(() => compileScore(drumOnly), /no playable/);
+  assert.throws(() => score([{ ticks: 0, durationTicks: -1, midi: 60, velocity: .5 }]), /invalid note/);
 });
 
 test('musical note-offs precede adjacent attacks and changing BPM never restarts playback', () => {

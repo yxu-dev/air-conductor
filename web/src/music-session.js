@@ -27,7 +27,7 @@ export class MusicSession {
       } catch (error) {
         if (!this.disposed) {
           this.state.musicLoadState = 'error';
-          this.state.musicError = `乐谱加载失败：${error.message}`;
+          this.state.musicError = `Could not load the score: ${error.message}`;
         }
         throw error;
       } finally { this.loading = null; }
@@ -58,7 +58,7 @@ export class MusicSession {
       if (!this.disposed && operation === this.operation) {
         this.player?.stop();
         this.state.playbackState = 'stopped';
-        this.state.musicError = `音乐无法播放：${error.message}`;
+        this.state.musicError = `Could not play music: ${error.message}`;
       }
       throw error;
     } finally { if (operation === this.operation) this.state.audioBusy = false; }
@@ -75,20 +75,20 @@ export class MusicSession {
   }
 
   setSource(source) {
-    if (!['manual', 'conducting'].includes(source)) throw new Error('音乐速度来源无效。');
+    if (!['manual', 'conducting'].includes(source)) throw new Error('Invalid tempo source.');
     this.state.tempoSource = source;
     this.onEvent('SOURCE', { source });
     this.syncTempo();
   }
 
   setManualBpm(bpm) {
-    if (!Number.isFinite(bpm)) throw new Error('手动速度必须是有效数值。');
+    if (!Number.isFinite(bpm)) throw new Error('Tempo must be a finite number.');
     this.state.manualBpm = Math.min(config.maxBpm, Math.max(config.minBpm, bpm));
     this.syncTempo();
   }
 
   setVolume(db) {
-    if (!Number.isFinite(db)) throw new Error('音量必须是有效数值。');
+    if (!Number.isFinite(db)) throw new Error('Volume must be a finite number.');
     this.state.volumeDb = Math.min(config.maxVolumeDb, Math.max(config.minVolumeDb, db));
     this.player?.setVolume(this.state.volumeDb);
     this.onEvent('VOLUME', { db: this.state.volumeDb });

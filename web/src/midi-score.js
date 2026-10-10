@@ -2,14 +2,14 @@ import { config } from './config.js';
 
 export function compileScore(midi) {
   const ppq = midi.header?.ppq;
-  if (!Number.isInteger(ppq) || ppq <= 0) throw new Error('MIDI 节拍精度无效。');
+  if (!Number.isInteger(ppq) || ppq <= 0) throw new Error('Invalid MIDI timing resolution.');
   const signature = midi.header.timeSignatures?.[0]?.timeSignature ?? [4, 4];
   const [beatsPerBar, denominator] = signature;
   if (![beatsPerBar, denominator].every(value => Number.isInteger(value) && value > 0)) {
-    throw new Error('MIDI 拍号无效。');
+    throw new Error('Invalid MIDI time signature.');
   }
   const barTicks = ppq * 4 * beatsPerBar / denominator;
-  if (!Number.isInteger(barTicks)) throw new Error('MIDI 拍号无法按整数 tick 排程。');
+  if (!Number.isInteger(barTicks)) throw new Error('MIDI time signature cannot be scheduled in integer ticks.');
   const tracks = [];
   for (const [trackIndex, track] of midi.tracks.entries()) {
     if (track.instrument?.percussion) continue;
@@ -18,7 +18,7 @@ export function compileScore(midi) {
           !Number.isInteger(note.ticks) || note.ticks < 0 ||
           !Number.isInteger(note.durationTicks) || note.durationTicks <= 0 ||
           !Number.isFinite(note.velocity) || note.velocity < 0 || note.velocity > 1) {
-        throw new Error('MIDI 包含无效音符。');
+        throw new Error('MIDI contains an invalid note.');
       }
       return { trackIndex, midi: note.midi, startTick: note.ticks,
         endTick: note.ticks + note.durationTicks, velocity: note.velocity };
@@ -37,7 +37,7 @@ export function compileScore(midi) {
       notes: merged.sort((a, b) => a.startTick - b.startTick || a.midi - b.midi) });
   }
   const notes = tracks.flatMap(track => track.notes);
-  if (!notes.length) throw new Error('MIDI 没有可播放的旋律音符。');
+  if (!notes.length) throw new Error('MIDI contains no playable melodic notes.');
   const lastEnd = Math.max(...notes.map(note => note.endTick));
   const durationTicks = Math.max(lastEnd, Number.isFinite(midi.durationTicks) ? midi.durationTicks : 0);
   const loopTicks = Math.ceil(durationTicks / barTicks) * barTicks;

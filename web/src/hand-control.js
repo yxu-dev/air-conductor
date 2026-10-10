@@ -58,9 +58,9 @@ export class HandControl {
 
   bindLeft() {
     if (!this.state.cameraReady || !this.state.handBindingReady || !this.latest ||
-        this.clock() - this.lastFrame > config.visionMaxGapMs) throw new Error('请只举起左手，稳定显示后再确认。');
+        this.clock() - this.lastFrame > config.visionMaxGapMs) throw new Error('Show only your left hand and wait for stable tracking before confirming.');
     const hand = validHand(this.latest, 0);
-    if (!hand || this.latest.landmarks.length !== 1) throw new Error('请让右手暂时离开画面，只确认左手。');
+    if (!hand || this.latest.landmarks.length !== 1) throw new Error('Keep your right hand out of view while confirming your left hand.');
     this.clearGesture();
     this.smoothed = null;
     this.lastLeft = null;
@@ -70,7 +70,7 @@ export class HandControl {
   }
 
   setVolumeSource(source) {
-    if (!['manual', 'left-hand'].includes(source)) throw new Error('音量来源无效。');
+    if (!['manual', 'left-hand'].includes(source)) throw new Error('Invalid volume source.');
     this.state.volumeSource = source;
     this.lastVolume = null;
     if (source === 'manual') this.music.setVolume(this.state.manualVolumeDb);
@@ -78,7 +78,7 @@ export class HandControl {
   }
 
   setManualVolume(db) {
-    if (!Number.isFinite(db)) throw new Error('音量必须为有效数值。');
+    if (!Number.isFinite(db)) throw new Error('Volume must be a finite number.');
     this.state.manualVolumeDb = clamp(db, config.minVolumeDb, config.maxVolumeDb);
     if (this.state.volumeSource === 'manual') this.music.setVolume(this.state.manualVolumeDb);
   }
