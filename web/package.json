@@ -4,7 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "predev": "npm run sync:wasm",
     "dev": "vite",
+    "test": "node --test tests/*.test.js",
     "sync:wasm": "node scripts/sync-wasm.mjs",
     "prebuild": "npm run sync:wasm",
     "build": "vite build",

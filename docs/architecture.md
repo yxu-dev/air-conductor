@@ -7,8 +7,10 @@ MPU6050 → Arduino stroke detector → USB Serial → browser tempo estimator
                                                    ↓
 Local MIDI → musical tick scheduler → Tone.js synth → speakers
 
-Webcam → MediaPipe → palm height / held gesture → volume / pause / resume
-Arduino beats + camera palm position → visual pulse / trail
+Webcam → classic Worker / MediaPipe → confirmed physical LEFT hand
+                                     ↓
+                           palm height / held gesture → volume / pause / resume
+RIGHT wrist Arduino beats → tempo / visual pulse
 ```
 
 Python diagnostics run separately and never serve as the final runtime or a required bridge. All runtime assets live inside this repository.
@@ -18,12 +20,25 @@ Python diagnostics run separately and never serve as the final runtime or a requ
 - Arduino: fixed-interval sampling, explicit stationary calibration, stroke timestamps and intensity.
 - `main.js`: user actions, module lifecycle and state updates.
 - `state.js`: one representation of connection, calibration, camera and playback state.
-- `serial.js`: transport, validation, commands and cleanup.
+- `serial.js`: Web Serial transport, ordered commands and stream/port cleanup.
+- `protocol.js`: bounded ASCII line framing and strict protocol validation.
+- `session.js`: boot handshake, calibration/detection acknowledgements, tempo lifecycle and event export.
 - `tempo.js`: pure interval/BPM logic; no DOM or Tone.js dependencies.
-- `audio.js`: local MIDI, musical scheduling, gain and playback lifecycle.
-- `vision.js`: camera inference, gesture stability and palm position.
-- `visuals.js`: render state, stroke pulses and hand trails.
+- `audio.js`: local MIDI loading and the Tone backend (polyphony, volume, mute gate and limiter).
+- `midi-score.js`: validated tick score, same-pitch overlap handling and loop/event boundaries.
+- `music-player.js`: tick scheduling, note-offs, loop cleanup and pause/resume/stop.
+- `music-session.js`: click-based audio unlock, loading/retry/cancellation, tempo source and UI music state.
+- `vision.js`: camera permission/start/stop, single-frame Worker scheduling and lifecycle cleanup.
+- `public/mediapipe/vision-worker.js`: local MediaPipe CPU inference in a classic Worker.
+- `hand-control.js`: physical-left binding, handedness filtering, height smoothing, held gestures and loss handling.
+- `visuals.js`: render state, stroke pulses, mirror camera preview and hand landmarks. A fading trail remains future work.
 
 ## Current scope
 
-Modules are scaffolds. Only the initial status page is implemented. Add working behavior one subsystem at a time; do not report READY before calibration completes.
+Stages A/B implement firmware sampling/calibration in `imu.h/.cpp`, a direction-gated stroke state machine in `stroke_detector.h/.cpp`, and Python capture, replay and beat analysis. READY means successful stationary sensor calibration; DETECT,ON independently enables beat output. Detection uses calibrated acceleration magnitude and gyro bias. Current right-hand mounting uses gx-negative gating, verified by a separate three-pair direction check; earlier records used gx-positive gating. Stationary calibration does not determine motion direction.
+
+Stage C implements Web Serial, explicit calibration/detection controls, device-time BPM estimation and a live dashboard. Opening/BOOT waits for startup, sends DETECT,OFF and STREAM,OFF, then probes STATUS. Acknowledgements, not button clicks, establish active device state. Reconnect, reboot and recalibration invalidate tempo; a conducting pause retains the last estimate but starts a fresh interval history on resumption. Raw telemetry is optional and independent. Real Chrome connection, calibration and beat reception were checked; physical unplug/reconnect is still pending. Details in [browser tempo](browser-tempo.md).
+
+Stage D loads the local two-voice, 16-bar MIDI and schedules note-on and note-off events by musical ticks on Tone Transport. Manual control is the default; conducting mode uses valid device-time estimates and holds tempo on idle/loss of detection. Pausing captures the audible tick, gates output and destroys queued voices; resuming preserves the paused Transport clock and restores held notes. Music is unlocked by an explicit play click. Note pitch is independent of BPM. See [music playback](music-playback.md).
+
+Stage E requires an explicit camera button and a stable, user-confirmed physical-left hand before visual control. MediaPipe detects up to two hands; only the confirmed left-hand label is selected, using matching handedness/landmark/gesture indices. Camera restart clears binding. A classic Worker loads the local package IIFE/WASM/model and processes at most one frame at a time, capped at 20 FPS. Old results and frame gaps cannot accumulate held gestures. Height control maps the smoothed left palm center to -30…-3 dB; manual mode retains its own saved setting. Left loss/ambiguity holds volume and clears the gesture candidate without switching to the right hand. Fist/open holds use the existing music session to pause/resume, never to initially start stopped audio. Node and real blank-frame runtime checks pass; camera/hand interaction checks await the user's explicit test start. See [camera control](camera-control.md).

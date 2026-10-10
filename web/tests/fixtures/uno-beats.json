@@ -1,0 +1,66 @@
+{
+  "source": "recordings/imu-20261005-155210-468771.csv",
+  "description": "2026-10-05 right-hand Stage B final 12-peak capture; 60 BPM host cues, actual median peak interval 930 ms.",
+  "beats": [
+    {
+      "timestampMs": 32716,
+      "intensity": 0.615,
+      "receiptMs": 34750.0
+    },
+    {
+      "timestampMs": 33766,
+      "intensity": 0.498,
+      "receiptMs": 35687.0
+    },
+    {
+      "timestampMs": 34596,
+      "intensity": 0.514,
+      "receiptMs": 36594.0
+    },
+    {
+      "timestampMs": 35736,
+      "intensity": 0.533,
+      "receiptMs": 37594.0
+    },
+    {
+      "timestampMs": 36666,
+      "intensity": 0.942,
+      "receiptMs": 38547.0
+    },
+    {
+      "timestampMs": 37547,
+      "intensity": 0.653,
+      "receiptMs": 39469.0
+    },
+    {
+      "timestampMs": 38586,
+      "intensity": 0.932,
+      "receiptMs": 40469.0
+    },
+    {
+      "timestampMs": 39446,
+      "intensity": 0.82,
+      "receiptMs": 41375.0
+    },
+    {
+      "timestampMs": 40366,
+      "intensity": 0.92,
+      "receiptMs": 42281.0
+    },
+    {
+      "timestampMs": 41296,
+      "intensity": 0.889,
+      "receiptMs": 43297.0
+    },
+    {
+      "timestampMs": 42296,
+      "intensity": 0.75,
+      "receiptMs": 44234.0
+    },
+    {
+      "timestampMs": 43386,
+      "intensity": 0.719,
+      "receiptMs": 45328.0
+    }
+  ]
+}

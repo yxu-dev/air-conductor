@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><title>Air Conductor · 本地视觉运行检查</title></head>
+<body><h1>本地视觉运行检查</h1><p>自动加载本地模型和 WASM，在 Worker 中处理空白图像。不启用摄像头，不播放声音。</p><pre id="results">正在检查…</pre>
+<script type="module">
+import { config } from '../src/config.js';
+const output = document.querySelector('#results');
+const reports = [];
+let worker;
+function waitFor(type) {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error(`${type} timeout`)), 20000);
+    worker.onmessage = ({ data }) => {
+      if (data.type === 'ERROR') { clearTimeout(timer); reject(new Error(data.message)); }
+      else if (data.type === type) { clearTimeout(timer); resolve(data); }
+    };
+    worker.onerror = event => { clearTimeout(timer); reject(new Error(event.message)); };
+  });
+}
+try {
+  worker = new Worker(config.visionWorkerUrl);
+  const started = performance.now();
+  let pending = waitFor('READY');
+  worker.postMessage({ type: 'INIT', modelUrl: new URL(config.gestureModelUrl, location.href).href,
+    wasmUrl: new URL(config.visionWasmUrl, location.href).href });
+  await pending;
+  reports.push({ check: 'local model and WASM in classic Worker', pass: true, loadMs: performance.now() - started });
+  const canvas = document.createElement('canvas'); canvas.width = 640; canvas.height = 480;
+  canvas.getContext('2d').fillRect(0, 0, 640, 480);
+  const times = [];
+  for (let i = 0; i < 2; i++) {
+    pending = waitFor('RESULT');
+    const bitmap = await createImageBitmap(canvas);
+    worker.postMessage({ type: 'FRAME', bitmap, timestamp: performance.now() }, [bitmap]);
+    const frame = await pending;
+    if (!Array.isArray(frame.result.landmarks) || !Array.isArray(frame.result.handedness) ||
+        !Array.isArray(frame.result.gestures) || frame.result.landmarks.length !== 0) throw new Error('Unexpected blank-frame result');
+    times.push(frame.inferenceMs);
+  }
+  reports.push({ check: 'two real blank-image inference frames', pass: true, inferenceMs: times });
+  output.dataset.status = 'passed';
+  output.textContent = JSON.stringify({ passed: reports.length, reports }, null, 2);
+} catch (error) {
+  output.dataset.status = 'failed';
+  output.textContent = JSON.stringify({ passed: reports.length, reports, error: error.message }, null, 2);
+} finally { worker?.terminate(); }
+</script></body></html>

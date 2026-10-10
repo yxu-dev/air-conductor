@@ -13,4 +13,6 @@ for (const entry of await readdir(target, { withFileTypes: true })) {
   }
 }
 await cp(source, target, { recursive: true });
-console.log('MediaPipe WASM assets synchronized.');
+await cp(fileURLToPath(new URL('../node_modules/@mediapipe/tasks-vision/vision_bundle.js', import.meta.url)),
+  fileURLToPath(new URL('../public/mediapipe/vision_bundle.js', import.meta.url)));
+console.log('MediaPipe WASM and Worker runtime synchronized.');

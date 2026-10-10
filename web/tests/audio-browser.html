@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><title>Air Conductor audio regression</title>
+<body><pre id="results" data-status="running">Rendering offline audio…</pre>
+<script type="module">
+import * as Tone from 'tone';
+import { ToneBackend } from '../src/audio.js';
+import { MusicPlayer } from '../src/music-player.js';
+import { compileScore } from '../src/midi-score.js';
+
+const result = document.querySelector('#results');
+const reports = [];
+function check(condition, message) { if (!condition) throw new Error(message); }
+const makeScore = (durationTicks = 960, loopTicks = 1920) => compileScore({
+  header: { ppq: 480, timeSignatures: [{ timeSignature: [4, 4] }] }, durationTicks: loopTicks,
+  tracks: [{ instrument: {}, notes: [{ ticks: 0, durationTicks, midi: 69, velocity: .8 }] }],
+});
+function rms(buffer, start, end) {
+  const values = buffer.getChannelData(0);
+  const from = Math.floor(start * buffer.sampleRate), to = Math.floor(end * buffer.sampleRate);
+  let sum = 0;
+  for (let i = from; i < to; i++) sum += values[i] ** 2;
+  return Math.sqrt(sum / (to - from));
+}
+function frequency(buffer, start, end) {
+  const values = buffer.getChannelData(0);
+  let crossings = 0;
+  for (let i = Math.floor(start * buffer.sampleRate) + 1; i < end * buffer.sampleRate; i++) {
+    if (values[i - 1] <= 0 && values[i] > 0) crossings++;
+  }
+  return crossings / (end - start);
+}
+async function render(bpm, duration, { ramp = false, loop = false } = {}) {
+  let player;
+  const buffer = await Tone.Offline(context => {
+    const score = makeScore(loop ? 1920 : 960);
+    const backend = new ToneBackend(score, { context });
+    player = new MusicPlayer({ score, backend });
+    player.setTempo(bpm);
+    player.play();
+    if (ramp) context.transport.schedule(() => player.setTempo(120), '480i');
+  }, duration, 1, 44100);
+  player.dispose();
+  return buffer.get();
+}
+try {
+  const slow = await render(60, 2.5);
+  const fast = await render(120, 2.5);
+  const slowHz = frequency(slow, .2, .7), fastHz = frequency(fast, .2, .7);
+  check(Math.abs(slowHz - 440) < 3 && Math.abs(fastHz - 440) < 3, 'Tempo changed note pitch');
+  check(rms(slow, 1.6, 1.8) > .001, 'Slow note ended early');
+  check(rms(slow, 2.2, 2.4) < .00001, 'Slow note did not release');
+  check(rms(fast, 1.2, 1.4) < .00001, 'Fast note did not release at musical duration');
+  reports.push({ check: 'fixed tempo, pitch and note-off', pass: true, slowHz, fastHz,
+    slowSustainRms: rms(slow, 1.6, 1.8), fastAfterReleaseRms: rms(fast, 1.2, 1.4) });
+  const changed = await render(60, 2.5, { ramp: true });
+  check(rms(changed, 1.2, 1.4) > .001, 'Mid-note ramp ended note too soon');
+  check(rms(changed, 1.8, 2.0) < .00001, 'Mid-note ramp did not move note-off');
+  reports.push({ check: 'tempo change during held note', pass: true,
+    sustainRms: rms(changed, 1.2, 1.4), afterReleaseRms: rms(changed, 1.8, 2.0) });
+  const looped = await render(120, 4.5, { loop: true });
+  check(rms(looped, 2.3, 2.5) > .001 && rms(looped, 4.2, 4.4) > .001, 'Loop failed to restart');
+  check(Math.abs(frequency(looped, 4.1, 4.4) - 440) < 4, 'Loop accumulated old voices');
+  reports.push({ check: 'loop boundary release and restart', pass: true, thirdLoopRms: rms(looped, 4.2, 4.4) });
+  let pausedTick, resumedTick, pausedPlayer;
+  const resumed = await Tone.Offline(context => {
+    const score = makeScore();
+    pausedPlayer = new MusicPlayer({ score, backend: new ToneBackend(score, { context }) });
+    pausedPlayer.setTempo(60); pausedPlayer.play();
+    context.setTimeout(() => {
+      pausedPlayer.pause(); pausedTick = pausedPlayer.snapshot().tick;
+      context.setTimeout(() => { pausedPlayer.play(); resumedTick = pausedPlayer.snapshot().tick; }, .25);
+    }, .731);
+  }, 2.8, 1, 44100);
+  pausedPlayer.dispose();
+  check(pausedTick > 300 && Math.abs(pausedTick - resumedTick) < .01, 'Fractional paused tick did not survive resume');
+  check(rms(resumed.get(), 1.2, 1.4) > .001, 'Held note was not restored after resume');
+  reports.push({ check: 'real Tone fractional-tick pause/resume', pass: true, pausedTick, resumedTick });
+  result.dataset.status = 'passed';
+  result.textContent = JSON.stringify({ passed: reports.length, reports }, null, 2);
+} catch (error) {
+  result.dataset.status = 'failed';
+  result.textContent = JSON.stringify({ passed: reports.length, reports, error: error.stack }, null, 2);
+}
+</script></body></html>
