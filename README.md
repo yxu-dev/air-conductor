@@ -1,16 +1,10 @@
 # Air Conductor
 
-A wearable music interface built with Arduino Uno, a wrist-mounted IMU, and a browser-based MIDI player.
+Make music with motion. A right-wrist IMU gives the beat; webcam tracking of your left hand shapes volume and playback. The English studio includes guided setup, motion trails, stroke pulses, fullscreen playback, and a device-free Listen mode.
 
-- **Right hand:** downward conducting strokes control musical tempo. Stroke intensity drives visual pulses.
-- **Left hand:** webcam tracking maps hand height to volume. A closed fist pauses playback; an open palm resumes from the paused position.
-- **Browser:** plays a local, looping MIDI arrangement of *Ode to Joy*. Tempo changes preserve pitch.
+## Run
 
-The core controls and concurrent IMU/webcam operation have been checked on the physical setup. The final presentation interface, motion trails, and guided interaction flow are the next development phase. The final interface and this README use English.
-
-## Run the browser app
-
-Use Node.js and npm. From the repository root:
+Requires Node.js and npm. From the repository root:
 
 ```powershell
 cd web
@@ -18,57 +12,28 @@ npm ci
 npm run dev -- --host 127.0.0.1 --port 5173 --strictPort
 ```
 
-Open `http://127.0.0.1:5173/` in Chrome or another browser with Web Serial support. MIDI, gesture models, and MediaPipe runtime files are served locally. The app runs independently of Lab4 and does not require a Python service.
+Open **http://127.0.0.1:5173/** in Chrome or Edge. Music, hand models, and tracking runtime are local. No Python service or Lab4 installation is needed.
 
-1. Wear the IMU on the right wrist using the verified mounting orientation.
-2. Connect the Arduino in the browser and select its current serial port.
-3. Run stationary calibration. Keep the right hand still through the preparation countdown and sampling period.
-4. Enable the camera. Show only the left hand, then confirm it once tracking is stable.
-5. Select conducting as the tempo source and left-hand height as the volume source.
-6. Enable beat detection and click the music play control to unlock browser audio.
-7. Conduct downward strokes with the right hand. Raise or lower the left hand to adjust volume; close and open it to pause and resume.
+## Play
 
-Pausing preserves the music position; stopping returns to the beginning. When strokes stop, music retains its last tempo. Losing the left hand holds volume. Restarting the camera requires a new left-hand confirmation. Manual tempo and volume controls are available for playback without the hardware.
+Choose **Listen** for music with tempo and volume sliders, or **Conduct** for hand control:
 
-## Hardware and firmware
+1. Wear the right-wrist sensor in the verified orientation. Connect the Arduino by USB and select it with **Connect**.
+2. Click **Calibrate**. Rest your right hand through the countdown and sampling period.
+3. Enable the camera. Show only your left hand, then **Confirm** when tracking is stable.
+4. Click **Start performance**. Right-hand downward strokes control tempo; lift to reset. Raise your left hand for louder music and lower it for softer music.
+5. Hold a fist to pause; open your palm to resume. Buttons also control playback.
 
-The firmware entry point is `arduino/AirConductor/AirConductor.ino`. The board target is Arduino Uno (`arduino:avr:uno`). I2C uses SDA to A4, SCL to A5, and GND to GND; power the breakout according to its electrical requirements.
+Pause preserves position; End stops detection and rewinds. Idle strokes retain tempo. Losing the left hand holds volume; restarting the camera requires confirmation again. **Reset devices** ends playback and releases both connections. Camera & session settings contain source overrides and CSV export; diagnostics are optional.
 
-The tested module reports address `0x68` and identity `0x70` (MPU6500). Firmware supports this configuration alongside Adafruit MPU6050 devices. Current motion parameters use negative `gx` for the verified right-wrist orientation.
+## Hardware
 
-Required Arduino libraries: Adafruit MPU6050, Adafruit Unified Sensor, and Adafruit BusIO. In this workspace, use the bundled CLI at:
+Upload `arduino/AirConductor/AirConductor.ino` to Arduino Uno (`arduino:avr:uno`). Use Adafruit MPU6050, Unified Sensor, and BusIO libraries. I2C uses SDA/A4, SCL/A5, and GND; supply power appropriate to your breakout. Confirm the current port before upload and close any other serial monitor.
 
-```text
-D:\Program Files\Arduino IDE\resources\app\lib\backend\resources\arduino-cli.exe
-```
+The tested module identifies as MPU6500 (`0x70` at `0x68`). Firmware also supports MPU6050. Current right-wrist mounting uses negative `gx` strokes; changing the mounting requires checking direction.
 
-Confirm the sketch and current port before uploading; the most recently used port is COM3. The browser and Arduino Serial Monitor cannot share an open serial port.
+## Development
 
-## Project layout
+From `web/`: `npm test`, `npm run test:browser`, and `npm run test:production`. The last command builds and checks the production app. Browser checks use installed Chrome, muted headless playback, and separate ports (5174/5175); no physical device or camera is opened. `npm run preview` serves the production build.
 
-```text
-arduino/AirConductor/   Firmware and stroke detector
-web/                   Browser app, local assets, and tests
-diagnostics/           Optional Python capture and analysis tools
-docs/                  Development records and technical references
-recordings/            Captures and analysis archived on development branches
-environment.yml        Python diagnostic environment specification
-```
-
-## Development checks
-
-From `web/`:
-
-```powershell
-npm test
-npm run build
-```
-
-The current browser suite contains 52 passing tests. For optional Python diagnostics, reuse the existing Conda environment:
-
-```powershell
-conda activate infosci201-physical
-python -m unittest discover -s diagnostics/tests -v
-```
-
-Development records remain available in [architecture](docs/architecture.md), [testing](docs/testing.md), [camera controls](docs/camera-control.md), and [music playback](docs/music-playback.md). Both `docs/` and `recordings/` are committed and uploaded on development branches. At release, remove these directories from the release tree and ignore them there; the complete development history stays in Git and on development branches. The final delivery contains code, required runtime assets, and one short English README, with required attribution included there. Current asset sources and licensing are recorded in [assets](docs/assets.md).
+Project code: MIT. Runtime dependencies: MediaPipe (Apache-2.0), Tone.js and @tonejs/midi (MIT). The included project MIDI plays Beethoven’s *Ode to Joy*. Development asset provenance and verification records are archived on development branches.

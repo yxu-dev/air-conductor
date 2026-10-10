@@ -124,3 +124,22 @@ test('studio, settings and diagnostics have no automated accessibility violation
   const conducting = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();
   expect(conducting.violations.map(v => ({ id: v.id, nodes: v.nodes.map(n => ({ target: n.target, message: n.failureSummary })) }))).toEqual([]);
 });
+
+test('fullscreen studio enters and exits without changing playback', async ({ page }) => {
+  await expect(page.locator('#focus')).toBeDisabled();
+  await page.locator('#mode-manual').click();
+  await page.locator('#focus').click();
+  await expect.poll(() => page.evaluate(() => document.fullscreenElement?.id)).toBe('studio');
+  await expect(page.locator('#focus')).toHaveAttribute('aria-label', 'Exit fullscreen studio');
+  await expect(page.locator('#playback-status')).toHaveText('Stopped');
+  await page.locator('#focus').click();
+  await expect.poll(() => page.evaluate(() => document.fullscreenElement)).toBe(null);
+});
+
+test('small phone and tablet layouts remain within their viewport', async ({ page }) => {
+  for (const width of [320, 768, 1024]) {
+    await page.setViewportSize({ width, height: 900 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+    await expect(page.locator('#play')).toBeVisible();
+  }
+});

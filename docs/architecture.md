@@ -19,6 +19,7 @@ Python diagnostics run separately and never serve as the final runtime or a requ
 
 - Arduino: fixed-interval sampling, explicit stationary calibration, stroke timestamps and intensity.
 - `main.js`: user actions, module lifecycle and state updates.
+- `experience.js`: Conduct/Listen modes, readiness gates, start rollback, immediate end, reset and device interruption.
 - `state.js`: one representation of connection, calibration, camera and playback state.
 - `serial.js`: Web Serial transport, ordered commands and stream/port cleanup.
 - `protocol.js`: bounded ASCII line framing and strict protocol validation.
@@ -31,7 +32,9 @@ Python diagnostics run separately and never serve as the final runtime or a requ
 - `vision.js`: camera permission/start/stop, single-frame Worker scheduling and lifecycle cleanup.
 - `public/mediapipe/vision-worker.js`: local MediaPipe CPU inference in a classic Worker.
 - `hand-control.js`: physical-left binding, handedness filtering, height smoothing, held gestures and loss handling.
-- `visuals.js`: render state, stroke pulses, mirror camera preview and hand landmarks. A fading trail remains future work.
+- `visuals.js`: English studio, four-step setup, source controls, progress/gesture feedback and collapsible diagnostics.
+- `motion-stage.js`: mirrored left-palm trails and intensity-scaled actual sensor pulses. Frames are never duplicated; paths break on tracking loss or gaps and expire after one second. Listen has a music-clock orbit rather than fabricated sensor beats.
+- `style.css`: responsive studio, keyboard focus, fullscreen layout and reduced-motion presentation.
 
 ## Current scope
 
@@ -45,7 +48,11 @@ Stage E requires an explicit camera button and a stable, user-confirmed physical
 
 ## Frontend development handoff
 
-The core-control checkpoint is on `dev-1`; frontend and interaction development continues on `dev-2`. The next work covers guided setup, the presentation layout, fading left-hand trails, beat/intensity feedback, and clear pause/resume/end/reset behavior. Preserve the verified firmware, serial, tempo and audio contracts.
+The core-control checkpoint is on `dev-1`; the product studio is implemented on `dev-2`. Conduct guides connection, calibration, camera access and left confirmation before one Start action. Listen requires only the local score. Starting unlocks audio directly from the click before serial awaits; failure rolls back detection. End silences immediately and stops detection, disconnecting if commands cannot finish. Reset also releases camera and binding. Device loss pauses audio and blocks gesture resume until a new explicit start; camera loss preserves volume-hold behavior. Active pause/resume retains source overrides. Mode changes require ending the performance.
+
+Camera settings auto-open for binding; successful start closes them and brings the studio into view. Permission and runtime errors remain recoverable. Firmware, stroke parameters, tempo estimation, musical scheduling and classification thresholds are unchanged. The optional gesture gate prevents an interrupted performance from resuming through an open palm.
+
+Headless checks cover actual Listen audio, pause/resume position, rewind, keyboard sliders, unsupported Web Serial, denied camera access, selectable snapshots, CSV download and narrow layouts. Accessibility audits cover both modes with settings/diagnostics expanded. These checks do not claim physical validation of the newly combined Start/End UI; earlier participant results still describe core controls. No new participant session was started.
 
 The final user interface and repository README must be in English. Development records may keep their existing language and remain available for now. Track and upload all recordings and associated metadata on development branches, alongside the existing documentation. Browser exports from `Final/tmp` are archived under `recordings/browser/`.
 

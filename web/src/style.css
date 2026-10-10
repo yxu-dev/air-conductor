@@ -356,7 +356,7 @@ button:not(:disabled):active {
   margin:8px 0 22px
 }
 
-.stage-center>p:last-child {
+.stage-center>#stage-description {
   color:#b2bcae;
   font-size:12px;
   line-height:1.7;
@@ -1327,7 +1327,7 @@ footer {
     font-size:7px;
     letter-spacing:1.7px
   }
-  .stage-center>p:last-child {
+  .stage-center>#stage-description {
     font-size:10px;
     max-width:250px
   }

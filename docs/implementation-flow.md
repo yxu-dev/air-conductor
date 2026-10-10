@@ -1,5 +1,7 @@
 # Air Conductor：完整中文实现流程
 
+> dev-2 当前进度：正式英文演奏界面已实现，包括 Conduct / Listen 模式、四步准备引导、统一 Start / Pause / Resume / End / Reset、左手淡出轨迹、真实拍点与强度反馈、全屏和响应式布局。设备设置、CSV 导出和诊断收纳在折叠面板中。核心硬件与音乐算法沿用 dev-1；新版入口尚未开展新的实机用户测试。此文保留实现过程，正式发布时按约定移出交付树。
+
 > 项目定位：Arduino Uno + MPU-6050 可穿戴手腕控制器 + Windows PC 摄像头 + 浏览器 MIDI 合成/可视化  
 > 最终交互：**右手挥拍速度 → Tempo；左手高度 → Volume；左手握拳 → Pause；左手张开手掌 → Resume；右手挥拍强度 → 视觉强度（可选进一步映射到 musical accent）**  
 > 最终展示环境建议：**Windows + Chrome / Microsoft Edge + 本地 Vite 服务**  

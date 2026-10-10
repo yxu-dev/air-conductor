@@ -1,0 +1,466 @@
+{
+  "config": {
+    "argv": [
+      "D:\\nvm4w\\nodejs\\node.exe",
+      "D:\\Documents\\Arduino\\INFOSCI-201\\Final\\air-conductor\\web\\node_modules\\@playwright\\test\\cli.js",
+      "test"
+    ],
+    "configFile": "D:\\Documents\\Arduino\\INFOSCI-201\\Final\\air-conductor\\web\\playwright.config.js",
+    "rootDir": "D:/Documents/Arduino/INFOSCI-201/Final/air-conductor/web/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/Documents/Arduino/INFOSCI-201/Final/air-conductor/web/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/Documents/Arduino/INFOSCI-201/Final/air-conductor/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "D:\\Documents\\Arduino\\INFOSCI-201\\Final\\air-conductor\\web\\test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "D:\\Documents\\Arduino\\INFOSCI-201\\Final\\air-conductor\\web\\e2e",
+        "snapshotDir": "D:\\Documents\\Arduino\\INFOSCI-201\\Final\\air-conductor\\web\\e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:5174",
+          "browserName": "chromium",
+          "channel": "chrome",
+          "headless": true,
+          "launchOptions": {
+            "args": [
+              "--mute-audio"
+            ]
+          },
+          "viewport": {
+            "width": 1440,
+            "height": 1050
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "../recordings/frontend/browser-checks.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": {
+      "command": "npm run dev -- --host 127.0.0.1 --port 5174 --strictPort",
+      "url": "http://127.0.0.1:5174",
+      "reuseExistingServer": false,
+      "timeout": 30000
+    }
+  },
+  "suites": [
+    {
+      "title": "studio.spec.js",
+      "file": "studio.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "English guided entry is silent, gated and visually complete",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1937,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-10T16:29:26.195Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3324084181281abe3b7c-73029e24ef91c018c03b",
+          "file": "studio.spec.js",
+          "line": 17,
+          "column": 1
+        },
+        {
+          "title": "Listen plays real music; pause retains position, resume continues, end rewinds",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3157,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-10T16:29:28.307Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3324084181281abe3b7c-5f65f32a68a35f8c068b",
+          "file": "studio.spec.js",
+          "line": 29,
+          "column": 1
+        },
+        {
+          "title": "camera permission denial has a recovery message and does not start music",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 392,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-10T16:29:31.475Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3324084181281abe3b7c-4e0acab52540893f5a75",
+          "file": "studio.spec.js",
+          "line": 58,
+          "column": 1
+        },
+        {
+          "title": "diagnostic snapshots remain selectable and CSV is downloadable",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 485,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-10T16:29:31.884Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3324084181281abe3b7c-f478786579f659997881",
+          "file": "studio.spec.js",
+          "line": 69,
+          "column": 1
+        },
+        {
+          "title": "narrow screens retain reachable controls and no horizontal overflow",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 467,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-10T16:29:32.379Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3324084181281abe3b7c-6df5e7f6de0c617e0473",
+          "file": "studio.spec.js",
+          "line": 83,
+          "column": 1
+        },
+        {
+          "title": "missing Web Serial still offers Listen and keyboard controls",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 423,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-10T16:29:32.856Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3324084181281abe3b7c-4969df5f85f2589f3552",
+          "file": "studio.spec.js",
+          "line": 94,
+          "column": 1
+        },
+        {
+          "title": "synthetic tracking state exposes readiness and held-volume messaging",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 523,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-10T16:29:33.288Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3324084181281abe3b7c-715f728064dc23da4cff",
+          "file": "studio.spec.js",
+          "line": 105,
+          "column": 1
+        },
+        {
+          "title": "studio, settings and diagnostics have no automated accessibility violations",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1120,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-10T16:29:33.820Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3324084181281abe3b7c-4a94c25c6b446cfb7107",
+          "file": "studio.spec.js",
+          "line": 117,
+          "column": 1
+        },
+        {
+          "title": "fullscreen studio enters and exits without changing playback",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 479,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-10T16:29:34.949Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3324084181281abe3b7c-70b1a42667e4433c15ec",
+          "file": "studio.spec.js",
+          "line": 128,
+          "column": 1
+        },
+        {
+          "title": "small phone and tablet layouts remain within their viewport",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 344,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-10T16:29:35.438Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3324084181281abe3b7c-302e7d0870e35c155346",
+          "file": "studio.spec.js",
+          "line": 139,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-10T16:29:24.813Z",
+    "duration": 11497.943000000001,
+    "expected": 10,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

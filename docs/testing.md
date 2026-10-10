@@ -1,5 +1,14 @@
 # Verification plan
 
+## dev-2 product studio
+
+- 66 Node checks pass: the existing 52 core checks plus performance readiness/lifecycle/rollback, preservation of sources, a gesture gate after interruption, and trail freshness/loss/expiry.
+- Ten muted headless Chrome checks pass: English gated entry; real Listen playback/pause/resume/rewind; friendly permission-denied recovery; stable copyable snapshots and CSV download; 390 px layout; keyboard control without Web Serial; synthetic readiness/held-volume presentation; automated WCAG 2 A/AA + 2.1 AA audits in both modes with settings and diagnostics expanded; fullscreen enter/exit; and 320/768/1024 px layouts. This bounded automated audit does not claim complete accessibility conformance.
+- Production build passes. `recordings/frontend/` contains desktop initial, real Listen playback and 390 px initial screenshots. No live device/camera data is captured. Synthetic state checks only UI readiness.
+- Five production smoke checks pass against the built app on port 5175: silent/gated entry; local MIDI/model/Worker/WASM availability; real audio pause/resume position; end/rewind and mode unlock; no uncaught browser errors. Run `npm run test:production` to rebuild and check. JSON results are archived with browser checks in `recordings/frontend/`.
+- Dedicated test service: port 5174. Installed Chrome is headless and muted; no serial port or physical camera is opened. Permission denial is simulated. No new participant tests or cues were started. The combined product Start/End flow can be experienced on the actual setup when the user requests it.
+
+
 ## Skeleton
 
 - `cd web; npm ci; npm run build` checks the browser build and local asset copying.
