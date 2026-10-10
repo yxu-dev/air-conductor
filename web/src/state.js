@@ -33,6 +33,8 @@ export function createState() { return {
   handStatus: 'off',
   handednessConfidence: 0,
   gestureConfidence: 0,
+  rawGesture: 'None',
+  rawGestureConfidence: 0,
   gestureProgress: 0,
   gestureControlsEnabled: true,
   volumeSource: 'manual',

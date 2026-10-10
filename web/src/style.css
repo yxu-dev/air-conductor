@@ -48,6 +48,7 @@ summary { cursor: pointer; color: #abbbaf; font-size: 13px; width: fit-content; 
 .small { padding: 7px 12px; font-size: 12px; }
 #debug-counts { color: #9aaa9e; font-size: 12px; }
 .mono, pre { font-family: Consolas, monospace; font-size: 12px; white-space: pre-wrap; overflow-wrap: anywhere; }
+#debug-snapshot { width: 100%; color: #b2c3b9; background: #15201b; border: 1px solid #496053; border-radius: 7px; padding: 12px; resize: vertical; }
 pre { color: #b2c3b9; max-height: 220px; overflow: auto; background: #15201b; padding: 14px; border-radius: 7px; }
 footer { color: #8ca192; font-size: 12px; margin-top: 24px; }
 .music-panel { background: #1c2824; border: 1px solid #35483e; border-radius: 14px; padding: 24px; margin-top: 20px; }

@@ -6,6 +6,8 @@ import { HandControl, selectHand, volumeForHeight } from '../src/hand-control.js
 import { VisionSession } from '../src/vision.js';
 import { MusicSession } from '../src/music-session.js';
 import { ConductorSession } from '../src/session.js';
+import { readFileSync } from 'node:fs';
+import vm from 'node:vm';
 
 const hand = (label = 'Left', y = .5, gesture = 'None', score = .95) => ({ label, y, gesture, score });
 function result(...hands) {
@@ -77,7 +79,7 @@ test('height mapping clamps endpoints, smooths motion and restores manual volume
   assert.equal(f.state.volumeDb, -22);
 });
 
-test('left fist/open require a continuous hold and pause/resume only once', async () => {
+test('left fist/open require consecutive observations and pause/resume only once', async () => {
   const f = fixture(); f.bind();
   for (let t = 800; t <= 2000; t += 100) f.frame(result(hand('Left', .5, 'Closed_Fist')), t);
   assert.deepEqual(f.calls, [['pause']]);
@@ -91,22 +93,104 @@ test('left fist/open require a continuous hold and pause/resume only once', asyn
 
 test('loss, low confidence, ambiguous labels and frame stalls reset the hold timer', () => {
   const f = fixture(); f.bind();
-  for (let t = 800; t <= 1200; t += 100) f.frame(result(hand('Left', .5, 'Closed_Fist')), t);
-  f.frame(result(hand('Right', .5, 'Closed_Fist')), 1300);
-  for (let t = 1400; t <= 1800; t += 100) f.frame(result(hand('Left', .5, 'Closed_Fist')), t);
+  for (let t = 800; t <= 900; t += 100) f.frame(result(hand('Left', .5, 'Closed_Fist')), t);
+  f.frame(result(hand('Right', .5, 'Closed_Fist')), 1000);
+  for (let t = 1100; t <= 1200; t += 100) f.frame(result(hand('Left', .5, 'Closed_Fist')), t);
   assert.equal(f.calls.length, 0);
   const uncertain = result(hand('Left', .5, 'Closed_Fist')); uncertain.gestures[0][0].score = .3;
-  f.frame(uncertain, 1900);
-  f.frame(result(hand('Left', .5, 'Closed_Fist'), hand('Left', .5, 'Closed_Fist')), 2000);
+  f.frame(uncertain, 1300);
+  f.frame(result(hand('Left', .5, 'Closed_Fist'), hand('Left', .5, 'Closed_Fist')), 1400);
   assert.equal(f.state.handTracked, false);
-  f.frame(result(hand('Left', .5, 'Closed_Fist', .4)), 2100);
+  f.frame(result(hand('Left', .5, 'Closed_Fist', .4)), 1500);
   assert.equal(f.state.handTracked, false);
-  for (let t = 2200; t <= 2600; t += 100) f.frame(result(hand('Left', .5, 'Closed_Fist')), t);
-  f.setTime(3100); f.control.tick();
+  for (let t = 1600; t <= 1700; t += 100) f.frame(result(hand('Left', .5, 'Closed_Fist')), t);
+  f.setTime(2200); f.control.tick();
   assert.equal(f.state.handStatus, 'lost');
-  f.frame(result(hand('Left', .5, 'Closed_Fist')), 3200);
-  assert.equal(f.state.gestureProgress, 0);
+  f.frame(result(hand('Left', .5, 'Closed_Fist')), 2300);
+  assert.equal(f.state.gestureProgress, 1 / config.gestureStableResults);
   assert.equal(f.calls.length, 0);
+});
+
+test('five distinct observations resume a borderline open palm', () => {
+  const f = fixture(); f.bind(); f.state.playbackState = 'paused';
+  const palm = result(hand('Left', .5, 'Open_Palm')); palm.gestures[0][0].score = .66;
+  f.frame(palm, 800); f.frame(palm, 800); f.frame(palm, 790);
+  assert.equal(f.state.gestureProgress, 1 / config.openPalmStableResults);
+  f.frame(palm, 850);
+  assert.equal(f.calls.length, 0);
+  f.frame(palm, 900);
+  f.frame(palm, 950);
+  assert.equal(f.calls.length, 0);
+  f.frame(palm, 1000);
+  assert.deepEqual(f.calls, [['play']]);
+  assert.equal(f.state.rawGestureConfidence, .66);
+});
+
+test('low-confidence and unrelated gestures remain observable but cannot resume', () => {
+  const f = fixture(); f.bind(); f.state.playbackState = 'paused';
+  const palm = result(hand('Left', .5, 'Open_Palm')); palm.gestures[0][0].score = .54;
+  for (let t = 800; t <= 1300; t += 100) f.frame(palm, t);
+  assert.equal(f.state.rawGesture, 'Open_Palm');
+  assert.equal(f.state.rawGestureConfidence, .54);
+  assert.equal(f.state.gesture, 'None');
+  assert.ok(f.events.some(e => e[0] === 'GESTURE_READING' && e[1].rawName === 'Open_Palm' && !e[1].accepted));
+  for (let t = 1400; t <= 1800; t += 100) f.frame(result(hand('Left', .5, 'Victory')), t);
+  assert.equal(f.state.rawGesture, 'Victory');
+  assert.equal(f.calls.length, 0);
+});
+
+test('observed natural palm scores resume only after five accepted frames', () => {
+  const f = fixture(); f.bind(); f.state.playbackState = 'paused';
+  const palm = result(hand('Left', .5, 'Open_Palm'));
+  const scores = [.627, .562, .617, .58, .60];
+  scores.forEach((score, i) => {
+    palm.gestures[0][0].score = score;
+    f.frame(palm, 800 + i * 70);
+    assert.equal(f.calls.length, i === 4 ? 1 : 0);
+  });
+  assert.deepEqual(f.calls, [['play']]);
+  assert.ok(f.events.some(([kind, data]) => kind === 'GESTURE_READING' &&
+    data.accepted && data.threshold === .55 && data.requiredResults === 5));
+  for (let t = 1200; t <= 1600; t += 70) f.frame(palm, t);
+  assert.deepEqual(f.calls, [['play']]);
+});
+
+test('a rejected palm observation or left-hand loss requires five new frames', () => {
+  const f = fixture(); f.bind(); f.state.playbackState = 'paused';
+  const palm = result(hand('Left', .5, 'Open_Palm')); palm.gestures[0][0].score = .60;
+  for (let t = 800; t <= 1100; t += 100) f.frame(palm, t);
+  const rejected = result(hand('Left', .5, 'Open_Palm')); rejected.gestures[0][0].score = .54;
+  f.frame(rejected, 1200);
+  for (let t = 1300; t <= 1600; t += 100) f.frame(palm, t);
+  assert.equal(f.calls.length, 0);
+  f.frame(result(hand('Right', .5, 'Open_Palm')), 1700);
+  for (let t = 1800; t <= 2100; t += 100) f.frame(palm, t);
+  assert.equal(f.calls.length, 0);
+  f.frame(palm, 2200);
+  assert.deepEqual(f.calls, [['play']]);
+});
+
+test('relaxed palm confidence never relaxes fist pause confidence', () => {
+  const f = fixture(); f.bind();
+  const fist = result(hand('Left', .5, 'Closed_Fist')); fist.gestures[0][0].score = .60;
+  for (let t = 800; t <= 1400; t += 100) f.frame(fist, t);
+  assert.equal(f.calls.length, 0);
+  fist.gestures[0][0].score = .66;
+  f.frame(fist, 1500); f.frame(fist, 1600);
+  assert.equal(f.calls.length, 0);
+  f.frame(fist, 1700);
+  assert.deepEqual(f.calls, [['pause']]);
+});
+
+test('production Worker uses the Lab4 two-gesture allowlist', async () => {
+  let options;
+  const sandbox = { self: { postMessage() {} }, importScripts() {},
+    Vision: { FilesetResolver: { forVisionTasks: async () => ({}) },
+      GestureRecognizer: { createFromOptions: async (_, o) => { options = o; return {}; } } } };
+  vm.runInNewContext(readFileSync(new URL('../public/mediapipe/vision-worker.js', import.meta.url), 'utf8'), sandbox);
+  await sandbox.self.onmessage({ data: { type: 'INIT', wasmUrl: '/wasm', modelUrl: '/model' } });
+  assert.deepEqual(Array.from(options.cannedGesturesClassifierOptions.categoryAllowlist), ['Open_Palm', 'Closed_Fist']);
+  assert.equal(options.numHands, 2);
 });
 
 test('paused/lost hands hold volume; invalid landmarks cannot drive controls', () => {

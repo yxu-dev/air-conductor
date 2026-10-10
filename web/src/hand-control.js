@@ -23,6 +23,12 @@ export function volumeForHeight(y) {
   return config.gestureMaxVolumeDb + ratio * (config.gestureMinVolumeDb - config.gestureMaxVolumeDb);
 }
 
+export function gestureRule(name) {
+  return name === 'Open_Palm'
+    ? { confidence: config.openPalmConfidence, results: config.openPalmStableResults }
+    : { confidence: config.gestureConfidence, results: config.gestureStableResults };
+}
+
 export class HandControl {
   constructor({ state, music, clock = () => performance.now(), onEvent = () => {} }) {
     Object.assign(this, { state, music, clock, onEvent });
@@ -35,10 +41,12 @@ export class HandControl {
     this.latest = null;
     this.smoothed = null;
     this.candidate = null;
+    this.lastGestureReading = null;
     Object.assign(this.state, { leftHandBound: false, leftHandLabel: null, handTracked: false,
       handStatus: this.state.cameraReady ? 'unbound' : 'off', handBindingReady: false,
       handBindingProgress: 0, detectedHands: 0, handednessConfidence: 0,
-      gesture: 'None', gestureConfidence: 0, gestureProgress: 0, palmX: null, palmY: null });
+      gesture: 'None', gestureConfidence: 0, rawGesture: 'None', rawGestureConfidence: 0,
+      gestureProgress: 0, palmX: null, palmY: null });
   }
 
   clearGesture() { this.candidate = null; this.state.gestureProgress = 0; }
@@ -56,7 +64,8 @@ export class HandControl {
     this.clearGesture();
     this.smoothed = null;
     this.lastLeft = null;
-    Object.assign(this.state, { leftHandBound: true, leftHandLabel: hand.label, handStatus: 'searching' });
+    Object.assign(this.state, { leftHandBound: true, leftHandLabel: hand.label, handStatus: 'searching',
+      handTracked: false, palmX: null, palmY: null, gesture: 'None', gestureConfidence: 0 });
     this.onEvent('BIND_LEFT', { reportedLabel: hand.label });
   }
 
@@ -81,7 +90,7 @@ export class HandControl {
   }
 
   process(result, now = this.clock()) {
-    if (!this.state.cameraReady) return;
+    if (!this.state.cameraReady || !Number.isFinite(now) || this.lastFrame !== null && now <= this.lastFrame) return;
     const gap = this.lastFrame === null ? null : now - this.lastFrame;
     if (gap !== null && (gap > config.visionMaxGapMs || gap < 0)) {
       this.clearGesture(); this.binding = null; this.smoothed = null;
@@ -118,15 +127,29 @@ export class HandControl {
   }
 
   processGesture(gesture, now) {
-    const good = Number.isFinite(gesture?.score) && gesture.score >= config.gestureConfidence;
+    const score = Number.isFinite(gesture?.score) && gesture.score >= 0 && gesture.score <= 1 ? gesture.score : 0;
+    const rawName = typeof gesture?.categoryName === 'string' ? gesture.categoryName : 'None';
+    const rule = gestureRule(rawName);
+    const good = score >= rule.confidence && ['Closed_Fist', 'Open_Palm'].includes(rawName);
     const name = good ? gesture.categoryName : 'None';
+    this.state.rawGesture = rawName;
+    this.state.rawGestureConfidence = score;
     this.state.gesture = name;
-    this.state.gestureConfidence = good ? gesture.score : 0;
+    this.state.gestureConfidence = good ? score : 0;
+    const previous = this.lastGestureReading;
+    if (!previous || previous.rawName !== rawName || previous.accepted !== good ||
+        now - previous.at >= 1000 && Math.abs(score - previous.score) >= .05) {
+      this.onEvent('GESTURE_READING', { rawName, score, accepted: good,
+        threshold: rule.confidence, requiredResults: rule.results });
+      this.lastGestureReading = { rawName, score, accepted: good, at: now };
+    }
     if (!this.state.gestureControlsEnabled || !['Closed_Fist', 'Open_Palm'].includes(name)) {
       this.clearGesture(); return;
     }
-    if (this.candidate?.name !== name) this.candidate = { name, since: now, fired: false };
-    this.state.gestureProgress = clamp((now - this.candidate.since) / config.gestureHoldMs, 0, 1);
+    // Count fresh consecutive results; a relaxed palm score needs more evidence.
+    if (this.candidate?.name !== name) this.candidate = { name, count: 1, fired: false };
+    else ++this.candidate.count;
+    this.state.gestureProgress = clamp(this.candidate.count / rule.results, 0, 1);
     if (this.state.gestureProgress < 1 || this.candidate.fired) return;
     this.candidate.fired = true;
     if (name === 'Closed_Fist' && this.state.playbackState === 'playing') {
@@ -140,7 +163,7 @@ export class HandControl {
   missing(now) {
     this.clearGesture(); this.smoothed = null;
     Object.assign(this.state, { handTracked: false, handednessConfidence: 0,
-      gesture: 'None', gestureConfidence: 0, palmX: null, palmY: null });
+      gesture: 'None', gestureConfidence: 0, rawGesture: 'None', rawGestureConfidence: 0, palmX: null, palmY: null });
     this.setHandStatus(!this.state.leftHandBound ? 'unbound' :
       this.lastLeft === null ? 'searching' : now - this.lastLeft >= config.handLostMs ? 'lost' : 'brief-loss');
   }

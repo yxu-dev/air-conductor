@@ -50,6 +50,22 @@ view['camera-toggle'].addEventListener('click', () => { void cameraAction(() => 
 view['bind-left'].addEventListener('click', () => { void cameraAction(() => control.bindLeft()); });
 view['volume-source'].addEventListener('change', event => { void musicAction(() => control.setVolumeSource(event.target.value)); });
 view['gesture-controls'].addEventListener('change', event => { control.setGestureControls(event.target.checked); update(); });
+view['copy-debug'].addEventListener('click', () => {
+  update();
+  const text = [new Date().toISOString(), view['hand-status'].textContent,
+    view['hand-reading'].textContent, view['gesture-debug'].textContent,
+    view['playback-status'].textContent, `播放手势：${state.gestureControlsEnabled ? '开启' : '关闭'}`].join('\n');
+  const snapshot = view['debug-snapshot'];
+  snapshot.value = text;
+  snapshot.hidden = false;
+  const status = view['copy-debug-status'];
+  status.textContent = '快照已固定，可选中文字复制。';
+  if (navigator.clipboard?.writeText) {
+    void navigator.clipboard.writeText(text).then(() => {
+      status.textContent = '调试快照已复制，可直接粘贴到聊天中。';
+    }).catch(() => { status.textContent = '快照已固定，请在文本框中选中文字复制。'; });
+  } else { snapshot.focus(); snapshot.select(); }
+});
 view.export.addEventListener('click', () => {
   const url = URL.createObjectURL(new Blob(['\uFEFF', session.exportCsv()], { type: 'text/csv;charset=utf-8' }));
   const anchor = document.createElement('a');

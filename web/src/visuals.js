@@ -1,4 +1,5 @@
 import { config } from './config.js';
+import { gestureRule } from './hand-control.js';
 
 const views = new WeakMap();
 const calibrationNames = { 'not-started': '未校准', 'awaiting-status': '等待设备',
@@ -48,12 +49,12 @@ export function renderStatus(root, state, { supported = true, now = performance.
           <strong id="hand-status"></strong><p id="hand-reading"></p>
           <label for="volume-source">音量来源</label><select id="volume-source"><option value="manual">手动滑块</option><option value="left-hand">左手高度</option></select>
           <label class="check-label"><input id="gesture-controls" type="checkbox" checked>左手握拳暂停／张掌恢复</label>
-          <p id="gesture-reading"></p><progress id="gesture-progress" max="1" value="0" aria-label="手势持续时间"></progress>
-          <p class="camera-help">左手握拳或张掌保持约半秒。左手离开画面时保持音量；右手的视觉结果不参与控制。</p>
+          <p id="gesture-reading"></p><progress id="gesture-progress" max="1" value="0" aria-label="稳定手势识别进度"></progress>
+          <p class="camera-help">左手握拳或张掌，等待稳定识别后操作。左手离开画面时保持音量；右手的视觉结果不参与控制。</p>
         </div></div><p id="camera-error" role="alert" hidden></p><p id="camera-stats"></p>
       </section>
       <div class="session-toolbar"><span id="device-model">设备尚未连接</span><button id="export" class="text-button" disabled>导出拍点记录</button></div>
-      <details class="diagnostics"><summary>调试记录</summary><div class="debug-toolbar"><button id="raw" class="secondary small">开启六轴数据</button><span id="debug-counts"></span></div><p id="raw-values" class="mono"></p><pre id="event-log" aria-label="最近设备消息"></pre></details>
+      <details class="diagnostics"><summary>调试记录</summary><div class="debug-toolbar"><button id="raw" class="secondary small">开启六轴数据</button><button id="copy-debug" class="secondary small">复制调试信息</button><span id="debug-counts"></span></div><p id="raw-values" class="mono"></p><p id="gesture-debug" class="mono"></p><textarea id="debug-snapshot" class="mono" rows="5" readonly hidden aria-label="可复制的调试快照"></textarea><p id="copy-debug-status" role="status"></p><pre id="event-log" aria-label="最近设备消息"></pre></details>
       <footer>右手给节奏，左手调音量与播放。首次声音启用需点击播放音乐。</footer>
     `;
     view = Object.fromEntries([...root.querySelectorAll('[id]')].map((element) => [element.id, element]));
@@ -117,7 +118,10 @@ export function renderStatus(root, state, { supported = true, now = performance.
   view['hand-reading'].textContent = state.handTracked ? `左手高度 ${Math.round((1 - state.palmY) * 100)}% · 识别置信度 ${Math.round(state.handednessConfidence * 100)}%` : state.detectedHands ? `画面检测到 ${state.detectedHands} 只手，等待可靠的左手结果。` : '左手抬高增加音量，降低减小音量。';
   view['volume-source'].value = state.volumeSource;
   view['gesture-controls'].checked = state.gestureControlsEnabled;
-  view['gesture-reading'].textContent = (gestureNames[state.gesture] ?? '当前手势不控制播放') + (state.gestureControlsEnabled ? ' · 保持约 0.5 秒' : ' · 播放手势已关闭');
+  view['gesture-reading'].textContent = (gestureNames[state.gesture] ?? '当前手势不控制播放') + (state.gestureControlsEnabled ? ' · 等待稳定识别' : ' · 播放手势已关闭');
+  const rule = gestureRule(state.rawGesture);
+  const gestureDebug = state.handTracked ? `左手原始手势：${state.rawGesture} · 置信度 ${state.rawGestureConfidence.toFixed(3)} · 接受阈值 ${rule.confidence.toFixed(2)} · 稳定识别 ${Math.min(state.gestureProgress * rule.results, rule.results).toFixed(0)} / ${rule.results}` : '左手原始手势：等待有效左手追踪';
+  if (view['gesture-debug'].textContent !== gestureDebug) view['gesture-debug'].textContent = gestureDebug;
   view['gesture-progress'].value = state.gestureProgress;
   view['camera-error'].hidden = !state.cameraError;
   view['camera-error'].textContent = state.cameraError ?? '';

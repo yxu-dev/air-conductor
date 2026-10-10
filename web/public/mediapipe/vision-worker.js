@@ -9,6 +9,7 @@ self.onmessage = async ({ data }) => {
         baseOptions: { modelAssetPath: data.modelUrl, delegate: 'CPU' },
         runningMode: 'VIDEO', numHands: 2,
         minHandDetectionConfidence: .6, minHandPresenceConfidence: .6, minTrackingConfidence: .6,
+        cannedGesturesClassifierOptions: { categoryAllowlist: ['Open_Palm', 'Closed_Fist'] },
       });
       self.postMessage({ type: 'READY' });
     } else if (data.type === 'FRAME') {
