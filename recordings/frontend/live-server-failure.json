@@ -1,0 +1,11 @@
+{
+  "url": "http://127.0.0.1:5173/",
+  "observed": "Before restarting Vite during the dev-3 rendering repair",
+  "compiledTailwind": false,
+  "unprocessedApply": true,
+  "unprocessedTheme": true,
+  "userReported": "Home page has only a huge arrow; severe lag and unresponsive controls",
+  "isolatedBrowserResult": "Play click timed out after 30000 ms: unstable element, html intercepting pointer events, element outside viewport",
+  "cause": "The already-running Vite process did not load the newly created Tailwind plugin configuration. Fresh test servers did load it.",
+  "physicalDevicesOpened": false
+}

@@ -14,6 +14,8 @@ npm run dev -- --host 127.0.0.1 --port 5173 --strictPort
 
 Open **http://127.0.0.1:5173/** in Chrome or Edge. Music, hand models, and tracking runtime are local. No Python service or Lab4 installation is needed.
 
+Restart Vite after changing its plugins or configuration. If the page reports that studio styles did not load, restart the server using the command above and reload.
+
 ## Play
 
 Choose **Listen** for music with tempo and volume sliders, or **Conduct** for hand control:
@@ -36,6 +38,6 @@ The tested module identifies as MPU6500 (`0x70` at `0x68`). Firmware also suppor
 
 ## Development
 
-From `web/`: `npm test`, `npm run test:browser`, and `npm run test:production`. The last command builds and checks the production app. Browser checks use installed Chrome, muted headless playback, and separate ports (5174/5175); no physical device or camera is opened. `npm run preview` serves the production build.
+From `web/`: `npm test`, `npm run test:browser`, and `npm run test:production`. The last command builds and checks the production app. Browser checks use installed Chrome, muted headless playback, and separate ports (5174/5175); no physical device or camera is opened. `npm run check:live` checks the running dev server on 5173, including compiled styles, icon sizes, rendering and button response. `npm run preview` serves the production build.
 
 Project code: MIT. Dependencies: MediaPipe (Apache-2.0); Three.js, Tailwind CSS, Tone.js and @tonejs/midi (MIT). The included project MIDI plays Beethoven’s *Ode to Joy*. Development asset provenance and verification records are archived on development branches.

@@ -6,8 +6,11 @@ import { createMusicSession } from './audio.js';
 import { HandControl } from './hand-control.js';
 import { VisionSession } from './vision.js';
 import { Experience } from './experience.js';
+import { requireStudioStyles } from './style-readiness.js';
 
 const root = document.querySelector('#app');
+requireStudioStyles(root);
+const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
 let view, stage, experience;
 let disposed = false, pageHidden = false;
 const music = createMusicSession(state, { onEvent: (kind, data) => session.recordMusicEvent(kind, data) });
@@ -18,6 +21,7 @@ const control = new HandControl({ state, music,
   allowPlayback: () => state.performanceActive && !state.performanceBusy && state.experienceMode === 'conduct',
   onEvent: (kind, data) => session.recordVisionEvent(kind, data) });
 const update = () => {
+  state.systemReducedMotion = motionPreference.matches;
   session.tick(); music.tick(); experience?.tick(); control.tick();
   view = renderStatus(root, state, { supported: session.transport.supported });
 };

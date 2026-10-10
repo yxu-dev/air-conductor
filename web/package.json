@@ -8,6 +8,7 @@
     "dev": "vite",
     "test": "node --test tests/*.test.js",
     "test:browser": "playwright test",
+    "check:live": "node scripts/profile-rendering.mjs",
     "pretest:production": "npm run build",
     "test:production": "node scripts/check-production.mjs",
     "sync:wasm": "node scripts/sync-wasm.mjs",

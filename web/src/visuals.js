@@ -5,7 +5,7 @@ import { readiness } from './experience.js';
 const views = new WeakMap();
 const text = (el, value) => { if (el.textContent !== String(value)) el.textContent = value; };
 const error = (el, message) => { el.hidden = !message; text(el, message ?? ''); };
-const icon = path => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">${path}</svg>`;
+const icon = path => `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">${path}</svg>`;
 const arrow = icon('<path d="M5 12h14m-6-6 6 6-6 6"/>');
 const camera = icon('<rect x="3" y="6" width="13" height="12" rx="3"/><path d="m16 10 5-3v10l-5-3"/>');
 const connections = { disconnected: 'Not connected', connecting: 'Choose a device', initializing: 'Starting device', connected: 'Connected', disconnecting: 'Disconnecting', unresponsive: 'No response' };

@@ -82,18 +82,12 @@ export class MotionStage {
 
   buildScene() {
     const scene = this.scene;
-    scene.add(new THREE.AmbientLight('#dceacb', 1.4));
-    this.keyLight = new THREE.PointLight('#bcffc3', 16, 15, 2);
-    this.keyLight.position.set(2, 3, 4); scene.add(this.keyLight);
-    this.fillLight = new THREE.PointLight('#b5f6ff', 12, 15, 2);
-    this.fillLight.position.set(-3, -1, 2); scene.add(this.fillLight);
     this.rig = new THREE.Group(); this.rig.position.y = .35; scene.add(this.rig);
     this.ribbons = [];
     for (let i = 0; i < 4; i++) {
       const curve = new THREE.CatmullRomCurve3(orbitPoints(1.55 + i * .22, .11 + i * .03), true);
-      const geometry = new THREE.TubeGeometry(curve, 192, i === 0 ? .028 : .013, 6, true);
-      const material = new THREE.MeshStandardMaterial({ color: '#bfe889', emissive: '#bfe889', emissiveIntensity: .55,
-        metalness: .5, roughness: .25, transparent: true, opacity: .75 });
+      const geometry = new THREE.TubeGeometry(curve, 96, i === 0 ? .028 : .013, 4, true);
+      const material = new THREE.MeshBasicMaterial({ color: '#bfe889', transparent: true, opacity: .75, depthWrite: false });
       const mesh = new THREE.Mesh(geometry, material);
       mesh.rotation.set(.25 + i * .3, i * .38, i * .35);
       this.ribbons.push(mesh); this.rig.add(mesh);
@@ -105,9 +99,8 @@ export class MotionStage {
       line.rotation.set(.55 + i * .12, -.3, i * .17);
       this.orbits.push(line); this.rig.add(line);
     }
-    this.core = new THREE.Mesh(new THREE.IcosahedronGeometry(.64, 3),
-      new THREE.MeshPhysicalMaterial({ color: '#e3efc9', emissive: '#bfe889', emissiveIntensity: .15,
-        metalness: .3, roughness: .3, clearcoat: 1, transparent: true, opacity: .32 }));
+    this.core = new THREE.Mesh(new THREE.IcosahedronGeometry(.64, 1),
+      new THREE.MeshBasicMaterial({ color: '#e3efc9', transparent: true, opacity: .16, depthWrite: false }));
     this.rig.add(this.core);
     const wire = new THREE.Mesh(new THREE.IcosahedronGeometry(.67, 1),
       new THREE.MeshBasicMaterial({ color: '#dfefd0', wireframe: true, transparent: true, opacity: .09 }));
@@ -129,7 +122,7 @@ export class MotionStage {
       transparent: true, opacity: .7, depthWrite: false, blending: THREE.AdditiveBlending }));
     scene.add(this.stars);
 
-    const pulseGeometry = new THREE.TorusGeometry(1, .009, 6, 160);
+    const pulseGeometry = new THREE.TorusGeometry(1, .009, 4, 96);
     this.pulseMeshes = Array.from({ length: this.pulses.limit }, () => {
       const mesh = new THREE.Mesh(pulseGeometry, new THREE.MeshBasicMaterial({ color: '#d4ed91', transparent: true,
         opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending }));
@@ -171,11 +164,10 @@ export class MotionStage {
     this.theme = name in palettes ? name : 'aurora';
     this.canvas.dataset.sceneTheme = this.theme;
     const palette = palettes[this.theme];
-    this.ribbons.forEach((mesh, i) => { mesh.material.color.set(i % 2 ? palette.secondary : palette.ribbon); mesh.material.emissive.copy(mesh.material.color); });
+    this.ribbons.forEach((mesh, i) => { mesh.material.color.set(i % 2 ? palette.secondary : palette.ribbon); });
     this.orbits.forEach(line => line.material.color.set(palette.ribbon));
-    this.core.material.color.set(palette.pearl); this.core.material.emissive.set(palette.ribbon);
+    this.core.material.color.set(palette.pearl);
     this.aura.material.color.set(palette.ribbon); this.stars.material.color.set(palette.pearl);
-    this.keyLight.color.set(palette.ribbon); this.fillLight.color.set(palette.secondary);
     this.pulseMeshes.forEach(mesh => mesh.material.color.set(palette.ribbon));
     this.ribbonTrail.material.uniforms.uColor.value.set(palette.ribbon);
     this.cursor.children[0].material.color.set(palette.pearl); this.cursor.children[1].material.color.set(palette.ribbon);
@@ -185,7 +177,10 @@ export class MotionStage {
     if (!this.renderer || this.disposed || this.contextLost) return;
     const box = this.canvas.getBoundingClientRect();
     this.width = Math.max(1, box.width); this.height = Math.max(1, box.height);
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, this.width < 500 ? 1.25 : 1.5));
+    // Bound the framebuffer even on large/high-DPI screens. A broken layout
+    // must not allocate a page-sized GPU surface or monopolize the renderer.
+    const ratio = Math.min(window.devicePixelRatio || 1, 1, Math.sqrt(600000 / (this.width * this.height)));
+    this.renderer.setPixelRatio(ratio);
     this.renderer.setSize(this.width, this.height, false);
     this.camera.aspect = this.width / this.height; this.camera.updateProjectionMatrix();
     this.lastDraw = -Infinity;
@@ -250,11 +245,10 @@ export class MotionStage {
     this.core.rotation.y = this.phase * .4;
     this.ribbons.forEach((mesh, i) => {
       mesh.rotation.z = i * .35 + this.phase * (i % 2 ? -.16 : .22);
-      mesh.material.emissiveIntensity = (playing ? .45 : .17) + gain * .3 + energy;
-      mesh.material.opacity = playing ? .82 : .4;
+      mesh.material.opacity = clamp((playing ? .6 : .28) + gain * .15 + energy * .25);
     });
     this.aura.material.opacity = (playing ? .27 : .12) + gain * .06 + energy * .25;
-    this.core.material.opacity = playing ? .35 : .16;
+    this.core.material.opacity = playing ? .14 : .06;
     this.pulseMeshes.forEach((mesh, i) => {
       const p = pulses[i]; mesh.visible = Boolean(p);
       if (!p) return;

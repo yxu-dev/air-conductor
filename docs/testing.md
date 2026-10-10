@@ -2,6 +2,17 @@
 
 ## dev-3 Three.js and Tailwind CSS
 
+### Rendering repair after the initial dev-3 checkpoint
+
+- The user reported a huge arrow on the home page and unresponsive controls. The live service on 5173 returned raw `@apply` and `@theme`; its existing Vite process had not loaded the newly created Tailwind plugin configuration. Fresh browser/build test servers had compiled the styles correctly. A click against the broken live page timed out after 30 seconds. Restarting the verified Vite process fixed the actual service. `live-server-failure.json` retains the observed failure.
+- Added a compiled-layout startup guard, bounded SVG dimensions and a `check:live` command against the actual running service. Missing/uncompiled styles now show recovery instructions without initializing a canvas. The scene uses lighter materials and less geometry: the same synthetic fixture renders 4,114 triangles instead of 11,650, with error 0 and full disposal. High-DPI framebuffer size dropped from 1,479,735 to below 600,000 pixels.
+- All 68 Node checks, 18 browser checks and seven production checks pass. Three new browser cases cover compiled layout/icon dimensions, deliberate uncompiled-CSS failure, and large-screen pixel bounds. The reduced-motion check exposed an occasional missed media-query update; the UI now reads the current system preference independently of scene visibility.
+- `check:live` uses muted headless Chrome at 1440×1000 with DPR 2, checks compiled Tailwind and actual computed layout/icon sizes, captures the actual-service page, runs Listen for five seconds and checks pause response. Its result is retained in `render-performance-after.json`; startup and active long tasks are reported separately. These measurements do not guarantee performance on every GPU and do not establish a reliable cold-start improvement. No physical device/camera or participant cue was opened.
+
+### Initial visual upgrade checkpoint (ad70783)
+
+The figures below describe the initial commit; current report files are updated by the rendering repair above.
+
 - Tailwind CSS 4.3.3 is compiled through `@tailwindcss/vite`; component layouts and typography use its theme and utilities. Three.js 0.186.1 replaces the Canvas 2D stage with WebGL rendering. The firmware, tempo/audio algorithms and gesture thresholds are unchanged.
 - All 68 Node checks pass, including bounded pulse intensity/expiry and breaks on rebound hand labels or invalid positions.
 - All 15 muted headless Chrome checks pass. The ten existing product checks remain passing; five additions cover actual renderer theme switching and frozen reduced-motion frames, OS motion preference, WebGL context loss/recovery while playing, unavailable-WebGL fallback with real Listen audio, and synthetic frame/beat rendering plus GPU cleanup.

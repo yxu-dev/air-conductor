@@ -127,12 +127,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1658,
+                  "duration": 2822,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-10T17:00:57.977Z",
+                  "startTime": "2026-10-10T17:21:28.737Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -143,6 +143,108 @@
           "id": "3324084181281abe3b7c-73029e24ef91c018c03b",
           "file": "studio.spec.js",
           "line": 19,
+          "column": 1
+        },
+        {
+          "title": "Tailwind layout is compiled and every SVG icon has a bounded size",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 758,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-10T17:21:31.830Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3324084181281abe3b7c-6ea9b4f7d8e4ab9b1806",
+          "file": "studio.spec.js",
+          "line": 35,
+          "column": 1
+        },
+        {
+          "title": "uncompiled studio styles show a bounded recovery message before canvas initialization",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 995,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-10T17:21:32.606Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3324084181281abe3b7c-deee4341dede52e86a58",
+          "file": "studio.spec.js",
+          "line": 41,
+          "column": 1
+        },
+        {
+          "title": "large viewport keeps the GPU framebuffer within its fixed pixel budget",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 909,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-10T17:21:33.625Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3324084181281abe3b7c-bf459755fda8f993afa2",
+          "file": "studio.spec.js",
+          "line": 53,
           "column": 1
         },
         {
@@ -161,12 +263,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 3724,
+                  "duration": 5156,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-10T17:00:59.840Z",
+                  "startTime": "2026-10-10T17:21:34.557Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -176,7 +278,7 @@
           ],
           "id": "3324084181281abe3b7c-5f65f32a68a35f8c068b",
           "file": "studio.spec.js",
-          "line": 35,
+          "line": 60,
           "column": 1
         },
         {
@@ -195,12 +297,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 709,
+                  "duration": 805,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-10T17:01:03.576Z",
+                  "startTime": "2026-10-10T17:21:39.739Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -210,7 +312,7 @@
           ],
           "id": "3324084181281abe3b7c-4e0acab52540893f5a75",
           "file": "studio.spec.js",
-          "line": 64,
+          "line": 89,
           "column": 1
         },
         {
@@ -229,12 +331,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 742,
+                  "duration": 970,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-10T17:01:04.304Z",
+                  "startTime": "2026-10-10T17:21:40.569Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -244,7 +346,7 @@
           ],
           "id": "3324084181281abe3b7c-f478786579f659997881",
           "file": "studio.spec.js",
-          "line": 75,
+          "line": 100,
           "column": 1
         },
         {
@@ -263,12 +365,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 598,
+                  "duration": 1097,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-10T17:01:05.060Z",
+                  "startTime": "2026-10-10T17:21:41.559Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -278,7 +380,7 @@
           ],
           "id": "3324084181281abe3b7c-6df5e7f6de0c617e0473",
           "file": "studio.spec.js",
-          "line": 89,
+          "line": 114,
           "column": 1
         },
         {
@@ -297,12 +399,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 611,
+                  "duration": 1128,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-10T17:01:05.669Z",
+                  "startTime": "2026-10-10T17:21:42.676Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -312,7 +414,7 @@
           ],
           "id": "3324084181281abe3b7c-4969df5f85f2589f3552",
           "file": "studio.spec.js",
-          "line": 100,
+          "line": 125,
           "column": 1
         },
         {
@@ -331,12 +433,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 615,
+                  "duration": 973,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-10T17:01:06.289Z",
+                  "startTime": "2026-10-10T17:21:43.826Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -346,7 +448,7 @@
           ],
           "id": "3324084181281abe3b7c-715f728064dc23da4cff",
           "file": "studio.spec.js",
-          "line": 111,
+          "line": 136,
           "column": 1
         },
         {
@@ -365,12 +467,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1271,
+                  "duration": 2303,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-10T17:01:06.912Z",
+                  "startTime": "2026-10-10T17:21:44.821Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -380,7 +482,7 @@
           ],
           "id": "3324084181281abe3b7c-4a94c25c6b446cfb7107",
           "file": "studio.spec.js",
-          "line": 123,
+          "line": 148,
           "column": 1
         },
         {
@@ -399,12 +501,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 790,
+                  "duration": 965,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-10T17:01:08.192Z",
+                  "startTime": "2026-10-10T17:21:47.146Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -414,7 +516,7 @@
           ],
           "id": "3324084181281abe3b7c-70b1a42667e4433c15ec",
           "file": "studio.spec.js",
-          "line": 134,
+          "line": 159,
           "column": 1
         },
         {
@@ -433,12 +535,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 509,
+                  "duration": 860,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-10T17:01:08.995Z",
+                  "startTime": "2026-10-10T17:21:48.132Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -448,7 +550,7 @@
           ],
           "id": "3324084181281abe3b7c-302e7d0870e35c155346",
           "file": "studio.spec.js",
-          "line": 152,
+          "line": 177,
           "column": 1
         },
         {
@@ -467,12 +569,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2465,
+                  "duration": 3137,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-10T17:01:09.515Z",
+                  "startTime": "2026-10-10T17:21:49.015Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -482,7 +584,7 @@
           ],
           "id": "3324084181281abe3b7c-62c259ff142092317d89",
           "file": "studio.spec.js",
-          "line": 160,
+          "line": 185,
           "column": 1
         },
         {
@@ -501,12 +603,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 585,
+                  "duration": 791,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-10T17:01:11.990Z",
+                  "startTime": "2026-10-10T17:21:52.176Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -516,7 +618,7 @@
           ],
           "id": "3324084181281abe3b7c-10190a76aaa998b7e530",
           "file": "studio.spec.js",
-          "line": 180,
+          "line": 205,
           "column": 1
         },
         {
@@ -535,12 +637,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 847,
+                  "duration": 1208,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-10T17:01:12.583Z",
+                  "startTime": "2026-10-10T17:21:52.985Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -550,7 +652,7 @@
           ],
           "id": "3324084181281abe3b7c-b761838209b10ecb4469",
           "file": "studio.spec.js",
-          "line": 188,
+          "line": 213,
           "column": 1
         },
         {
@@ -569,12 +671,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1006,
+                  "duration": 1413,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-10T17:01:13.443Z",
+                  "startTime": "2026-10-10T17:21:54.212Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -584,7 +686,7 @@
           ],
           "id": "3324084181281abe3b7c-33b5f1d8cc38aadcbc18",
           "file": "studio.spec.js",
-          "line": 203,
+          "line": 228,
           "column": 1
         },
         {
@@ -603,12 +705,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 571,
+                  "duration": 939,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-10T17:01:14.457Z",
+                  "startTime": "2026-10-10T17:21:55.645Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -618,7 +720,7 @@
           ],
           "id": "3324084181281abe3b7c-f93179aa8b2200c3e5ed",
           "file": "studio.spec.js",
-          "line": 218,
+          "line": 243,
           "column": 1
         }
       ]
@@ -626,9 +728,9 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-10-10T17:00:55.478Z",
-    "duration": 20103.072,
-    "expected": 15,
+    "startTime": "2026-10-10T17:21:26.038Z",
+    "duration": 31522.152000000002,
+    "expected": 18,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0

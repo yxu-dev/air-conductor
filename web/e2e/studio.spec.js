@@ -32,6 +32,31 @@ test('English guided entry is silent, gated and visually complete', async ({ pag
   await page.screenshot({ path: resolve(captures, 'studio-desktop.png'), fullPage: true });
 });
 
+test('Tailwind layout is compiled and every SVG icon has a bounded size', async ({ page }) => {
+  await expect(page.locator('#studio')).toHaveCSS('display', 'grid');
+  const widths = await page.locator('svg').evaluateAll(icons => icons.map(icon => icon.getBoundingClientRect().width));
+  expect(Math.max(...widths)).toBeLessThanOrEqual(30);
+});
+
+test('uncompiled studio styles show a bounded recovery message before canvas initialization', async ({ page }) => {
+  await page.route('**/src/style.css*', route => route.fulfill({ contentType: 'application/javascript',
+    body: `const style = document.createElement('style'); style.textContent = '.studio { @apply grid; }'; document.head.append(style);` }));
+  await page.reload();
+  await expect(page.getByRole('heading', { name: 'The studio styles did not load.' })).toBeVisible();
+  await expect(page.locator('#motion-canvas')).toHaveCount(0);
+  await expect(page.locator('svg')).toHaveCount(0);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(1440);
+  expect(page.__errors).toEqual(['Studio styles are uncompiled. Restart Vite with the Tailwind plugin.']);
+  page.__errors.length = 0; // This simulated failure is the expected guard, not a hidden renderer error.
+});
+
+test('large viewport keeps the GPU framebuffer within its fixed pixel budget', async ({ page }) => {
+  await page.setViewportSize({ width: 2560, height: 1440 });
+  await expect.poll(() => page.locator('#motion-canvas').evaluate(canvas => canvas.width * canvas.height)).toBeLessThanOrEqual(600000);
+  await page.locator('#mode-manual').click();
+  await expect(page.locator('#play')).toBeEnabled();
+});
+
 test('Listen plays real music; pause retains position, resume continues, end rewinds', async ({ page }) => {
   await page.locator('#mode-manual').click();
   await expect(page.locator('#play')).toBeEnabled();
