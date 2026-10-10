@@ -33,8 +33,9 @@ Python diagnostics run separately and never serve as the final runtime or a requ
 - `public/mediapipe/vision-worker.js`: local MediaPipe CPU inference in a classic Worker.
 - `hand-control.js`: physical-left binding, handedness filtering, height smoothing, held gestures and loss handling.
 - `visuals.js`: English studio, four-step setup, source controls, progress/gesture feedback and collapsible diagnostics.
-- `motion-stage.js`: mirrored left-palm trails and intensity-scaled actual sensor pulses. Frames are never duplicated; paths break on tracking loss or gaps and expire after one second. Listen has a music-clock orbit rather than fabricated sensor beats.
-- `style.css`: responsive studio, keyboard focus, fullscreen layout and reduced-motion presentation.
+- `motion-trail.js`: bounded presentation data for mirrored left-palm paths and sensor pulses. Points require fresh confirmed frames, break on tracking loss, invalid coordinates, label changes or gaps, and expire after one second.
+- `motion-stage.js`: lazy-loaded Three.js renderer, luminous 3D orbits, particles, a GPU ribbon, live left-hand cursor and intensity-scaled sensor rings. Ambient motion follows the music tempo; only actual serial BEAT events create stroke pulses. Rendering does not change musical or hand-control state.
+- `style.css` / `vite.config.js`: Tailwind CSS theme, utility-based components and official Vite integration; responsive layout, keyboard focus, fullscreen and reduced motion.
 
 ## Current scope
 
@@ -49,6 +50,8 @@ Stage E requires an explicit camera button and a stable, user-confirmed physical
 ## Frontend development handoff
 
 The core-control checkpoint is on `dev-1`; the product studio is implemented on `dev-2`. Conduct guides connection, calibration, camera access and left confirmation before one Start action. Listen requires only the local score. Starting unlocks audio directly from the click before serial awaits; failure rolls back detection. End silences immediately and stops detection, disconnecting if commands cannot finish. Reset also releases camera and binding. Device loss pauses audio and blocks gesture resume until a new explicit start; camera loss preserves volume-hold behavior. Active pause/resume retains source overrides. Mode changes require ending the performance.
+
+The visual upgrade is on `dev-3`, using Tailwind CSS 4.3.3 and Three.js 0.186.1. Aurora and Nocturne are presentation palettes. A user preference or system reduced-motion setting freezes ambient animation and suppresses trails/pulses while retaining the real hand cursor. WebGL initialization failure selects a static scene; context loss/recovery leaves audio available. Geometry, materials, textures, observers and listeners are released on disposal. Render scheduling pauses offscreen or in hidden documents, caps at roughly 30 FPS and limits pixel ratio to 1.5 (1.25 on narrow stages). The scene is a separate lazy chunk, about 143 kB gzip; music/UI initialization does not wait for it.
 
 Camera settings auto-open for binding; successful start closes them and brings the studio into view. Permission and runtime errors remain recoverable. Firmware, stroke parameters, tempo estimation, musical scheduling and classification thresholds are unchanged. The optional gesture gate prevents an interrupted performance from resuming through an open palm.
 

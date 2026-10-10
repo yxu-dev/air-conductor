@@ -1,5 +1,14 @@
 # Verification plan
 
+## dev-3 Three.js and Tailwind CSS
+
+- Tailwind CSS 4.3.3 is compiled through `@tailwindcss/vite`; component layouts and typography use its theme and utilities. Three.js 0.186.1 replaces the Canvas 2D stage with WebGL rendering. The firmware, tempo/audio algorithms and gesture thresholds are unchanged.
+- All 68 Node checks pass, including bounded pulse intensity/expiry and breaks on rebound hand labels or invalid positions.
+- All 15 muted headless Chrome checks pass. The ten existing product checks remain passing; five additions cover actual renderer theme switching and frozen reduced-motion frames, OS motion preference, WebGL context loss/recovery while playing, unavailable-WebGL fallback with real Listen audio, and synthetic frame/beat rendering plus GPU cleanup.
+- The synthetic scene renders 66 trail indices and 11,650 triangles with WebGL error 0; disposal returns allocated geometry count to 0. This uses generated inputs, not participant data. `recordings/frontend/scene-checks.json` and `synthetic-motion.png` retain the result and rendered example. Desktop, mobile, playing and Nocturne screenshots were inspected.
+- Production build and all seven built-app smoke checks pass: the prior five checks plus actual lazy-loaded Three.js initialization and theme/reduced-motion controls while real audio keeps playing. JSON reports are retained under `recordings/frontend/`.
+- No physical camera, serial port or participant cue was opened. These checks validate presentation and regressions, not performance on every GPU or a new physical conducting session. Automatic Chrome playback was headless and muted on isolated ports 5174/5175.
+
 ## dev-2 product studio
 
 - 66 Node checks pass: the existing 52 core checks plus performance readiness/lifecycle/rollback, preservation of sources, a gesture gate after interruption, and trail freshness/loss/expiry.
