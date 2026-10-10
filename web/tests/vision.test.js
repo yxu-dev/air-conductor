@@ -64,6 +64,19 @@ test('physical left binding supports a reversed input label without switching ha
   assert.equal(f.state.playbackState, 'playing');
 });
 
+test('presentation gesture gate prevents an interrupted performance from resuming', () => {
+  const f = fixture(); f.bind();
+  f.state.playbackState = 'paused';
+  let allowed = false;
+  f.control.allowPlayback = () => allowed;
+  for (let t = 800; t <= 1300; t += 100) f.frame(result(hand('Left', .5, 'Open_Palm')), t);
+  assert.equal(f.state.playbackState, 'paused');
+  assert.equal(f.state.gestureProgress, 0);
+  allowed = true;
+  for (let t = 1400; t <= 1800; t += 100) f.frame(result(hand('Left', .5, 'Open_Palm')), t);
+  assert.equal(f.state.playbackState, 'playing');
+});
+
 test('height mapping clamps endpoints, smooths motion and restores manual volume', () => {
   assert.equal(volumeForHeight(.1), -3);
   assert.equal(volumeForHeight(.9), -30);

@@ -30,8 +30,8 @@ export function gestureRule(name) {
 }
 
 export class HandControl {
-  constructor({ state, music, clock = () => performance.now(), onEvent = () => {} }) {
-    Object.assign(this, { state, music, clock, onEvent });
+  constructor({ state, music, clock = () => performance.now(), onEvent = () => {}, allowPlayback = () => true }) {
+    Object.assign(this, { state, music, clock, onEvent, allowPlayback });
     this.reset();
   }
 
@@ -143,7 +143,7 @@ export class HandControl {
         threshold: rule.confidence, requiredResults: rule.results });
       this.lastGestureReading = { rawName, score, accepted: good, at: now };
     }
-    if (!this.state.gestureControlsEnabled || !['Closed_Fist', 'Open_Palm'].includes(name)) {
+    if (!this.state.gestureControlsEnabled || !this.allowPlayback() || !['Closed_Fist', 'Open_Palm'].includes(name)) {
       this.clearGesture(); return;
     }
     // Count fresh consecutive results; a relaxed palm score needs more evidence.

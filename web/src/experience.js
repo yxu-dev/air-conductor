@@ -34,8 +34,6 @@ export class Experience {
     const operation = ++this.operation;
     state.performanceBusy = true;
     state.performanceError = null;
-    this.music.setSource(state.experienceMode === 'conduct' ? 'conducting' : 'manual');
-    this.control.setVolumeSource(state.experienceMode === 'conduct' ? 'left-hand' : 'manual');
     this.onChange();
     // Invoke audio unlock before any awaited serial command, within the click.
     const audio = this.music.play();

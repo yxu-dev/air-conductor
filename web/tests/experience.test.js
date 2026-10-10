@@ -17,6 +17,7 @@ function fixture() {
   const control = { setVolumeSource: source => { state.volumeSource = source; }, setGestureControls: enabled => { state.gestureControlsEnabled = enabled; } };
   const vision = { stop: () => { calls.push('camera:off'); state.cameraReady = false; state.leftHandBound = false; } };
   const experience = new Experience({ state, session, music, control, vision });
+  experience.setMode('conduct');
   return { state, calls, music, session, experience };
 }
 
@@ -51,6 +52,13 @@ test('unready start cannot play music or enable detection', async () => {
   const f = fixture(); f.state.leftHandBound = false;
   await assert.rejects(f.experience.start(), /left hand/);
   assert.deepEqual(f.calls, []);
+});
+
+test('resume preserves the configured sources of an active performance', async () => {
+  const f = fixture(); await f.experience.start();
+  f.state.playbackState = 'paused'; f.state.tempoSource = 'manual'; f.state.volumeSource = 'manual';
+  await f.experience.start();
+  assert.equal(f.state.tempoSource, 'manual'); assert.equal(f.state.volumeSource, 'manual');
 });
 
 test('audio failure rolls back detection and exposes a recoverable error', async () => {
