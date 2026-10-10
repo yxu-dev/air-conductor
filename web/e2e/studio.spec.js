@@ -132,6 +132,13 @@ test('fullscreen studio enters and exits without changing playback', async ({ pa
   await expect.poll(() => page.evaluate(() => document.fullscreenElement?.id)).toBe('studio');
   await expect(page.locator('#focus')).toHaveAttribute('aria-label', 'Exit fullscreen studio');
   await expect(page.locator('#playback-status')).toHaveText('Stopped');
+  // Device readiness may disappear in fullscreen; the exit control must survive.
+  await page.evaluate(async () => {
+    const { state } = await import('/src/state.js');
+    state.experienceMode = 'conduct';
+  });
+  await expect(page.locator('#app')).toHaveAttribute('data-mode', 'conduct');
+  await expect(page.locator('#focus')).toBeEnabled();
   await page.locator('#focus').click();
   await expect.poll(() => page.evaluate(() => document.fullscreenElement)).toBe(null);
 });

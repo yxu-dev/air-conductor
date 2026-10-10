@@ -50,7 +50,7 @@ export function renderStatus(root, state, { supported = true, now = performance.
   text(v['ready-title'], ready.title); text(v['ready-hint'], ready.hint);
   v['setup-link'].hidden = manual || ready.ready;
   v['studio-link'].hidden = manual || !ready.ready;
-  v.focus.disabled = !ready.ready && !state.performanceActive;
+  v.focus.disabled = !document.fullscreenElement && !ready.ready && !state.performanceActive;
   const done = [connected, state.calibrationState === 'ready', state.cameraReady, state.leftHandBound];
   ['connect', 'calibrate', 'camera', 'left'].forEach((step, i) => { v[`step-${step}`].dataset.complete = String(done[i]); v[`step-${step}`].dataset.current = String(ready.step === step); });
   text(v['setup-progress'], manual ? 'LISTEN MODE' : `${done.filter(Boolean).length} / 4 READY`);
