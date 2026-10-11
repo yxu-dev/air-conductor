@@ -4,7 +4,7 @@ Make music with motion. A right-wrist IMU gives the beat; webcam tracking of you
 
 ## Run
 
-Requires Node.js and npm. From the repository root:
+Requires Node.js 20.19+ (20.x) or 22.12+ and npm. From the repository root:
 
 ```powershell
 cd web

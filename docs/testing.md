@@ -2,6 +2,12 @@
 
 ## dev-4 glass studio (2026-10-11)
 
+### Latest user feedback and documentation audit
+
+On 2026-10-11 the user reported that the latest frontend had been tested. The tested frontend checkpoint is `b9c5bb8`. No new CSV, timed trial or individual results were supplied; this is recorded separately from earlier instrumented captures. All agreed runtime features are implemented; optional extensions and previously deferred trials are not outstanding frontend development tasks. The report is archived in `recordings/frontend/dev-4/user-feedback.json`.
+
+The repository audit verifies required runtime assets, tracked files, local documentation links, UTF-8 readability, identical core modules on dev-2/dev-3/dev-4 and the existing passing browser/production reports. Current instructions follow the dev-4 windows; earlier stage operations remain explicitly labeled as historical. No additional physical test was started, and release cleanup remains deferred.
+
 ### Glass polish
 
 The follow-up visual change keeps the existing layout and device/music core, with stronger translucent surfaces, static background colors, reflection gradients, button feedback and eased dialog entry. The existing browser style expectation now reflects the 26 px/145% dialog blur. Browser checks also exercise opening Settings immediately after Play; late audio-start completion cannot close that newly opened dialog. Updated screenshots and build/live measurements are preserved in this directory's Git history. No participant test was started.

@@ -1,12 +1,14 @@
 # 浏览器串口与节奏测量（Stage C）
 
+> 本文保存 Stage C 调试界面的操作与验证记录。dev-4 的正式操作以 [README](../README.md) 为准：通过 Devices 完成连接/校准，Conduct 的 Play 自动启用检测；原始数据与单独检测开关位于 Settings → Diagnostics。音乐和左手摄像头均已接入。
+
 ## 当前结果
 
-已实现网页串口连接、启动握手、静止校准、检测开关、BPM、拍点脉冲、相对强度与 CSV 导出。Stage C 完成时，25 项 Node 测试和 Vite 生产构建通过。2026-10-05 用户已确认真实 Chrome 页面显示“已连接”及“校准完成”，完成三段提示动作并导出 CSV。本页记录串口与节奏测量的阶段结果；后续已实现音乐播放，见 [Stage D](music-playback.md)。摄像头尚未接入。
+已实现网页串口连接、启动握手、静止校准、检测开关、BPM、拍点脉冲、相对强度与 CSV 导出。Stage C 完成时，25 项 Node 测试和 Vite 生产构建通过。2026-10-05 用户已确认真实 Chrome 页面显示“已连接”及“校准完成”，完成三段提示动作并导出 CSV。本页记录串口与节奏测量的阶段结果；后续已实现音乐播放，见 [Stage D](music-playback.md)，以及左手摄像头控制，见 [Stage E](camera-control.md)。
 
 沿用 Stage B 的检测器与协议；本阶段发现当前佩戴方向符号反了，已修正符号并重新上传 Uno。最终运行链路为 Uno → USB → 网页，不需要 Python 桥接或 Lab4 文件。
 
-## 操作
+## Stage C 调试页操作（历史）
 
 1. 在 `web` 目录运行 `npm run dev`，用 Chrome 打开显示的本机地址。Web Serial 需要安全上下文；本机 localhost 可用于开发。[Chrome 官方说明](https://developer.chrome.com/docs/capabilities/serial)
 2. 关闭占用串口的 Python 采集器和 Arduino Serial Monitor。点击“连接设备”，在浏览器设备选择器中选 Uno 当前串口（目前 COM3）。等待启动完成，显示“已连接”。打开串口可能重启 Uno。

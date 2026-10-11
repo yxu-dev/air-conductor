@@ -20,7 +20,7 @@
 | `BEAT,<timestamp_ms>,<intensity>` | Accepted downstroke peak time and intensity in [0,1], emitted after release |
 | `ERROR,<code>` | Sensor, calibration or command error |
 
-READY means sampling calibration completed. Beat detection starts only after DETECT,ON; music playback is not implemented yet.
+READY means sampling calibration completed. Beat detection starts only after DETECT,ON. In the current browser, Conduct's Play action enables detection and starts MIDI playback; Listen plays without a device. Playback is handled on the host, not by the firmware. See [the current operating instructions](../README.md).
 
 ## Host → device
 
