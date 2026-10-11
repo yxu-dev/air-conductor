@@ -18,6 +18,7 @@ arduino/**/build/
 /recordings/
 *.md
 !/README.md
+!/diagnostics/README.md
 
 # Local-only files
 .env
