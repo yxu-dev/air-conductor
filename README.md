@@ -4,6 +4,8 @@ Make music with motion. A right-wrist IMU gives the beat; webcam tracking of you
 
 ## Run
 
+**Before starting the frontend, use Arduino IDE to upload [`arduino/AirConductor/AirConductor.ino`](arduino/AirConductor/AirConductor.ino) to your Arduino Uno.** Then start the frontend with the commands below.
+
 Requires Node.js 20.19+ (20.x) or 22.12+ and npm. From the repository root:
 
 ```powershell
@@ -32,7 +34,7 @@ Pause preserves position; the square End button stops detection and rewinds. Idl
 
 ## Hardware
 
-Upload `arduino/AirConductor/AirConductor.ino` to Arduino Uno (`arduino:avr:uno`). Use Adafruit MPU6050, Unified Sensor, and BusIO libraries. I2C uses SDA/A4, SCL/A5, and GND; supply power appropriate to your breakout. Confirm the current port before upload and close any other serial monitor.
+The firmware uses Adafruit MPU6050, Unified Sensor, and BusIO libraries. I2C uses SDA/A4, SCL/A5, and GND; supply power appropriate to your breakout. Close Arduino IDE's Serial Monitor before connecting from the browser.
 
 The tested module identifies as MPU6500 (`0x70` at `0x68`). Firmware also supports MPU6050. Current right-wrist mounting uses negative `gx` strokes; changing the mounting requires checking direction.
 
