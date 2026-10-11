@@ -13,9 +13,11 @@ __pycache__/
 # Arduino build products
 arduino/**/build/
 
-# Development recordings are tracked on development branches.
-# Final release only: remove docs/ and recordings/ from the release tree
-# and add /docs/ and /recordings/ here; keep their development history.
+# Local documentation and captures
+/docs/
+/recordings/
+*.md
+!/README.md
 
 # Local-only files
 .env

@@ -1,6 +1,6 @@
 # Air Conductor
 
-Make music with motion. A right-wrist IMU gives the beat; webcam tracking of your left hand shapes volume and playback. This English studio combines Tailwind CSS glass surfaces, a Three.js motion scene, guided setup windows, fullscreen playback and a device-free Listen mode.
+Make music with motion. A right-wrist IMU sets the tempo; webcam tracking of your left hand controls volume and playback. A glass studio with Three.js visuals guides setup and offers fullscreen playback or a device-free Listen mode.
 
 ## Run
 
@@ -11,16 +11,15 @@ Requires Node.js 20.19+ (20.x) or 22.12+ and npm. From the repository root:
 ```powershell
 cd web
 npm ci
-npm run dev -- --host 127.0.0.1 --port 5173 --strictPort
+npm run build
+npm run preview -- --host 127.0.0.1 --port 5173 --strictPort
 ```
 
-Open **http://127.0.0.1:5173/** in Chrome or Edge. Music, hand models, and tracking runtime are local. No Python service or Lab4 installation is needed.
-
-Restart Vite after changing its plugins or configuration. If the page reports that studio styles did not load, restart the server using the command above and reload.
+Open **http://127.0.0.1:5173/** in Chrome or Edge. Music, hand models and tracking assets are served locally. Keep the terminal running while using the app.
 
 ## Play
 
-The setup window opens when you arrive. Choose **Listen** for music with sliders, or **Conduct** for hand control. Continue through the setup steps:
+The setup window opens when you arrive. Choose **Listen** for music with sliders, or **Conduct** and complete these steps:
 
 1. Wear the right-wrist sensor in the verified orientation. Connect the Arduino by USB and select it with **Connect**.
 2. Click **Calibrate**. Rest your right hand through the countdown and sampling period.
@@ -36,20 +35,33 @@ Pause preserves position; the square End button stops detection and rewinds. Idl
 
 The firmware uses Adafruit MPU6050, Unified Sensor, and BusIO libraries. I2C uses SDA/A4, SCL/A5, and GND; supply power appropriate to your breakout. Close Arduino IDE's Serial Monitor before connecting from the browser.
 
-The tested module identifies as MPU6500 (`0x70` at `0x68`). Firmware also supports MPU6050. Current right-wrist mounting uses negative `gx` strokes; changing the mounting requires checking direction.
+MPU6050 and MPU6500 are supported. The firmware expects downward right-wrist strokes to produce negative `gx`; changing the sensor mounting requires checking that direction.
 
-## Development
+## License and credits
 
-Each branch retains the complete device, music and hand-control implementation:
+Project code: MIT. MediaPipe's hand model and runtime use Apache-2.0; Three.js, Tailwind CSS, Tone.js and @tonejs/midi use MIT. The included MIDI plays Beethoven’s *Ode to Joy*. Third-party assets retain their upstream licenses.
 
-| Branch | Interface |
-| --- | --- |
-| `dev-2` | Warm studio with Canvas 2D visuals |
-| `dev-3` | Instrument dashboard with Tailwind CSS and Three.js |
-| `dev-4` | Minimal glass studio with Tailwind CSS, Three.js and setup/settings windows |
+<details>
+<summary>MIT License</summary>
 
-Restart the development server after switching branches. Run `npm ci` when dependencies change.
+Copyright (c) 2026 Yifan Xu
 
-From `web/`: `npm test`, `npm run test:browser`, and `npm run test:production`. The last command builds and checks the production app. Browser checks use installed Chrome, muted headless playback, and separate ports (5174/5175); no physical device or camera is opened. `npm run check:live` checks the running dev server on 5173, including compiled styles, icon sizes, rendering and button response. `npm run preview` serves the production build.
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-Project code: MIT. Dependencies: MediaPipe (Apache-2.0); Three.js, Tailwind CSS, Tone.js and @tonejs/midi (MIT). The included project MIDI plays Beethoven’s *Ode to Joy*. Development asset provenance and verification records are archived on development branches.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+</details>

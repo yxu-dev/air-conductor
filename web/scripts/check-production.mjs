@@ -5,7 +5,7 @@ import { chromium } from '@playwright/test';
 import { preview } from 'vite';
 
 // Isolated built-app check. Never requests camera access or a serial port.
-const output = resolve('../recordings/frontend/dev-4');
+const output = resolve('../recordings/frontend');
 const reports = [];
 const server = await preview({ preview: { host: '127.0.0.1', port: 5175, strictPort: true } });
 let browser;

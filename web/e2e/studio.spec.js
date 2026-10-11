@@ -3,7 +3,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import AxeBuilder from '@axe-core/playwright';
 
-const captures = resolve('../recordings/frontend/dev-4');
+const captures = resolve('../recordings/frontend');
 test.beforeAll(async () => { await mkdir(captures, { recursive: true }); });
 test.beforeEach(async ({ page }) => {
   page.__errors = [];

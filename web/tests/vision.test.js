@@ -195,7 +195,7 @@ test('relaxed palm confidence never relaxes fist pause confidence', () => {
   assert.deepEqual(f.calls, [['pause']]);
 });
 
-test('production Worker uses the Lab4 two-gesture allowlist', async () => {
+test('production Worker uses the two-gesture allowlist', async () => {
   let options;
   const sandbox = { self: { postMessage() {} }, importScripts() {},
     Vision: { FilesetResolver: { forVisionTasks: async () => ({}) },
