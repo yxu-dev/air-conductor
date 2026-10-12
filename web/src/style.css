@@ -46,7 +46,10 @@
     box-shadow:0 12px 40px #34589313, 0 2px 8px #34589308, inset 0 1px 0 #ffffffed, inset 0 -1px 0 #8ca8d416; }
   .skip-link { @apply fixed top-3 left-3 z-50 px-4 py-2 rounded-lg bg-ink text-white opacity-0 pointer-events-none; }
   .skip-link:focus { @apply opacity-100 pointer-events-auto; }
-  .site-header { @apply relative flex justify-between items-center gap-4 rounded-full px-6 h-16 mt-5; background-color:#ffffff7a; }
+  .site-header { @apply sticky top-5 z-30 flex justify-between items-center gap-4 rounded-full px-6 h-16 mt-5 border-white/60;
+    background-color:#ffffff4d; background-image:linear-gradient(125deg, #ffffff38, #ffffff00 44%, #d8e5ff14);
+    backdrop-filter:blur(24px) saturate(160%);
+    box-shadow:0 10px 32px #34589318, 0 2px 8px #34589308, inset 0 1px 0 #ffffffb3, inset 0 -1px 0 #8ca8d416; }
   .site-header:before,.transport:before { content:''; position:absolute; top:0; left:24px; right:24px; height:1px; pointer-events:none; background:linear-gradient(90deg, transparent, #ffffff, transparent); }
   .brand { @apply flex items-center gap-2.5 font-semibold text-[17px] tracking-[-.02em] whitespace-nowrap; }
   .brand-mark { @apply grid place-items-center w-8 h-8 rounded-full text-accent; background:linear-gradient(145deg, #ffffffb8, #b9d3ff66); box-shadow:inset 0 1px 0 #ffffff, 0 3px 10px #487bcc17; }
@@ -56,7 +59,7 @@
   .mode-pill { @apply rounded-full px-3 py-1.5 text-[13px] font-semibold text-accent mr-2; background:linear-gradient(135deg, #dbeaffb3, #e4ddff80); box-shadow:inset 0 1px 0 #ffffffb3; }
   .status-dot { @apply inline-block w-1.5 h-1.5 rounded-full bg-[#8c96a8]; }
   .status-dot[data-ready=true],.status-dot[data-live=true],.stage[data-tracked=true] .hand-dot { @apply bg-[#16804a]; }
-  .studio { @apply grid justify-items-center text-center pt-8; }
+  .studio { @apply grid justify-items-center text-center pt-8 scroll-mt-24; }
   .score-heading h1 { @apply text-[clamp(30px,3vw,36px)] font-semibold tracking-[-.025em] m-0; line-height:1.2; }
   .eyebrow { @apply text-[12px] uppercase font-semibold tracking-[1px] text-muted m-0 mb-2; line-height:1.4; }
   .micro { @apply text-[15px] leading-relaxed text-muted mt-2 mb-0; }
@@ -177,7 +180,7 @@
   button:not(:disabled):active { transform:translateY(0) scale(.98); }
   @media(max-width:640px) {
     #app { @apply px-4; }
-    .site-header { @apply px-2 h-16 mt-3 gap-2; }
+    .site-header { @apply top-3 px-2 h-16 mt-3 gap-2; }
     .brand { @apply text-base gap-1.5; }
     .brand-mark { @apply w-7 h-7; }
     .site-header nav { @apply gap-0; }
