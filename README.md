@@ -39,32 +39,26 @@ MPU6050 and MPU6500 are supported. The firmware expects downward right-wrist str
 
 ## License and credits
 
-Project code: MIT. MediaPipe's hand model and runtime use Apache-2.0; Three.js, Tailwind CSS, Tone.js and @tonejs/midi use MIT. The included MIDI plays Beethoven’s *Ode to Joy*. The locally bundled Inter font uses SIL OFL-1.1. Third-party assets retain their upstream licenses.
+Air Conductor's original code is licensed under the [MIT License](LICENSE), copyright (c) 2026 Yifan Xu. Third-party libraries and assets retain their own licenses.
 
-<details>
-<summary>MIT License</summary>
+| Component | License / source |
+| --- | --- |
+| Three.js | [MIT](https://github.com/mrdoob/three.js/blob/dev/LICENSE) |
+| Tailwind CSS and its Vite plugin | [MIT](https://github.com/tailwindlabs/tailwindcss/blob/main/LICENSE) |
+| Tone.js | [MIT](https://github.com/Tonejs/Tone.js/blob/dev/LICENSE.md) |
+| @tonejs/midi | [MIT](https://github.com/Tonejs/Midi/blob/master/LICENSE.md) |
+| MediaPipe Tasks Vision runtime, including its JavaScript and WASM assets | [Apache-2.0](https://github.com/google-ai-edge/mediapipe/blob/master/LICENSE) |
+| `gesture_recognizer.task` | Google MediaPipe model; a separate license for these model weights has not been verified. See the [upstream guide](https://developers.google.com/edge/mediapipe/solutions/vision/gesture_recognizer) and [model card](https://storage.googleapis.com/mediapipe-assets/gesture_recognizer/model_card_hand_gesture_classification_with_faireness_2022.pdf). |
+| Inter font | [SIL OFL-1.1](https://github.com/rsms/inter/blob/master/LICENSE.txt); full notice below and included in frontend builds. |
+| `web/public/midi/ode.mid` | Beethoven's *Ode to Joy*, from [Mutopia edition 528](https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=528), marked Public Domain. |
+| Adafruit MPU6050 | [BSD-3-Clause](https://github.com/adafruit/Adafruit_MPU6050/blob/master/license.txt) |
+| Adafruit Unified Sensor | [Apache-2.0](https://github.com/adafruit/Adafruit_Sensor/blob/master/LICENSE.txt) |
+| Adafruit BusIO | [MIT](https://github.com/adafruit/Adafruit_BusIO/blob/master/LICENSE) |
+| Vite (build tool) | [MIT](https://github.com/vitejs/vite/blob/main/LICENSE) |
+| Playwright (browser checks) | [Apache-2.0](https://github.com/microsoft/playwright/blob/main/LICENSE) |
+| axe-core / @axe-core/playwright (accessibility checks) | [MPL-2.0](https://github.com/dequelabs/axe-core/blob/develop/LICENSE) |
 
-Copyright (c) 2026 Yifan Xu
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-</details>
+Dependency packages carry their upstream notices. The project MIT license does not relicense third-party code, models, music or fonts.
 
 <details>
 <summary>Inter font: SIL Open Font License 1.1</summary>
