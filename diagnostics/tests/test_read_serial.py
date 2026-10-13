@@ -8,6 +8,13 @@ spec.loader.exec_module(capture)
 
 
 class ProtocolTests(unittest.TestCase):
+    def test_motion_protocol_version_state_and_timestamp(self):
+        self.assertEqual(capture.parse_motion('MOTION,1,STILL,4294967295'), (2**32 - 1, 'STILL'))
+        for line in ('MOTION,2,STILL,10', 'MOTION,1,REST,10', 'MOTION,1,MOVING,-1',
+                     'MOTION,1,MOVING,4294967296', 'MOTION,1,STILL,1.5', 'MOTION,1,STILL,1,extra'):
+            with self.subTest(line=line), self.assertRaises(ValueError):
+                capture.parse_motion(line)
+
     def test_beat_timestamp_and_normalized_intensity(self):
         self.assertEqual(capture.parse_beat("BEAT,4294967295,0.75"), (2**32 - 1, .75))
         for line in ("BEAT,1,nan", "BEAT,1,1.01", "BEAT,1,-0.1", "BEAT,-1,0.5",

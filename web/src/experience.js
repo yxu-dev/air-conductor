@@ -87,6 +87,39 @@ export class Experience {
     } finally { this.state.performanceBusy = false; this.onChange(); }
   }
 
+  coronaReady() {
+    const s = this.state;
+    return s.coronaEnabled && s.motionSupported && s.experienceMode === 'conduct' &&
+      s.tempoSource === 'conducting' && s.performanceActive && !s.performanceBusy &&
+      s.playbackState === 'playing' && s.serialPhase === 'connected' &&
+      s.calibrationState === 'ready' && s.detectionActive;
+  }
+
+  setCoronaEnabled(enabled) {
+    this.state.coronaEnabled = Boolean(enabled);
+    this.state.coronaArmed = false;
+    if (!enabled && this.state.coronaActive) {
+      this.session.reseedTempo(); this.music.exitCorona('disabled');
+    }
+    this.onEvent('CORONA_ENABLED', { enabled: this.state.coronaEnabled });
+    this.onChange();
+  }
+
+  beat() {
+    if (this.coronaReady() && !this.state.coronaActive && this.state.motionState === 'MOVING') this.state.coronaArmed = true;
+  }
+
+  motion(message) {
+    if (!this.coronaReady()) { this.state.coronaArmed = false; return; }
+    if (message.value === 'MOVING') {
+      this.state.coronaArmed = true;
+      if (this.state.coronaActive) { this.session.reseedTempo(); this.music.exitCorona(); }
+    } else if (message.value === 'STILL' && this.state.coronaArmed) {
+      this.session.reseedTempo(); this.music.enterCorona();
+    }
+    this.onChange();
+  }
+
   tick() {
     if (this.state.performanceActive && this.state.experienceMode === 'conduct' &&
         (this.state.serialPhase !== 'connected' || this.state.calibrationState !== 'ready' || !this.state.detectionActive)) {
@@ -94,6 +127,12 @@ export class Experience {
       this.state.performanceActive = false;
       this.state.performanceError = 'Conducting paused because the device is unavailable. Reconnect, calibrate, then resume.';
       this.onEvent('INTERRUPTED', {});
+    }
+    if (!this.coronaReady()) {
+      this.state.coronaArmed = false;
+      if (this.state.coronaActive) {
+        this.session.reseedTempo(); this.music.exitCorona('controls-changed');
+      }
     }
   }
 }

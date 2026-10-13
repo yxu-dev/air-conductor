@@ -31,6 +31,8 @@ Pause preserves position; the square End button stops detection and rewinds. Idl
 
 In **Settings → Control response**, **Responsive** (default) follows tempo and left-hand volume changes sooner; **Classic** applies stronger smoothing. Switching preserves playback position and remeasures the next strokes. The response setting is included in CSV exports.
 
+**Corona / Fermata** is optional and off by default. Upload the current Arduino sketch, reconnect, then enable **Settings → Hold notes when my right arm rests**. In Conduct mode with right-hand tempo, begin moving, then hold your right arm still for about half a second: the score freezes and the notes sounding at that moment sustain. A rest stays silent. Move again to continue from the same position. Left-hand volume remains available; a fist or Pause silences the music, and right-arm movement cannot resume a manual pause. Turning Corona off during a hold continues playback. Older firmware keeps ordinary conducting available but cannot trigger Corona.
+
 **Visual atmosphere** offers Glacier and Iris palettes and reduced motion. System motion preferences are respected. The scene pauses behind open windows and loads separately; if WebGL is unavailable, a static view keeps music and hand controls available.
 
 ## Hardware

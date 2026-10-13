@@ -64,13 +64,33 @@ export class MusicSession {
     } finally { if (operation === this.operation) this.state.audioBusy = false; }
   }
 
-  pause() { this.player?.pause(); this.tick(); this.onEvent('PAUSE', { tick: this.player?.snapshot().tick ?? 0 }); }
+  pause() {
+    const held = this.state.coronaActive;
+    this.player?.pause(); this.state.coronaArmed = false; this.tick();
+    if (held) this.onEvent('CORONA_CLEAR', { reason: 'pause', tick: this.player.snapshot().tick });
+    this.onEvent('PAUSE', { tick: this.player?.snapshot().tick ?? 0 });
+  }
+
+  enterCorona() {
+    if (!this.player?.enterCorona()) return false;
+    this.tick();
+    this.onEvent('CORONA_ENTER', { tick: this.player.snapshot().tick, bpm: this.state.musicBpm });
+    return true;
+  }
+
+  exitCorona(reason = 'moving') {
+    if (!this.player?.exitCorona()) return false;
+    this.tick();
+    this.onEvent('CORONA_EXIT', { reason, tick: this.player.snapshot().tick, bpm: this.state.musicBpm });
+    return true;
+  }
 
   stop() {
+    if (this.state.coronaActive) this.onEvent('CORONA_CLEAR', { reason: 'stop', tick: this.player.snapshot().tick });
     ++this.operation;
     this.state.audioBusy = false;
     this.player?.stop();
-    Object.assign(this.state, { playbackState: 'stopped', musicProgress: 0, musicBar: 1, musicBeat: 1 });
+    Object.assign(this.state, { playbackState: 'stopped', coronaActive: false, coronaArmed: false, musicProgress: 0, musicBar: 1, musicBeat: 1 });
     this.onEvent('STOP', { tick: 0 });
   }
 
@@ -96,6 +116,7 @@ export class MusicSession {
 
   syncTempo() {
     const state = this.state;
+    if (state.coronaActive) return;
     let target = state.musicBpm;
     if (state.tempoSource === 'manual') {
       state.tempoFollowStatus = 'manual';
@@ -121,7 +142,7 @@ export class MusicSession {
     this.syncTempo();
     if (this.player) {
       const snapshot = this.player.snapshot();
-      Object.assign(this.state, { playbackState: snapshot.playbackState,
+      Object.assign(this.state, { playbackState: snapshot.playbackState, coronaActive: snapshot.coronaActive,
         musicProgress: snapshot.progress, musicBar: snapshot.bar, musicBeat: snapshot.beat });
     }
   }

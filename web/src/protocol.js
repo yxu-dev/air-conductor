@@ -10,6 +10,10 @@ function timestamp(value) {
 export function parseSerialLine(line) {
   const parts = line.split(',');
   const [type, value] = parts;
+  if (type === 'CAPS' && parts.length === 3 && value === 'MOTION' && parts[2] === '1') return { type, motionVersion: 1 };
+  if (type === 'MOTION' && parts.length === 4 && value === '1' && ['STILL', 'MOVING'].includes(parts[2]) && timestamp(parts[3])) {
+    return { type, version: 1, value: parts[2], timestampMs: Number(parts[3]) };
+  }
   if (type === 'BEAT' && parts.length === 3 && timestamp(value) && numeric(parts[2])) {
     const intensity = Number(parts[2]);
     return intensity >= 0 && intensity <= 1 ? { type, timestampMs: Number(value), intensity } : null;

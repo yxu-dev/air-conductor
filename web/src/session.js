@@ -14,10 +14,11 @@ const errorText = {
 
 export class ConductorSession {
   constructor({ state = createState(), serial, clock = () => performance.now(),
-    onChange = () => {}, onBeat = () => {}, startupMs = config.serialStartupMs,
+    onChange = () => {}, onBeat = () => {}, onMotion = () => {}, startupMs = config.serialStartupMs,
     preparationMs = config.calibrationPreparationMs } = {}) {
-    Object.assign(this, { state, clock, onChange, onBeat, startupMs, preparationMs });
+    Object.assign(this, { state, clock, onChange, onBeat, onMotion, startupMs, preparationMs });
     this.tempo = new TempoEstimator(tempoOptions(state.controlResponse));
+    this.lastMotionTimestamp = this.latestDeviceTimestamp = null;
     this.pending = null;
     this.epoch = 0;
     this.timers = new Set();
@@ -62,9 +63,16 @@ export class ConductorSession {
   }
 
   resetTempo() {
+    this.lastMotionTimestamp = this.latestDeviceTimestamp = null;
+    Object.assign(this.state, { motionState: 'unknown', coronaArmed: false });
     this.tempo.reset();
     Object.assign(this.state, { measuredBpm: null, tempoStatus: 'waiting', tempoIntervals: 0,
       lastBeatReceivedAt: null, lastBeatIntensity: 0 });
+  }
+
+  reseedTempo() {
+    this.tempo.reset({ holdBpm: true });
+    Object.assign(this.state, { measuredBpm: this.tempo.bpm, tempoStatus: 'warming', tempoIntervals: 0 });
   }
 
   setControlResponse(profile) {
@@ -123,6 +131,7 @@ export class ConductorSession {
     this.awaitingProbe = false;
     this.resetTempo();
     Object.assign(this.state, { serialPhase: 'initializing', calibrationState: 'awaiting-status',
+      motionSupported: false,
       calibrationCountdown: null, detectionActive: false, rawStreamActive: false });
     this.defer(async () => {
       if (epoch !== this.epoch) return;
@@ -158,7 +167,7 @@ export class ConductorSession {
         this.awaitingProbe = false;
         this.resetTempo();
         Object.assign(this.state, { calibrationState: 'not-started', calibrationCountdown: null,
-          detectionActive: false, rawStreamActive: false, deviceModel: null });
+          detectionActive: false, rawStreamActive: false, deviceModel: null, motionSupported: false });
         this.state.notice = 'Reconnect the device, then rest your right hand and recalibrate.';
       }
       if (phase === 'connecting') {
@@ -178,6 +187,20 @@ export class ConductorSession {
       if (this.rows.length > 10000) this.rows.shift();
     }
     switch (message.type) {
+      case 'CAPS':
+        if (this.awaitingProbe || state.serialPhase === 'connected') state.motionSupported = message.motionVersion === 1;
+        break;
+      case 'MOTION': {
+        if (state.serialPhase !== 'connected' || !state.detectionActive || state.calibrationState !== 'ready' || !state.motionSupported) break;
+        const stamp = message.timestampMs;
+        const forward = previous => previous === null || ((stamp - previous) >>> 0) > 0 && ((stamp - previous) >>> 0) < 2 ** 31;
+        if (!forward(this.lastMotionTimestamp) || this.latestDeviceTimestamp !== null && ((stamp - this.latestDeviceTimestamp) >>> 0) >= 2 ** 31) break;
+        this.lastMotionTimestamp = this.latestDeviceTimestamp = stamp;
+        if (state.motionState === message.value) break;
+        state.motionState = message.value;
+        this.onMotion(message);
+        break;
+      }
       case 'BOOT':
         state.deviceModel = null;
         state.receivedBeatCount = state.ignoredBeatCount = 0;
@@ -210,10 +233,11 @@ export class ConductorSession {
       case 'IMU': state.lastImu = message.values; state.rawSamples += 1; break;
       case 'BEAT':
         if (state.serialPhase === 'connected' && state.detectionActive && state.calibrationState === 'ready') {
+          if (this.latestDeviceTimestamp === null || ((message.timestampMs - this.latestDeviceTimestamp) >>> 0) < 2 ** 31) this.latestDeviceTimestamp = message.timestampMs;
           state.receivedBeatCount += 1;
           state.lastBeatReceivedAt = now;
           state.lastBeatIntensity = message.intensity;
-          const result = this.tempo.add(message.timestampMs, now);
+          const result = state.coronaActive ? { accepted: false, ...this.tempo.snapshot(now) } : this.tempo.add(message.timestampMs, now);
           if (!result.accepted) state.ignoredBeatCount += 1;
           state.measuredBpm = result.bpm;
           state.tempoStatus = result.status;

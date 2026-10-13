@@ -9,6 +9,7 @@ import { MusicSession } from '../src/music-session.js';
 import { createState } from '../src/state.js';
 import { ConductorSession } from '../src/session.js';
 import { FakePort, FakeSerial, until } from './fake-serial.js';
+import { Experience } from '../src/experience.js';
 
 function score(notes = [{ ticks: 0, durationTicks: 960, midi: 60, velocity: .7 },
   { ticks: 960, durationTicks: 480, midi: 60, velocity: .8 }]) {
@@ -39,6 +40,9 @@ class FakeBackend {
   startTime() { return this.time + .1; }
   createVoices() { this.calls.push(['create']); }
   destroyVoices() { this.calls.push(['destroy']); }
+  startHold(notes, time) { this.destroyVoices(); this.holding = true; this.calls.push(['hold', notes.map(n => n.midi), time]); }
+  endHold(time) { this.holding = false; this.calls.push(['end-hold', time]); }
+  clearHold() { if (this.holding) this.calls.push(['clear-hold']); this.holding = false; }
   attack(note, time) { this.calls.push(['attack', note.midi, time]); }
   release(note, time) { this.calls.push(['release', note.midi, time]); }
   releaseAtLoop(time) { this.calls.push(['loop-release', time]); }
@@ -116,6 +120,74 @@ test('last notes release at loopEnd before restarting tick zero', () => {
   assert.equal(backend.calls[0][0], 'loop-release');
   assert.equal(backend.calls[1][0], 'attack');
   player.dispose();
+});
+
+test('Corona freezes fractional ticks, suppresses scheduled events and preserves exact boundaries', () => {
+  const backend = new FakeBackend();
+  const player = new MusicPlayer({ score: score(), backend });
+  assert.equal(player.enterCorona(), false);
+  player.play(); backend.tick = 600.75;
+  assert.equal(player.enterCorona(), true);
+  const calls = backend.calls.length;
+  assert.equal(player.enterCorona(), false);
+  backend.fire(960); backend.handlers.get('loopEnd')(3);
+  assert.equal(backend.calls.length, calls);
+  assert.equal(player.snapshot().tick, 600.75);
+  assert.equal(player.snapshot().playbackState, 'playing');
+  assert.equal(player.exitCorona(), true);
+  assert.equal(player.snapshot().tick, 600.75);
+  assert.equal(player.exitCorona(), false);
+  backend.tick = 960;
+  player.enterCorona(); backend.calls.length = 0; player.exitCorona(); backend.fire(960);
+  assert.equal(backend.calls.filter(c => c[0] === 'attack').length, 1, 'boundary note must attack only once');
+  backend.tick = 1600;
+  player.enterCorona(); assert.deepEqual(backend.calls.findLast(c => c[0] === 'hold')[1], []);
+  player.pause(); const paused = player.snapshot().tick;
+  assert.equal(player.exitCorona(), false);
+  player.play(); assert.equal(player.snapshot().tick, paused);
+  player.enterCorona(); player.stop(); assert.equal(backend.holding, false);
+  assert.equal(player.snapshot().tick, 0);
+  player.dispose(); assert.equal(player.enterCorona(), false);
+});
+
+test('motion integration arms only in Conduct, preserves tempo across a hold and respects pause/disconnect', async () => {
+  const { session: music, state, backend } = setupSession();
+  let now = 0, experience;
+  const conductor = new ConductorSession({ state, serial: new FakeSerial(new FakePort()), clock: () => now,
+    onMotion: message => experience.motion(message), onBeat: () => { experience.beat(); music.tick(); } });
+  experience = new Experience({ state, session: conductor, music, control: {}, vision: {} });
+  Object.assign(state, { serialPhase: 'connected', calibrationState: 'ready', detectionActive: true,
+    performanceActive: true, motionSupported: true, coronaEnabled: true });
+  music.setSource('conducting'); await music.play();
+  const motion = (value, time) => { now = time; conductor.message({ type: 'MOTION', value, timestampMs: time, version: 1 }, now, `MOTION,1,${value},${time}`); };
+  motion('STILL', 10); assert.equal(state.coronaActive, false);
+  motion('MOVING', 100);
+  for (let t = 500; t <= 2500; t += 500) { now = t; conductor.message({ type: 'BEAT', timestampMs: t, intensity: .5 }, now, `BEAT,${t},0.5`); }
+  assert.equal(state.musicBpm, 120);
+  backend.tick = 650.25; motion('STILL', 3000);
+  assert.equal(state.coronaActive, true); assert.equal(conductor.tempo.anchor, null);
+  const count = backend.calls.length;
+  motion('MOVING', 2900); motion('STILL', 3000);
+  assert.equal(backend.calls.length, count, 'stale/duplicate motion must be ignored');
+  motion('MOVING', 8000);
+  assert.equal(state.coronaActive, false); assert.equal(state.musicBpm, 120);
+  assert.equal(conductor.tempo.anchor, null); assert.equal(backend.tick, 650.25);
+  motion('STILL', 8600); music.pause(); motion('MOVING', 9000);
+  assert.equal(state.playbackState, 'paused'); assert.equal(state.coronaActive, false);
+  await music.play(); motion('STILL', 9600);
+  assert.equal(state.coronaActive, false, 'resume needs fresh movement before another hold');
+  motion('MOVING', 9700); motion('STILL', 10300);
+  experience.setCoronaEnabled(false); assert.equal(state.coronaActive, false);
+  assert.equal(state.playbackState, 'playing');
+  experience.setCoronaEnabled(true); motion('MOVING', 10500); motion('STILL', 11100);
+  conductor.connectionState('disconnected'); experience.tick();
+  assert.equal(state.playbackState, 'paused'); assert.equal(backend.holding, false);
+  motion('MOVING', 12000); assert.equal(state.playbackState, 'paused');
+  Object.assign(state, { serialPhase: 'connected', calibrationState: 'ready', detectionActive: true, motionSupported: true,
+    experienceMode: 'manual', performanceActive: true });
+  await music.play(); motion('MOVING', 13000); motion('STILL', 14000);
+  assert.equal(state.coronaActive, false);
+  music.dispose();
 });
 
 function setupSession(options = {}) {

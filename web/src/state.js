@@ -3,6 +3,11 @@ import { config } from './config.js';
 export function createState() { return {
   experienceMode: 'conduct',
   controlResponse: config.defaultResponseProfile,
+  coronaEnabled: false,
+  coronaActive: false,
+  coronaArmed: false,
+  motionSupported: false,
+  motionState: 'unknown',
   performanceActive: false,
   performanceBusy: false,
   performanceError: null,

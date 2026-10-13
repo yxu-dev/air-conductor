@@ -32,3 +32,9 @@ test('calibration/readiness/control messages are distinct', () => {
   assert.equal(parseSerialLine('IMU,10,0,0,-9.8,0,0,0').values.length, 6);
   for (const line of ['STATUS,UNKNOWN', 'READY,1', 'BOOT,99', 'CALIBRATION,0,0,0,0,0,0,-1,0', 'IMU,1,0,0,nan,0,0,0']) assert.equal(parseSerialLine(line), null);
 });
+
+test('motion events require the supported protocol version, state and uint32 timestamp', () => {
+  assert.deepEqual(parseSerialLine('CAPS,MOTION,1'), { type: 'CAPS', motionVersion: 1 });
+  assert.deepEqual(parseSerialLine('MOTION,1,STILL,4294967295'), { type: 'MOTION', version: 1, value: 'STILL', timestampMs: 4294967295 });
+  for (const line of ['MOTION,STILL,10', 'MOTION,2,MOVING,10', 'MOTION,1,REST,10', 'MOTION,1,STILL,-1', 'MOTION,1,STILL,4294967296', 'MOTION,1,MOVING,1,extra', 'CAPS,MOTION,2']) assert.equal(parseSerialLine(line), null);
+});

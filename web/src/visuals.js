@@ -86,6 +86,18 @@ export function renderStatus(root, state, { supported = true, now = performance.
   v['stage-gesture-progress'].value = state.gestureProgress;
   v['tempo-source'].value = state.tempoSource; v['volume-source'].value = state.volumeSource; v['gesture-controls'].checked = state.gestureControlsEnabled;
   v['control-response'].value = state.controlResponse;
+  v['corona-enabled'].checked = state.coronaEnabled;
+  text(v['corona-status'], !state.coronaEnabled ? 'Off. Music continues at your last tempo.' : !state.motionSupported ? 'Motion support unavailable. Upload the current Arduino sketch, then reconnect.' : manual || state.tempoSource !== 'conducting' ? 'Available with right-hand tempo in Conduct mode.' : state.coronaActive ? 'Holding the score. Move your right arm to continue.' : state.coronaArmed ? 'Ready to hold when your right arm rests.' : 'Start conducting to arm the hold.');
+  if (state.coronaActive) {
+    text(v['stage-status'], 'CORONA / FERMATA');
+    text(v['stage-kicker'], 'HOLDING THIS MOMENT');
+    text(v['stage-title'], 'Let it ring');
+    text(v['stage-description'], 'Move your right arm to continue.');
+    text(v['playback-status'], 'Corona');
+    text(v['music-bpm'], '0');
+    text(v['follow-status'], `Score frozen. Resume at ${state.musicBpm.toFixed(0)} BPM.`);
+    text(v['tempo-status'], 'Current notes sustain; rests stay silent.');
+  }
   text(v['camera-stats'], state.cameraReady ? `${state.cameraFrames} frames processed · Last inference ${state.cameraInferenceMs?.toFixed(0) ?? '—'} ms` : 'Camera access is optional in Listen mode.');
   v.reset.disabled = busy; v.export.disabled = !state.eventLog.length;
   v.detect.disabled = !connected || state.actionPending || state.calibrationState !== 'ready' || state.performanceActive || busy; text(v.detect, state.detectionActive ? 'Stop detection' : 'Start detection');

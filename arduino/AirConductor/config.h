@@ -25,4 +25,9 @@ constexpr uint32_t MIN_STROKE_MS = 90; // Measured rebounds 50–60 ms; downstro
 constexpr uint32_t MAX_STROKE_MS = 600;
 constexpr uint32_t MIN_BEAT_GAP_MS = 280;
 constexpr uint32_t MAX_SAMPLE_GAP_MS = 30;
+// Corona candidates: verify with the worn sensor before showcase use.
+constexpr float CORONA_STILL_SCORE = 0.65f;
+constexpr float CORONA_MOVING_SCORE = 1.2f;
+constexpr uint32_t CORONA_STILL_MS = 500;
+constexpr uint32_t CORONA_MOVING_MS = 40;
 }

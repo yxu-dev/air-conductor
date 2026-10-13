@@ -38,6 +38,15 @@ def parse_beat(line: str) -> tuple[int, float]:
     return timestamp, intensity
 
 
+def parse_motion(line: str) -> tuple[int, str]:
+    parts = line.split(',')
+    if len(parts) != 4 or parts[:2] != ['MOTION', '1'] or parts[2] not in ('STILL', 'MOVING'):
+        raise ValueError('Expected MOTION,1,STILL|MOVING,timestamp')
+    if not parts[3].isascii() or not parts[3].isdigit() or not 0 <= int(parts[3]) < 2**32:
+        raise ValueError('Invalid motion timestamp')
+    return int(parts[3]), parts[2]
+
+
 class LineBuffer:
     """Reassemble fragmented lines and discard overlong frames through newline."""
 
@@ -188,6 +197,14 @@ def capture(args: argparse.Namespace) -> int:
                                 else:
                                     row.update(timestamp_ms=timestamp, intensity=intensity)
                                     beat_count += 1
+                            elif kind == 'MOTION':
+                                try:
+                                    timestamp, _ = parse_motion(line)
+                                except ValueError:
+                                    counts['INVALID_MOTION'] += 1
+                                    row['type'] = 'INVALID_MOTION'
+                                else:
+                                    row['timestamp_ms'] = timestamp
                             stopped = stopped or line == "STREAM,OFF"
                             if line == "DETECT,ON":
                                 detector_started = True

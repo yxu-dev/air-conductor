@@ -51,6 +51,14 @@ firmware BEAT events as well. Guided options play movement cues; start them only
 when the wearer is ready. Opening the serial port may reset the Uno, so recalibrate
 before returning to Conduct mode in the browser.
 
+The current sketch also reports `CAPS,MOTION,1` and, while detection is active,
+`MOTION,1,STILL,timestamp` / `MOTION,1,MOVING,timestamp` on state transitions.
+Captures preserve these events and device timestamps. Corona requires this motion
+support; a missing BEAT alone is not a stillness signal. Its initial thresholds
+need checking with the worn sensor. Enable the optional Corona control in the app
+only when you are ready to compare it. Returning to older firmware-dependent
+behavior may require uploading that branch's sketch again.
+
 To inspect a saved capture, replace `capture.csv` with its actual path:
 
 ```powershell

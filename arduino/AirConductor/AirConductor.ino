@@ -1,12 +1,14 @@
 #include "config.h"
 #include "imu.h"
 #include "stroke_detector.h"
+#include "motion_detector.h"
 #include <math.h>
 #include <string.h>
 #include <Wire.h>
 
 ImuController imu;
 StrokeDetector detector;
+MotionDetector motion;
 bool streaming = false;
 bool detecting = false;
 unsigned long lastSampleMs = 0;
@@ -15,6 +17,7 @@ uint8_t commandLength = 0;
 bool discardCommand = false;
 
 void reportStatus() {
+  Serial.println(F("CAPS,MOTION,1"));
   Serial.print(F("STATUS,"));
   if (!imu.healthy()) Serial.println(F("SENSOR_ERROR"));
   else if (imu.calibrating()) Serial.println(F("CALIBRATING"));
@@ -54,6 +57,7 @@ void handleCommand(const char *line) {
   } else if (strcmp(line, "DETECT,OFF") == 0) {
     detecting = false;
     detector.reset();
+    motion.reset();
     Serial.println(F("DETECT,OFF"));
   } else if (!imu.healthy()) Serial.println(F("ERROR,SENSOR_UNAVAILABLE"));
   else if (strcmp(line, "STREAM,ON") == 0) {
@@ -62,7 +66,7 @@ void handleCommand(const char *line) {
   } else if (strcmp(line, "DETECT,ON") == 0) {
     if (!imu.calibrated()) Serial.println(F("ERROR,NOT_CALIBRATED"));
     else {
-      if (!detecting) detector.reset();
+      if (!detecting) { detector.reset(); motion.reset(); }
       detecting = true;
       Serial.println(F("DETECT,ON"));
     }
@@ -71,6 +75,7 @@ void handleCommand(const char *line) {
     else {
       detecting = false;
       detector.reset();
+      motion.reset();
       Serial.println(F("DETECT,OFF"));
       imu.startCalibration();
       reportStatus();
@@ -127,6 +132,7 @@ void loop() {
   if (!imu.read(sample)) {
     streaming = detecting = false;
     detector.reset();
+    motion.reset();
     Serial.println(F("ERROR,IMU_READ_FAILED"));
     reportStatus();
     return;
@@ -152,6 +158,12 @@ void loop() {
                         Config::GYRO_WEIGHT * sqrtf(gyroSquared);
     const float direction = Config::STROKE_DIRECTION *
       (sample.values[Config::PRIMARY_GYRO_AXIS + 3] - imu.gyroBias(Config::PRIMARY_GYRO_AXIS));
+    MotionState movement;
+    if (motion.update(score, sample.timestampMs, movement)) {
+      Serial.print(F("MOTION,1,"));
+      Serial.print(movement == MotionState::Still ? F("STILL,") : F("MOVING,"));
+      Serial.println(sample.timestampMs);
+    }
     BeatEvent beat;
     if (detector.update(score, direction, sample.timestampMs, beat)) {
       Serial.print(F("BEAT,"));

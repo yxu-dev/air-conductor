@@ -61,6 +61,31 @@ test('real audio retains pitch, releases notes and resumes its fractional tick',
   expect(results.passed).toBe(4);
 });
 
+test('Corona renders sustained audio, frozen rests and silent cleanup with real Tone', async ({ page }) => {
+  await page.goto('/tests/corona-browser.html');
+  await page.locator('#run').click();
+  await expect(page.locator('#results')).not.toHaveAttribute('data-status', 'running', { timeout: 30000 });
+  const results = JSON.parse(await page.locator('#results').textContent());
+  expect(results, results.error).toMatchObject({ passed: 7 });
+});
+
+test('Corona is opt-in, explains firmware support and stays inactive in Listen', async ({ page }) => {
+  await enterListen(page);
+  await page.locator('#open-preferences').click();
+  const toggle = page.getByLabel('Hold notes when my right arm rests');
+  await expect(toggle).not.toBeChecked();
+  await toggle.check();
+  await expect(page.locator('#corona-status')).toContainText('Upload the current Arduino sketch');
+  await setState(page, { motionSupported: true });
+  await expect(page.locator('#corona-status')).toContainText('Conduct mode');
+  await page.screenshot({ path: resolve(captures, 'corona-settings.png'), fullPage: true });
+  await page.locator('#preferences .window-close').click();
+  await page.locator('#play').click();
+  await expect(page.locator('#playback-status')).toHaveText('Playing');
+  expect(await page.evaluate(async () => (await import('/src/state.js')).state.coronaActive)).toBe(false);
+  expect(await page.evaluate(() => window.permissionAttempts)).toEqual({ camera: 0, serial: 0 });
+});
+
 test('English initialization opens silently with no camera or serial request', async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   await expect(page.locator('#settings')).toHaveAttribute('open', '');

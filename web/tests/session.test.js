@@ -47,6 +47,30 @@ test('failed calibration stays disabled and can retry', async () => {
   await session.disconnect();
 });
 
+test('motion capability, wrap, old firmware and detection epochs gate motion callbacks', async () => {
+  const { session, port } = setup();
+  const events = [];
+  session.onMotion = message => events.push(message.value);
+  await session.connect(); await until(() => session.state.serialPhase === 'connected');
+  await session.calibrate(); await session.setDetection(true);
+  port.feed('MOTION,1,MOVING,4294967200\n');
+  await new Promise(resolve => setTimeout(resolve, 5));
+  assert.deepEqual(events, []);
+  port.feed('CAPS,MOTION,1\nMOTION,1,MOVING,4294967200\nMOTION,1,STILL,20\n');
+  await until(() => events.length === 2);
+  port.feed('MOTION,1,MOVING,19\nMOTION,1,MOVING,20\nMOTION,1,STILL,21\n');
+  await new Promise(resolve => setTimeout(resolve, 5));
+  assert.deepEqual(events, ['MOVING', 'STILL']);
+  await session.setDetection(false);
+  assert.equal(session.state.motionState, 'unknown');
+  port.feed('MOTION,1,MOVING,30\n');
+  await new Promise(resolve => setTimeout(resolve, 5));
+  assert.equal(events.length, 2);
+  await session.disconnect();
+  assert.equal(session.state.motionSupported, false);
+  assert.equal(session.state.coronaArmed, false);
+});
+
 test('recalibration and BOOT clear tempo; stale beats outside active detection are ignored', async () => {
   const { session, port, setTime } = setup();
   await session.connect();
