@@ -20,6 +20,7 @@ const session = new ConductorSession({ state,
   onMotion: message => experience?.motion(message),
 });
 session.recordHostEvent('CONTROL', 'RESPONSE', { profile: state.controlResponse });
+session.recordMusicEvent('SOUND_PROFILE', { profile: state.soundProfile, tick: 0 });
 const control = new HandControl({ state, music,
   allowPlayback: () => state.performanceActive && !state.performanceBusy && state.experienceMode === 'conduct',
   onEvent: (kind, data) => session.recordVisionEvent(kind, data) });
@@ -76,6 +77,7 @@ for (const mode of ['conduct', 'manual']) view[`mode-${mode}`].addEventListener(
 view['tempo-source'].addEventListener('change', event => { music.setSource(event.target.value); update(); });
 view['control-response'].addEventListener('change', event => { session.setControlResponse(event.target.value); update(); });
 view['corona-enabled'].addEventListener('change', event => { experience.setCoronaEnabled(event.target.checked); });
+view['sound-profile'].addEventListener('change', event => { void action(() => music.setSoundProfile(event.target.value), 'musicError'); });
 view['manual-tempo'].addEventListener('input', event => { music.setManualBpm(Number(event.target.value)); update(); });
 view.volume.addEventListener('input', event => { control.setManualVolume(Number(event.target.value)); update(); });
 view['volume-source'].addEventListener('change', event => { control.setVolumeSource(event.target.value); update(); });

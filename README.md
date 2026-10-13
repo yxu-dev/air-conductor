@@ -31,7 +31,9 @@ Pause preserves position; the square End button stops detection and rewinds. Idl
 
 In **Settings → Control response**, **Responsive** (default) follows tempo and left-hand volume changes sooner; **Classic** applies stronger smoothing. Switching preserves playback position and remeasures the next strokes. The response setting is included in CSV exports.
 
-**Corona / Fermata** is optional and off by default. Enable **Settings → Hold notes when my right arm rests**. In Conduct mode with right-hand tempo, hold your right arm still after conducting for about half a second to freeze the score and sustain the current notes; move again to continue. Rests remain silent, and your left hand can still adjust volume. A fist or Pause silences the music and requires an open palm or Resume to continue. Turning Corona off during a hold resumes normal playback.
+**Settings → Sound palette** offers **Ensemble** (default), with warm synthesized strings, electric keys and subtle ambience, or **Classic**, the original two synth voices. Both play the same two MIDI tracks. You can switch during playback, pause or Corona without losing your position.
+
+**Corona / Fermata** is optional and off by default. Enable **Settings → Hold notes when my right arm rests**. After beginning to conduct with right-hand tempo, hold your right arm still for about half a second to freeze the score and sustain the current notes; move again to continue. Rests remain silent, and your left hand can still adjust volume. A fist or Pause silences the music and requires an open palm or Resume to continue. Turning Corona off during a hold resumes normal playback.
 
 **Visual atmosphere** offers Glacier and Iris palettes and reduced motion. System motion preferences are respected. The scene pauses behind open windows and loads separately; if WebGL is unavailable, a static view keeps music and hand controls available.
 

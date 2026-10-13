@@ -3,6 +3,7 @@ import { config } from './config.js';
 export function createState() { return {
   experienceMode: 'conduct',
   controlResponse: config.defaultResponseProfile,
+  soundProfile: config.defaultSoundProfile,
   coronaEnabled: false,
   coronaActive: false,
   coronaArmed: false,

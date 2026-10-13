@@ -22,7 +22,7 @@ function rms(buffer, from, to) {
 async function render(value, seconds, actions) {
   let player, backend;
   const buffer = await Tone.Offline(context => {
-    backend = new ToneBackend(value, { context });
+    backend = new ToneBackend(value, { context, soundProfile: 'classic' });
     player = new MusicPlayer({ score: value, backend });
     player.setTempo(60); player.play();
     actions(context, player, backend);
@@ -73,9 +73,12 @@ try {
     player.setVolume(-24); await wait(150); const soft = level();
     check(soft / loud > .3 && soft / loud < .7, 'Master volume did not control sustained sound');
     player.exitCorona(); await wait(400);
-    check(level() < .00001, 'Live resumed note did not release');
+    const releaseTail = level();
+    check(releaseTail < .001, `Live resumed note remained active: ${releaseTail}`);
+    await wait(250);
+    check(level() < .00001, `Live ambience failed to decay: ${level()}`);
     player.dispose(); analyser.dispose(); silent.dispose();
-    reports.push({ check: 'live lookahead note-off isolation, hold volume and resumed release', pass: true, loud, soft });
+    reports.push({ check: 'live lookahead note-off isolation, hold volume and resumed release', pass: true, loud, soft, releaseTail });
   }
   for (const action of ['pause', 'stop', 'dispose']) {
     const analyser = new Tone.Analyser({ context: liveContext, type: 'waveform', size: 2048 });

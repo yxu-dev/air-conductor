@@ -33,7 +33,7 @@ async function render(bpm, duration, { ramp = false, loop = false } = {}) {
   let player;
   const buffer = await Tone.Offline(context => {
     const score = makeScore(loop ? 1920 : 960);
-    const backend = new ToneBackend(score, { context });
+    const backend = new ToneBackend(score, { context, soundProfile: 'classic' });
     player = new MusicPlayer({ score, backend });
     player.setTempo(bpm);
     player.play();
@@ -64,7 +64,7 @@ try {
   let pausedTick, resumedTick, pausedPlayer;
   const resumed = await Tone.Offline(context => {
     const score = makeScore();
-    pausedPlayer = new MusicPlayer({ score, backend: new ToneBackend(score, { context }) });
+    pausedPlayer = new MusicPlayer({ score, backend: new ToneBackend(score, { context, soundProfile: 'classic' }) });
     pausedPlayer.setTempo(60); pausedPlayer.play();
     context.setTimeout(() => {
       pausedPlayer.pause(); pausedTick = pausedPlayer.snapshot().tick;

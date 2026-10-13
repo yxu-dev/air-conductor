@@ -321,7 +321,7 @@ test('gesture-to-music integration preserves pause/resume lifecycle and exports 
     createPlayer: () => ({ snapshot: () => ({ playbackState: state.playbackState, progress: .4, bar: 1, beat: 2, tick: 700 }),
       play: () => { state.playbackState = 'playing'; calls.push('play'); },
       pause: () => { state.playbackState = 'paused'; calls.push('pause'); },
-      setTempo() {}, setVolume() {}, stop() {}, dispose() {} }),
+      setTempo() {}, setVolume() {}, setSoundProfile() {}, stop() {}, dispose() {} }),
     onEvent: (k, d) => serial.recordMusicEvent(k, d) });
   await music.play();
   let now = 0;

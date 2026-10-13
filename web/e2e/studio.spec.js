@@ -69,6 +69,32 @@ test('Corona renders sustained audio, frozen rests and silent cleanup with real 
   expect(results, results.error).toMatchObject({ passed: 7 });
 });
 
+test('sound palettes retain pitch, distinct tracks, live switching and Corona sustain', async ({ page }) => {
+  await page.goto('/tests/sound-browser.html'); await page.locator('#run').click();
+  await expect(page.locator('#results')).not.toHaveAttribute('data-status', 'running', { timeout: 30000 });
+  const results = JSON.parse(await page.locator('#results').textContent());
+  expect(results, results.error).toMatchObject({ passed: 4 });
+});
+
+test('Ensemble is default and Classic can be selected while playing or paused', async ({ page }) => {
+  await enterListen(page); await page.locator('#play').click();
+  await expect.poll(() => page.locator('#music-progress').getAttribute('value').then(Number)).toBeGreaterThan(.015);
+  const before = await page.locator('#music-progress').getAttribute('value').then(Number);
+  await page.locator('#open-preferences').click();
+  await expect(page.getByLabel('Sound palette')).toHaveValue('ensemble');
+  await page.getByLabel('Sound palette').selectOption('classic');
+  await expect.poll(() => page.evaluate(async () => (await import('/src/state.js')).state.soundProfile)).toBe('classic');
+  await expect(page.locator('#playback-status')).toHaveText('Playing');
+  expect(await page.locator('#music-progress').getAttribute('value').then(Number)).toBeGreaterThan(before);
+  await page.screenshot({ path: resolve(captures, 'sound-settings.png'), fullPage: true });
+  await page.locator('#preferences .window-close').click(); await page.locator('#pause').click();
+  const paused = await page.locator('#music-progress').getAttribute('value');
+  await page.locator('#open-preferences').click(); await page.getByLabel('Sound palette').selectOption('ensemble');
+  await expect(page.locator('#playback-status')).toHaveText('Paused');
+  await expect(page.locator('#music-progress')).toHaveAttribute('value', paused);
+  expect(await page.evaluate(() => window.permissionAttempts)).toEqual({ camera: 0, serial: 0 });
+});
+
 test('Corona is opt-in, explains firmware support and stays inactive in Listen', async ({ page }) => {
   await enterListen(page);
   await page.locator('#open-preferences').click();

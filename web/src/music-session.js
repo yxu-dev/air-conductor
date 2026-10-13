@@ -1,4 +1,5 @@
 import { config, responseSettings } from './config.js';
+import { soundSettings } from './sound-profiles.js';
 
 export class MusicSession {
   constructor({ state, loadScore, unlock, createPlayer, onEvent = () => {} }) {
@@ -47,7 +48,10 @@ export class MusicSession {
       this.state.audioReady = true;
       const score = await this.load();
       if (this.disposed || operation !== this.operation) return;
-      if (!this.player) this.player = this.createPlayer(score);
+      if (!this.player) {
+        this.player = this.createPlayer(score);
+        this.player.setSoundProfile(this.state.soundProfile);
+      }
       this.syncTempo();
       this.player.setVolume(this.state.volumeDb);
       this.player.play();
@@ -99,6 +103,14 @@ export class MusicSession {
     this.state.tempoSource = source;
     this.onEvent('SOURCE', { source });
     this.syncTempo();
+  }
+
+  setSoundProfile(profile) {
+    soundSettings(profile);
+    if (profile === this.state.soundProfile) return;
+    this.player?.setSoundProfile(profile);
+    this.state.soundProfile = profile;
+    this.onEvent('SOUND_PROFILE', { profile, tick: this.player?.snapshot().tick ?? 0 });
   }
 
   setManualBpm(bpm) {

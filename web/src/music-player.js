@@ -1,5 +1,6 @@
 import { config } from './config.js';
 import { heldNotes } from './midi-score.js';
+import { soundSettings } from './sound-profiles.js';
 
 export class MusicPlayer {
   constructor({ score, backend }) {
@@ -70,6 +71,13 @@ export class MusicPlayer {
     // Disposing voices also cancels attacks already queued inside Tone's lookahead.
     this.backend.destroyVoices();
     this.backend.clearHold();
+    this.backend.clearEffects();
+  }
+
+  setSoundProfile(profile) {
+    soundSettings(profile);
+    if (this.disposed) throw new Error('The music player has been closed.');
+    this.backend.setSoundProfile(profile);
   }
 
   enterCorona() {

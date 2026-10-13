@@ -48,6 +48,8 @@ class FakeBackend {
   releaseAtLoop(time) { this.calls.push(['loop-release', time]); }
   mute(value, time) { this.calls.push(['mute', value, time]); }
   setVolume(db) { this.calls.push(['volume', db]); }
+  setSoundProfile(profile) { this.calls.push(['sound-profile', profile]); }
+  clearEffects() {}
   dispose() { this.calls.push(['dispose']); }
   fire(tick) { if (this.status === 'started') this.tick = tick; for (const event of this.events.values()) if (event.tick === tick) event.callback(this.time); }
 }
@@ -198,6 +200,31 @@ function setupSession(options = {}) {
     unlock: async () => { unlocks += 1; }, createPlayer: value => new MusicPlayer({ score: value, backend }), ...options });
   return { session, state, backend, unlocks: () => unlocks };
 }
+
+test('sound palette switches retain playing, paused and Corona position and are logged', async () => {
+  const events = [];
+  const { session, state, backend } = setupSession({ onEvent: (...event) => events.push(event) });
+  assert.equal(state.soundProfile, 'ensemble');
+  session.setSoundProfile('classic'); await session.play();
+  assert.equal(state.soundProfile, 'classic');
+  backend.tick = 650.75; backend.calls.length = 0;
+  session.setSoundProfile('ensemble'); session.tick();
+  assert.equal(backend.tick, 650.75);
+  assert.deepEqual(backend.calls, [['sound-profile', 'ensemble']]);
+  assert.equal(state.playbackState, 'playing');
+  session.enterCorona(); backend.calls.length = 0;
+  session.setSoundProfile('classic'); session.tick();
+  assert.equal(state.coronaActive, true); assert.equal(backend.tick, 650.75);
+  assert.deepEqual(backend.calls, [['sound-profile', 'classic']]);
+  session.pause(); backend.calls.length = 0;
+  session.setSoundProfile('ensemble'); session.tick();
+  assert.equal(state.playbackState, 'paused'); assert.equal(backend.tick, 650.75);
+  assert.deepEqual(backend.calls, [['sound-profile', 'ensemble']]);
+  assert.ok(events.some(([kind, data]) => kind === 'SOUND_PROFILE' && data.profile === 'classic' && data.tick === 650.75));
+  assert.throws(() => session.setSoundProfile('unknown'), /Unknown sound/);
+  assert.equal(state.soundProfile, 'ensemble');
+  session.dispose();
+});
 
 test('response switching preserves music position, uses the selected ramp and holds tempo while remeasuring', async () => {
   const { session: music, state, backend } = setupSession();

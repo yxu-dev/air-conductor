@@ -14,6 +14,7 @@ export const responseProfiles = Object.freeze({
 
 export const config = Object.freeze({
   defaultResponseProfile: 'responsive',
+  defaultSoundProfile: 'ensemble',
   ...responseProfiles.responsive,
   serialBaudRate: 115200,
   minBpm: 50,
