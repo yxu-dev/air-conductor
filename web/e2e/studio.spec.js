@@ -77,6 +77,7 @@ test('sound palettes retain pitch, distinct tracks, live switching and Corona su
 });
 
 test('Ensemble is default and Classic can be selected while playing or paused', async ({ page }) => {
+  await expect(page.locator('#music-info')).toHaveText('16 bars · Ensemble');
   await enterListen(page); await page.locator('#play').click();
   await expect.poll(() => page.locator('#music-progress').getAttribute('value').then(Number)).toBeGreaterThan(.015);
   const before = await page.locator('#music-progress').getAttribute('value').then(Number);
@@ -84,14 +85,64 @@ test('Ensemble is default and Classic can be selected while playing or paused', 
   await expect(page.getByLabel('Sound palette')).toHaveValue('ensemble');
   await page.getByLabel('Sound palette').selectOption('classic');
   await expect.poll(() => page.evaluate(async () => (await import('/src/state.js')).state.soundProfile)).toBe('classic');
+  await expect(page.locator('#music-info')).toHaveText('16 bars · Classic');
   await expect(page.locator('#playback-status')).toHaveText('Playing');
   expect(await page.locator('#music-progress').getAttribute('value').then(Number)).toBeGreaterThan(before);
   await page.screenshot({ path: resolve(captures, 'sound-settings.png'), fullPage: true });
   await page.locator('#preferences .window-close').click(); await page.locator('#pause').click();
   const paused = await page.locator('#music-progress').getAttribute('value');
   await page.locator('#open-preferences').click(); await page.getByLabel('Sound palette').selectOption('ensemble');
+  await expect(page.locator('#music-info')).toHaveText('16 bars · Ensemble');
   await expect(page.locator('#playback-status')).toHaveText('Paused');
   await expect(page.locator('#music-progress')).toHaveAttribute('value', paused);
+  expect(await page.evaluate(() => window.permissionAttempts)).toEqual({ camera: 0, serial: 0 });
+});
+
+test('paused and Corona instructions stay above wrapped gesture feedback at every viewport', async ({ page }) => {
+  await closeSetup(page);
+  // Freeze the live sessions; render synthetic presentation states without opening devices or audio.
+  await page.evaluate(async () => {
+    window.dispatchEvent(new Event('pagehide'));
+    const { createState } = await import('/src/state.js');
+    window.layoutState = { ...createState(), playbackState: 'paused', handTracked: true,
+      handStatus: 'tracking', gesture: 'None', gestureProgress: .5, scenePhase: 'fallback',
+      musicInfo: { title: 'Ode to Joy', bars: 16, tracks: 2 }, calibrationState: 'ready', serialPhase: 'connected',
+      cameraReady: true, leftHandBound: true };
+  });
+  const checkLayout = async (corona, gesture) => {
+    const boxes = await page.evaluate(async ({ corona, gesture }) => {
+      const { renderStatus } = await import('/src/visuals.js');
+      Object.assign(window.layoutState, { playbackState: corona ? 'playing' : 'paused', coronaActive: corona, gesture });
+      renderStatus(document.querySelector('#app'), window.layoutState);
+      return Object.fromEntries(['.stage', '.stage-center', '.stage-bottom', '.stage-hand', '.stage-gesture', '.stroke-counter', '.readouts']
+        .map(selector => { const r = document.querySelector(selector).getBoundingClientRect();
+          return [selector, { top: r.top, bottom: r.bottom, left: r.left, right: r.right, height: r.height }]; }));
+    }, { corona, gesture });
+    expect(boxes['.stage-center'].height).toBeGreaterThan(0);
+    expect(boxes['.stage-bottom'].top - boxes['.stage-center'].bottom).toBeGreaterThanOrEqual(12);
+    expect(boxes['.stage-bottom'].bottom).toBeLessThanOrEqual(boxes['.stage'].bottom);
+    expect(boxes['.readouts'].top).toBeGreaterThanOrEqual(boxes['.stage'].bottom);
+    const controls = ['.stage-hand', '.stage-gesture', '.stroke-counter'];
+    for (let i = 0; i < controls.length; ++i) for (let j = i + 1; j < controls.length; ++j) {
+      const a = boxes[controls[i]], b = boxes[controls[j]];
+      expect(a.right <= b.left || b.right <= a.left || a.bottom <= b.top || b.bottom <= a.top).toBe(true);
+    }
+    await expect(page.locator('#playback-status')).toHaveText(corona ? 'Corona' : 'Paused');
+    await expect(page.locator('#stage-description')).toHaveText(corona ? 'Move your right arm to continue.' : 'Continue exactly where you left off.');
+  };
+  for (const width of [320, 390, 640, 641, 768, 900, 1440]) {
+    await page.setViewportSize({ width, height: 600 });
+    for (const gesture of ['None', 'Open_Palm', 'Closed_Fist']) await checkLayout(false, gesture);
+    await checkLayout(true, 'None');
+  }
+  // Enlarged text recreates the multi-line feedback from the reported screenshot.
+  await page.addStyleTag({ content: '.stage-center h2, #stage-description, .stage-bottom { font-size: 28px; line-height: 1.5; }' });
+  for (const width of [390, 768, 1440]) {
+    await page.setViewportSize({ width, height: 600 });
+    await checkLayout(false, 'None');
+    await page.screenshot({ path: resolve(captures, `paused-layout-${width}.png`), fullPage: true });
+    await checkLayout(true, 'Open_Palm');
+  }
   expect(await page.evaluate(() => window.permissionAttempts)).toEqual({ camera: 0, serial: 0 });
 });
 

@@ -2,6 +2,7 @@ import { config } from './config.js';
 import { studioMarkup } from './studio-markup.js';
 import { gestureRule } from './hand-control.js';
 import { readiness } from './experience.js';
+import { soundSettings } from './sound-profiles.js';
 
 const views = new WeakMap();
 const text = (el, value) => { if (el.textContent !== String(value)) el.textContent = value; };
@@ -27,6 +28,7 @@ export function renderStatus(root, state, { supported = true, now = performance.
   const paused = state.playbackState === 'paused';
   const busy = state.performanceBusy || state.audioBusy;
   root.dataset.mode = state.experienceMode; root.dataset.playback = state.playbackState;
+  root.dataset.corona = String(state.coronaActive);
   root.dataset.motion = state.visualReducedMotion || state.systemReducedMotion ? 'reduced' : 'full';
   v.stage.dataset.theme = state.sceneTheme; v.stage.dataset.scene = state.scenePhase;
   v['scene-theme'].value = state.sceneTheme;
@@ -66,7 +68,7 @@ export function renderStatus(root, state, { supported = true, now = performance.
   text(v['tempo-status'], manual ? 'LISTEN MODE / YOUR OWN PACE' : state.detectionActive ? tempos[state.tempoStatus] : 'Downward strokes give the beat.');
   text(v['beat-count'], state.receivedBeatCount); text(v['hand-status'], manual ? 'Manual controls' : hands[state.handStatus]); v.stage.dataset.tracked = String(state.handTracked && !manual);
   text(v['music-title'], state.musicInfo?.title ?? config.midiTitle);
-  text(v['music-info'], state.musicInfo ? `${state.musicInfo.bars} bars · ${state.musicInfo.tracks} voices · on repeat` : state.musicLoadState === 'error' ? 'Score unavailable · retry below' : 'Loading the score…');
+  text(v['music-info'], state.musicInfo ? `${state.musicInfo.bars} bars · ${soundSettings(state.soundProfile).label}` : state.musicLoadState === 'error' ? 'Score unavailable · retry below' : 'Loading the score…');
   text(v['music-bpm'], state.musicBpm.toFixed(0)); text(v['follow-status'], follows[state.tempoFollowStatus]);
   v['manual-tempo'].disabled = state.tempoSource !== 'manual'; v['manual-tempo'].value = String(state.manualBpm); text(v['manual-tempo-value'], `${state.manualBpm.toFixed(0)} BPM`);
   text(v['pace-help'], state.tempoSource === 'manual' ? 'Slower ← → Faster' : 'Following your right hand · 50–180 BPM');
