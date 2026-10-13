@@ -85,6 +85,7 @@ export function renderStatus(root, state, { supported = true, now = performance.
   text(v['stage-gesture-label'], state.gesture === 'None' ? 'Fist to pause · palm to resume' : gestures[state.gesture]);
   v['stage-gesture-progress'].value = state.gestureProgress;
   v['tempo-source'].value = state.tempoSource; v['volume-source'].value = state.volumeSource; v['gesture-controls'].checked = state.gestureControlsEnabled;
+  v['control-response'].value = state.controlResponse;
   text(v['camera-stats'], state.cameraReady ? `${state.cameraFrames} frames processed · Last inference ${state.cameraInferenceMs?.toFixed(0) ?? '—'} ms` : 'Camera access is optional in Listen mode.');
   v.reset.disabled = busy; v.export.disabled = !state.eventLog.length;
   v.detect.disabled = !connected || state.actionPending || state.calibrationState !== 'ready' || state.performanceActive || busy; text(v.detect, state.detectionActive ? 'Stop detection' : 'Start detection');

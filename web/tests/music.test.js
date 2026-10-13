@@ -82,7 +82,7 @@ test('musical note-offs precede adjacent attacks and changing BPM never restarts
   backend.calls.length = 0;
   player.setTempo(160);
   assert.equal(backend.tick, 960);
-  assert.deepEqual(backend.calls, [['tempo', 160, .2]]);
+  assert.deepEqual(backend.calls, [['tempo', 160, .08]]);
   assert.equal(player.snapshot().bar, 1);
   assert.equal(player.snapshot().beat, 3);
   player.dispose();
@@ -126,6 +126,39 @@ function setupSession(options = {}) {
     unlock: async () => { unlocks += 1; }, createPlayer: value => new MusicPlayer({ score: value, backend }), ...options });
   return { session, state, backend, unlocks: () => unlocks };
 }
+
+test('response switching preserves music position, uses the selected ramp and holds tempo while remeasuring', async () => {
+  const { session: music, state, backend } = setupSession();
+  const conductor = new ConductorSession({ state, serial: new FakeSerial(new FakePort()), clock: () => 6000 });
+  Object.assign(state, { serialPhase: 'connected', calibrationState: 'ready', detectionActive: true,
+    receivedBeatCount: 13, measuredBpm: 120, tempoStatus: 'tracking', tempoIntervals: 3 });
+  for (let at = 0; at <= 6000; at += 500) conductor.tempo.add(at, at);
+  music.setSource('conducting');
+  await music.play(); backend.tick = 700.5; backend.calls.length = 0;
+  conductor.setControlResponse('classic'); music.tick();
+  assert.equal(state.musicBpm, 120);
+  assert.equal(state.tempoFollowStatus, 'measuring');
+  assert.equal(state.receivedBeatCount, 13);
+  assert.equal(state.detectionActive, true);
+  assert.equal(conductor.tempo.anchor, null);
+  assert.deepEqual(backend.calls, []);
+  assert.equal(backend.tick, 700.5);
+  assert.ok(conductor.exportCsv().includes('classic'));
+  Object.assign(state, { measuredBpm: 90, tempoStatus: 'tracking', tempoIntervals: 3 });
+  music.tick();
+  assert.deepEqual(backend.calls, [['tempo', 90, .2]]);
+  conductor.setControlResponse('responsive'); music.tick();
+  Object.assign(state, { measuredBpm: 100, tempoStatus: 'tracking', tempoIntervals: 3 });
+  music.tick();
+  assert.deepEqual(backend.calls.at(-1), ['tempo', 100, .08]);
+  music.pause(); const paused = backend.tick;
+  conductor.setControlResponse('classic'); music.tick();
+  assert.equal(state.playbackState, 'paused');
+  assert.equal(backend.tick, paused);
+  assert.throws(() => conductor.setControlResponse('invalid'), /Unknown/);
+  assert.equal(state.controlResponse, 'classic');
+  music.dispose();
+});
 
 test('preloading is silent; manual/follow sources are independent and idle/disconnect hold tempo', async () => {
   const { session, state, backend, unlocks } = setupSession();

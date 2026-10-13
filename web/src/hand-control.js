@@ -1,4 +1,4 @@
-import { config } from './config.js';
+import { config, responseSettings } from './config.js';
 
 const palmIds = [0, 5, 9, 13, 17];
 const clamp = (x, lo, hi) => Math.min(hi, Math.max(lo, x));
@@ -111,14 +111,15 @@ export class HandControl {
     const dt = this.lastLeft === null ? 0 : now - this.lastLeft;
     const y = palmIds.reduce((sum, id) => sum + hand.landmarks[id].y, 0) / palmIds.length;
     const x = palmIds.reduce((sum, id) => sum + hand.landmarks[id].x, 0) / palmIds.length;
-    const alpha = dt > 0 ? 1 - Math.exp(-dt / config.palmSmoothingMs) : 1;
+    const response = responseSettings(this.state.controlResponse);
+    const alpha = dt > 0 ? 1 - Math.exp(-dt / response.palmSmoothingMs) : 1;
     this.smoothed = this.smoothed === null ? y : this.smoothed + alpha * (y - this.smoothed);
     this.lastLeft = now;
     this.setHandStatus('tracking');
     Object.assign(this.state, { handTracked: true,
       handednessConfidence: hand.confidence, palmX: x, palmY: this.smoothed });
     if (this.state.volumeSource === 'left-hand' && this.state.playbackState !== 'paused' &&
-        (this.lastVolume === null || now - this.lastVolume >= 100)) {
+        (this.lastVolume === null || now - this.lastVolume >= response.volumeUpdateMs)) {
       const target = volumeForHeight(this.smoothed);
       if (Math.abs(target - this.state.volumeDb) >= .25) this.music.setVolume(target);
       this.lastVolume = now;

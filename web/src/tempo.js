@@ -1,4 +1,11 @@
-import { config } from './config.js';
+import { config, responseSettings } from './config.js';
+
+export function tempoOptions(profile) {
+  const settings = responseSettings(profile);
+  return { window: settings.tempoWindow, alpha: settings.tempoSmoothing,
+    changeIntervals: settings.tempoChangeIntervals, tolerance: settings.tempoTolerance,
+    consecutiveChanges: settings.tempoConsecutiveChanges };
+}
 
 export function median(values) {
   const sorted = [...values].sort((a, b) => a - b);
@@ -9,8 +16,7 @@ export function median(values) {
 export class TempoEstimator {
   constructor(options = {}) {
     this.options = { minBpm: config.minBpm, maxBpm: config.maxBpm,
-      window: config.tempoWindow, alpha: config.tempoSmoothing,
-      changeIntervals: config.tempoChangeIntervals, tolerance: config.tempoTolerance,
+      ...tempoOptions(),
       idleMs: config.beatIdleMs, ...options };
     this.reset();
   }
@@ -75,9 +81,15 @@ export class TempoEstimator {
     this.evidence = this.evidence.slice(-this.options.window);
     if (baseline !== null && Math.abs(dt / baseline - 1) > this.options.tolerance) {
       const direction = Math.sign(dt - baseline);
-      this.pending = this.evidence.filter(interval =>
-        Math.sign(interval - baseline) === direction &&
-        Math.abs(interval / baseline - 1) > this.options.tolerance);
+      if (this.options.consecutiveChanges) {
+        // Two isolated missed beats must not accumulate into a slowdown.
+        if (this.pending.length && Math.sign(this.pending[0] - baseline) !== direction) this.pending = [];
+        this.pending.push(dt);
+      } else {
+        this.pending = this.evidence.filter(interval =>
+          Math.sign(interval - baseline) === direction &&
+          Math.abs(interval / baseline - 1) > this.options.tolerance);
+      }
       if (this.pending.length < this.options.changeIntervals) {
         this.status = 'verifying';
         return { accepted: false, reason: 'tempo-candidate', ...this.snapshot(receiptMs) };

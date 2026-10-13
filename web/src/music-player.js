@@ -67,11 +67,11 @@ export class MusicPlayer {
     this.backend.destroyVoices();
   }
 
-  setTempo(bpm) {
+  setTempo(bpm, rampSeconds = config.tempoRampSeconds) {
     if (!Number.isFinite(bpm)) throw new Error('Tempo must be a finite number.');
     const value = Math.min(config.maxBpm, Math.max(config.minBpm, bpm));
     const parameter = this.backend.transport.bpm;
-    if (this.state === 'playing') parameter.rampTo(value, config.tempoRampSeconds);
+    if (this.state === 'playing') parameter.rampTo(value, rampSeconds);
     else parameter.value = value;
     this.tempo = value;
     return value;

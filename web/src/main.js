@@ -18,6 +18,7 @@ const music = createMusicSession(state, { onEvent: (kind, data) => session.recor
 const session = new ConductorSession({ state,
   onBeat: beat => { music.tick(); if (view) pulseBeat(view); stage?.pulse(beat.intensity); },
 });
+session.recordHostEvent('CONTROL', 'RESPONSE', { profile: state.controlResponse });
 const control = new HandControl({ state, music,
   allowPlayback: () => state.performanceActive && !state.performanceBusy && state.experienceMode === 'conduct',
   onEvent: (kind, data) => session.recordVisionEvent(kind, data) });
@@ -72,6 +73,7 @@ view.stop.addEventListener('click', () => { void action(() => experience.end(), 
 view.reset.addEventListener('click', () => { void action(() => experience.reset(), 'performanceError'); });
 for (const mode of ['conduct', 'manual']) view[`mode-${mode}`].addEventListener('click', () => { experience.setMode(mode); });
 view['tempo-source'].addEventListener('change', event => { music.setSource(event.target.value); update(); });
+view['control-response'].addEventListener('change', event => { session.setControlResponse(event.target.value); update(); });
 view['manual-tempo'].addEventListener('input', event => { music.setManualBpm(Number(event.target.value)); update(); });
 view.volume.addEventListener('input', event => { control.setManualVolume(Number(event.target.value)); update(); });
 view['volume-source'].addEventListener('change', event => { control.setVolumeSource(event.target.value); update(); });

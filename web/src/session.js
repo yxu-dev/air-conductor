@@ -1,6 +1,6 @@
 import { config } from './config.js';
 import { SerialConnection } from './serial.js';
-import { TempoEstimator } from './tempo.js';
+import { TempoEstimator, tempoOptions } from './tempo.js';
 import { createState } from './state.js';
 
 const errorText = {
@@ -17,7 +17,7 @@ export class ConductorSession {
     onChange = () => {}, onBeat = () => {}, startupMs = config.serialStartupMs,
     preparationMs = config.calibrationPreparationMs } = {}) {
     Object.assign(this, { state, clock, onChange, onBeat, startupMs, preparationMs });
-    this.tempo = new TempoEstimator();
+    this.tempo = new TempoEstimator(tempoOptions(state.controlResponse));
     this.pending = null;
     this.epoch = 0;
     this.timers = new Set();
@@ -65,6 +65,18 @@ export class ConductorSession {
     this.tempo.reset();
     Object.assign(this.state, { measuredBpm: null, tempoStatus: 'waiting', tempoIntervals: 0,
       lastBeatReceivedAt: null, lastBeatIntensity: 0 });
+  }
+
+  setControlResponse(profile) {
+    const options = tempoOptions(profile);
+    if (profile === this.state.controlResponse) return;
+    this.state.controlResponse = profile;
+    Object.assign(this.tempo.options, options);
+    // Keep the current tempo and transport position; remeasure with a fresh window.
+    this.tempo.reset({ holdBpm: true });
+    Object.assign(this.state, { measuredBpm: this.tempo.bpm, tempoStatus: 'warming', tempoIntervals: 0 });
+    this.recordHostEvent('CONTROL', 'RESPONSE', { profile });
+    this.onChange();
   }
 
   failPending(error) {

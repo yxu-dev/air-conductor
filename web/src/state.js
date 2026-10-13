@@ -2,6 +2,7 @@ import { config } from './config.js';
 
 export function createState() { return {
   experienceMode: 'conduct',
+  controlResponse: config.defaultResponseProfile,
   performanceActive: false,
   performanceBusy: false,
   performanceError: null,

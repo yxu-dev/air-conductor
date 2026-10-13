@@ -30,6 +30,37 @@ async function enterListen(page) {
 }
 async function setState(page, data) { await page.evaluate(async data => Object.assign((await import('/src/state.js')).state, data), data); }
 
+test('response controls switch during playback and pause without restarting or requesting devices', async ({ page }) => {
+  await enterListen(page);
+  await page.locator('#play').click();
+  await expect(page.locator('#playback-status')).toHaveText('Playing');
+  await expect.poll(() => page.locator('#music-progress').getAttribute('value').then(Number)).toBeGreaterThan(.015);
+  await page.locator('#pause').click();
+  const position = await page.locator('#music-progress').getAttribute('value');
+  await page.locator('#open-preferences').click();
+  await expect(page.getByLabel('Control response')).toHaveValue('responsive');
+  await page.getByLabel('Control response').selectOption('classic');
+  await expect.poll(() => page.evaluate(async () => (await import('/src/state.js')).state.controlResponse)).toBe('classic');
+  await expect(page.locator('#playback-status')).toHaveText('Paused');
+  await expect(page.locator('#music-progress')).toHaveAttribute('value', position);
+  await page.screenshot({ path: resolve(captures, 'response-settings.png'), fullPage: true });
+  await page.locator('#preferences .window-close').click();
+  await page.locator('#play').click();
+  await expect.poll(() => page.locator('#music-progress').getAttribute('value').then(Number)).toBeGreaterThan(Number(position));
+  await page.locator('#open-preferences').click();
+  await page.getByLabel('Control response').selectOption('responsive');
+  await expect(page.locator('#playback-status')).toHaveText('Playing');
+  expect(await page.locator('#music-progress').getAttribute('value').then(Number)).toBeGreaterThan(Number(position));
+  expect(await page.evaluate(() => window.permissionAttempts)).toEqual({ camera: 0, serial: 0 });
+});
+
+test('real audio retains pitch, releases notes and resumes its fractional tick', async ({ page }) => {
+  await page.goto('/tests/audio-browser.html');
+  await expect(page.locator('#results')).toHaveAttribute('data-status', 'passed', { timeout: 30000 });
+  const results = JSON.parse(await page.locator('#results').textContent());
+  expect(results.passed).toBe(4);
+});
+
 test('English initialization opens silently with no camera or serial request', async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   await expect(page.locator('#settings')).toHaveAttribute('open', '');

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { TempoEstimator } from '../src/tempo.js';
+import { TempoEstimator, tempoOptions } from '../src/tempo.js';
 import { readFileSync } from 'node:fs';
 
 function seeded(bpm) {
@@ -32,6 +32,50 @@ test('one missed beat does not halve the tempo', () => {
   estimator.add(at + 1500, at + 1500);
   assert.equal(estimator.bpm, 120);
   assert.equal(estimator.pending.length, 0);
+});
+
+test('isolated missed beats and opposite candidates cannot confirm a responsive tempo change', () => {
+  const { estimator, at } = seeded(120);
+  let now = at;
+  for (const interval of [1000, 500, 1000, 500, 1000, 350, 500]) {
+    now += interval;
+    estimator.add(now, now);
+    assert.equal(estimator.bpm, 120);
+  }
+});
+
+for (const [from, to] of [[60, 120], [120, 60], [90, 150], [120, 80], [80, 120]]) {
+  test(`responsive follows ${from} to ${to} sooner than classic without changing on one candidate`, t => {
+    const measurements = {};
+    for (const profile of ['classic', 'responsive']) {
+      const estimator = new TempoEstimator(tempoOptions(profile));
+      let now = 0;
+      for (let i = 0; i <= 12; i++) { now = Math.round(i * 60000 / from); estimator.add(now, now); }
+      const baseline = estimator.bpm;
+      for (let stroke = 1; stroke <= 16; stroke++) {
+        now += Math.round(60000 / to);
+        estimator.add(now, now);
+        if (stroke === 1) assert.equal(estimator.bpm, baseline);
+        if (Math.abs(estimator.bpm - to) < 2 && !measurements[profile]) measurements[profile] = stroke;
+      }
+    }
+    assert.ok(measurements.responsive <= 5, JSON.stringify(measurements));
+    assert.ok(measurements.responsive < measurements.classic, JSON.stringify(measurements));
+    t.diagnostic(`Synthetic step, within 2 BPM: ${JSON.stringify(measurements)} strokes; interval ${Math.round(60000 / to)} ms`);
+  });
+}
+
+test('responsive steady timing variation stays bounded without half- or double-tempo jumps', () => {
+  for (const bpm of [60, 90, 120, 150]) {
+    const estimator = new TempoEstimator();
+    let now = 0;
+    estimator.add(now, now);
+    for (let i = 0; i < 40; i++) {
+      now += Math.round(60000 / bpm * [1, .96, 1.06, .98][i % 4]);
+      estimator.add(now, now);
+      if (estimator.bpm !== null) assert.ok(Math.abs(estimator.bpm / bpm - 1) < .07);
+    }
+  }
 });
 
 for (const [from, to] of [[60, 120], [120, 60], [90, 150]]) {

@@ -1,16 +1,27 @@
+export const responseProfiles = Object.freeze({
+  classic: Object.freeze({
+    tempoWindow: 5, tempoSmoothing: 0.35, tempoChangeIntervals: 3,
+    tempoTolerance: 0.25, tempoConsecutiveChanges: false, tempoRampSeconds: 0.2,
+    palmSmoothingMs: 220, volumeUpdateMs: 100,
+  }),
+  responsive: Object.freeze({
+    tempoWindow: 3, tempoSmoothing: 0.65, tempoChangeIntervals: 2,
+    tempoTolerance: 0.20, tempoConsecutiveChanges: true, tempoRampSeconds: 0.08,
+    // Apply each fresh inference frame (at most 20 FPS), keeping the dB deadzone.
+    palmSmoothingMs: 120, volumeUpdateMs: 0,
+  }),
+});
+
 export const config = Object.freeze({
+  defaultResponseProfile: 'responsive',
+  ...responseProfiles.responsive,
   serialBaudRate: 115200,
   minBpm: 50,
   maxBpm: 180,
   defaultBpm: 100,
-  tempoWindow: 5,
-  tempoSmoothing: 0.35,
-  tempoChangeIntervals: 3,
-  tempoTolerance: 0.25,
   beatIdleMs: 2500,
   serialStartupMs: 2000,
   calibrationPreparationMs: 5000,
-  tempoRampSeconds: 0.2,
   defaultVolumeDb: -18,
   minVolumeDb: -36,
   maxVolumeDb: 0,
@@ -23,7 +34,6 @@ export const config = Object.freeze({
   visionMaxGapMs: 250,
   handLostMs: 500,
   visionFps: 20,
-  palmSmoothingMs: 220,
   cameraTop: 0.2,
   cameraBottom: 0.8,
   gestureMaxVolumeDb: -3,
@@ -34,3 +44,8 @@ export const config = Object.freeze({
   gestureModelUrl: '/models/gesture_recognizer.task',
   visionWasmUrl: '/mediapipe/wasm',
 });
+
+export function responseSettings(name = config.defaultResponseProfile) {
+  if (!Object.hasOwn(responseProfiles, name)) throw new Error('Unknown control response.');
+  return responseProfiles[name];
+}

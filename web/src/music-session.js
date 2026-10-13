@@ -1,4 +1,4 @@
-import { config } from './config.js';
+import { config, responseSettings } from './config.js';
 
 export class MusicSession {
   constructor({ state, loadScore, unlock, createPlayer, onEvent = () => {} }) {
@@ -110,7 +110,7 @@ export class MusicSession {
     if (Math.abs(target - state.musicBpm) >= .05 || (this.player && this.appliedBpm === undefined)) {
       state.musicBpm = target;
       state.bpm = target;
-      this.player?.setTempo(target);
+      this.player?.setTempo(target, responseSettings(this.state.controlResponse).tempoRampSeconds);
       if (this.player) this.appliedBpm = target;
       this.onEvent('TEMPO', { source: state.tempoSource, bpm: target });
     }

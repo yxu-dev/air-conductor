@@ -15,9 +15,9 @@ function result(...hands) {
     handedness: hands.map(h => [{ categoryName: h.label, score: h.score }]),
     gestures: hands.map(h => [{ categoryName: h.gesture, score: .95 }]) };
 }
-function fixture() {
+function fixture(profile = config.defaultResponseProfile) {
   const state = createState();
-  Object.assign(state, { cameraReady: true, audioReady: true, playbackState: 'playing' });
+  Object.assign(state, { cameraReady: true, audioReady: true, playbackState: 'playing', controlResponse: profile });
   const calls = [], events = [];
   let now = 0;
   const music = { setVolume: db => { state.volumeDb = db; calls.push(['volume', db]); },
@@ -90,6 +90,31 @@ test('height mapping clamps endpoints, smooths motion and restores manual volume
   assert.ok(f.state.volumeDb > -3.3);
   f.control.setVolumeSource('manual');
   assert.equal(f.state.volumeDb, -22);
+});
+
+test('responsive volume reaches a new height sooner at 20 FPS while retaining its deadzone and binding', t => {
+  const settled = {};
+  for (const profile of ['classic', 'responsive']) {
+    const f = fixture(profile); f.bind(); f.control.setVolumeSource('left-hand');
+    f.frame(result(hand('Left', .8)), 800);
+    for (let t = 850; t <= 1800; t += 50) {
+      f.frame(result(hand('Left', .2)), t);
+      if (f.state.volumeDb >= -5.7 && !settled[profile]) settled[profile] = t - 800;
+    }
+    // Start the jitter check at the settled target rather than the step's tail.
+    f.state.volumeDb = volumeForHeight(.2);
+    const count = f.calls.length;
+    f.state.controlResponse = profile === 'classic' ? 'responsive' : 'classic';
+    for (let t = 1850; t <= 2350; t += 50) f.frame(result(hand('Left', t % 100 ? .201 : .199)), t);
+    assert.equal(f.calls.length, count, 'small stationary jitter must remain inside the volume deadzone');
+    assert.equal(f.state.leftHandBound, true);
+    assert.equal(f.state.handTracked, true);
+    assert.equal(f.state.playbackState, 'playing');
+  }
+  assert.ok(settled.responsive <= 350, JSON.stringify(settled));
+  assert.ok(settled.classic >= 500, JSON.stringify(settled));
+  assert.ok(settled.responsive < settled.classic);
+  t.diagnostic(`Synthetic height step at 20 FPS, 90% target volume: ${JSON.stringify(settled)} ms (before audio ramp)`);
 });
 
 test('left fist/open require consecutive observations and pause/resume only once', async () => {

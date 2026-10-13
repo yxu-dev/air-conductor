@@ -29,6 +29,8 @@ The setup window opens when you arrive. Choose **Listen** for music with sliders
 
 Pause preserves position; the square End button stops detection and rewinds. Idle strokes retain tempo. Losing the left hand holds volume; restarting the camera requires confirmation again. **Devices** reopens setup; **Reset devices** ends playback and releases both connections. **Settings** contains source overrides, gesture controls, CSV export and optional diagnostics. Closing a window keeps your session running. Opening the page never requests device access or starts sound automatically.
 
+In **Settings → Control response**, **Responsive** (default) follows tempo and left-hand volume changes sooner; **Classic** applies stronger smoothing. Switching preserves playback position and remeasures the next strokes. The response setting is included in CSV exports.
+
 **Visual atmosphere** offers Glacier and Iris palettes and reduced motion. System motion preferences are respected. The scene pauses behind open windows and loads separately; if WebGL is unavailable, a static view keeps music and hand controls available.
 
 ## Hardware
