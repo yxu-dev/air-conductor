@@ -37,13 +37,16 @@ try {
   await page.waitForFunction(() => document.querySelector('#music-progress').value > .03);
   await page.locator('#open-preferences').click();
   assert.equal(await page.locator('#sound-profile').inputValue(), 'ensemble');
-  const beforeSound = await page.locator('#music-progress').evaluate(p => p.value);
-  await page.locator('#sound-profile').selectOption('classic');
-  await page.waitForFunction(() => document.querySelector('#sound-profile').value === 'classic');
-  assert.equal(await page.locator('#playback-status').textContent(), 'Playing');
-  assert.ok(await page.locator('#music-progress').evaluate(p => p.value) >= beforeSound);
-  await page.locator('#sound-profile').selectOption('ensemble');
-  reports.push({ check: 'built Ensemble default and Classic alternative switch without restarting playback', pass: true });
+  assert.equal(await page.locator('#sound-profile option').count(), 5);
+  for (const [id, label] of [['chamber', 'Chamber Strings'], ['woodwinds', 'Woodwinds'], ['keys', 'Soft Keys'], ['classic', 'Classic'], ['ensemble', 'Ensemble']]) {
+    const beforeSound = await page.locator('#music-progress').evaluate(p => p.value);
+    await page.locator('#sound-profile').selectOption(id);
+    await page.waitForFunction(label => document.querySelector('#music-info').textContent.includes(label), label);
+    await page.waitForTimeout(150);
+    assert.equal(await page.locator('#playback-status').textContent(), 'Playing');
+    assert.ok(await page.locator('#music-progress').evaluate(p => p.value) >= beforeSound);
+  }
+  reports.push({ check: 'built five-palette selector switches real synths without restarting playback', pass: true });
   await page.locator('#scene-theme').selectOption('nocturne');
   await page.waitForFunction(() => document.querySelector('#motion-canvas').dataset.sceneTheme === 'nocturne');
   await page.locator('#reduce-motion').check();

@@ -98,6 +98,39 @@ test('Ensemble is default and Classic can be selected while playing or paused', 
   expect(await page.evaluate(() => window.permissionAttempts)).toEqual({ camera: 0, serial: 0 });
 });
 
+test('all five sound palettes render real MIDI, transfer queued notes and clean up silent states', async ({ page }) => {
+  test.setTimeout(150000);
+  await page.goto('/tests/palettes-browser.html'); await page.locator('#run').click();
+  await expect(page.locator('#results')).not.toHaveAttribute('data-status', 'running', { timeout: 120000 });
+  const results = JSON.parse(await page.locator('#results').textContent());
+  await writeFile(resolve(captures, 'five-palette-audio.json'), JSON.stringify(results, null, 2) + '\n');
+  expect(results, results.error).toMatchObject({ passed: 6 });
+});
+
+test('Settings lists five sound palettes and rapid selection keeps playing and paused positions', async ({ page }) => {
+  await enterListen(page); await page.locator('#open-preferences').click();
+  await expect(page.locator('#sound-profile option')).toHaveCount(5);
+  await expect(page.getByLabel('Sound palette')).toHaveValue('ensemble');
+  await page.getByLabel('Sound palette').selectOption('chamber');
+  await expect(page.locator('#sound-description')).toContainText('violin-like');
+  await page.keyboard.press('Escape'); await page.locator('#play').click();
+  await expect.poll(() => page.locator('#music-progress').evaluate(p => p.value)).toBeGreaterThan(.02);
+  const before = await page.locator('#music-progress').evaluate(p => p.value);
+  await page.locator('#open-preferences').click();
+  await page.evaluate(() => { const select = document.querySelector('#sound-profile'); for (const id of ['woodwinds', 'keys', 'classic', 'chamber', 'keys']) { select.value = id; select.dispatchEvent(new Event('change')); } });
+  await expect(page.locator('#music-info')).toHaveText('16 bars · Soft Keys');
+  await expect(page.locator('#playback-status')).toHaveText('Playing');
+  expect(await page.locator('#music-progress').evaluate(p => p.value)).toBeGreaterThan(before);
+  await page.screenshot({ path: resolve(captures, 'five-palettes-settings.png'), fullPage: true });
+  await page.keyboard.press('Escape'); await page.locator('#pause').click();
+  const paused = await page.locator('#music-progress').getAttribute('value');
+  await page.locator('#open-preferences').click(); await page.getByLabel('Sound palette').selectOption('woodwinds');
+  await expect(page.locator('#music-info')).toHaveText('16 bars · Woodwinds');
+  await expect(page.locator('#playback-status')).toHaveText('Paused');
+  await expect(page.locator('#music-progress')).toHaveAttribute('value', paused);
+  expect(await page.evaluate(() => window.permissionAttempts)).toEqual({ camera: 0, serial: 0 });
+});
+
 test('paused and Corona instructions stay above wrapped gesture feedback at every viewport', async ({ page }) => {
   await closeSetup(page);
   // Freeze the live sessions; render synthetic presentation states without opening devices or audio.

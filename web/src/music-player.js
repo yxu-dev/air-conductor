@@ -77,7 +77,10 @@ export class MusicPlayer {
   setSoundProfile(profile) {
     soundSettings(profile);
     if (this.disposed) throw new Error('The music player has been closed.');
-    this.backend.setSoundProfile(profile);
+    const tick = this.snapshot().tick;
+    const mode = this.coronaActive ? 'corona' : this.state;
+    const notes = mode === 'corona' ? this.score.notes.filter(note => note.startTick <= tick && note.endTick > tick) : heldNotes(this.score, tick);
+    return this.backend.setSoundProfile(profile, { mode, tick, notes });
   }
 
   enterCorona() {

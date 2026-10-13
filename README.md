@@ -31,7 +31,7 @@ Pause preserves position; the square End button stops detection and rewinds. Idl
 
 In **Settings → Control response**, **Responsive** (default) follows tempo and left-hand volume changes sooner; **Classic** applies stronger smoothing. Switching preserves playback position and remeasures the next strokes. The response setting is included in CSV exports.
 
-**Settings → Sound palette** offers **Ensemble** (default), with warm synthesized strings, electric keys and subtle ambience, or **Classic**, the original two synth voices. Both play the same two MIDI tracks. You can switch during playback, pause or Corona without losing your position.
+**Settings → Sound palette** offers **Ensemble** (default), **Chamber Strings**, **Woodwinds**, **Soft Keys**, and **Classic** (the original synth voices). All five are synthesized locally with Tone.js; the instrument-like palettes use no recordings or downloaded samples. They play the same two MIDI tracks. Switch during playback, pause or Corona while keeping your position; new palettes add subtle, repeatable musical dynamics. Corona sustains each palette’s current tones, including Soft Keys, until you move again.
 
 **Corona / Fermata** is optional and off by default. Enable **Settings → Hold notes when my right arm rests**. After beginning to conduct with right-hand tempo, hold your right arm still for about half a second to freeze the score and sustain the current notes; move again to continue. Rests remain silent, and your left hand can still adjust volume. A fist or Pause silences the music and requires an open palm or Resume to continue. Turning Corona off during a hold resumes normal playback.
 

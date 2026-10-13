@@ -88,7 +88,9 @@ export function renderStatus(root, state, { supported = true, now = performance.
   v['stage-gesture-progress'].value = state.gestureProgress;
   v['tempo-source'].value = state.tempoSource; v['volume-source'].value = state.volumeSource; v['gesture-controls'].checked = state.gestureControlsEnabled;
   v['control-response'].value = state.controlResponse;
-  v['sound-profile'].value = state.soundProfile;
+  v['sound-profile'].value = state.pendingSoundProfile ?? state.soundProfile;
+  text(v['sound-description'], state.pendingSoundProfile && state.pendingSoundProfile !== state.soundProfile
+    ? `Changing to ${soundSettings(state.pendingSoundProfile).label}…` : soundSettings(state.soundProfile).description);
   v['corona-enabled'].checked = state.coronaEnabled;
   text(v['corona-status'], !state.coronaEnabled ? 'Off. Music continues at your last tempo.' : !state.motionSupported ? 'Motion support unavailable. Upload the current Arduino sketch, then reconnect.' : manual || state.tempoSource !== 'conducting' ? 'Available with right-hand tempo in Conduct mode.' : state.coronaActive ? 'Holding the score. Move your right arm to continue.' : state.coronaArmed ? 'Ready to hold when your right arm rests.' : 'Start conducting to arm the hold.');
   if (state.coronaActive) {

@@ -107,10 +107,38 @@ export class MusicSession {
 
   setSoundProfile(profile) {
     soundSettings(profile);
-    if (profile === this.state.soundProfile) return;
-    this.player?.setSoundProfile(profile);
-    this.state.soundProfile = profile;
-    this.onEvent('SOUND_PROFILE', { profile, tick: this.player?.snapshot().tick ?? 0 });
+    if (this.disposed) throw new Error('The music session has been closed.');
+    this.requestedSoundProfile = profile;
+    this.state.pendingSoundProfile = profile;
+    // Coalesce rapid choices while one fade is in progress. No extra banks pile up.
+    if (!this.soundChanging) this.soundChanging = Promise.resolve().then(() => this.drainSoundProfiles());
+    return this.soundChanging;
+  }
+
+  async drainSoundProfiles() {
+    try {
+      while (!this.disposed && this.requestedSoundProfile) {
+        const to = this.requestedSoundProfile; this.requestedSoundProfile = null;
+        if (to === this.state.soundProfile) continue;
+        const from = this.state.soundProfile;
+        const mode = this.state.coronaActive ? 'corona' : this.state.playbackState;
+        const tick = this.player?.snapshot().tick ?? 0;
+        this.onEvent('SOUND_PROFILE_REQUEST', { from, to, mode, tick });
+        try {
+          const finished = this.player?.setSoundProfile(to);
+          this.state.soundProfile = to;
+          this.state.musicError = null;
+          this.onEvent('SOUND_PROFILE', { profile: to, from, to, mode, tick, success: true });
+          await finished;
+        } catch (error) {
+          this.state.musicError = `Could not change sound palette: ${error.message}`;
+          this.onEvent('SOUND_PROFILE_FAILED', { from, to, mode, tick, success: false, error: error.message });
+          if (!this.requestedSoundProfile) throw error;
+        }
+      }
+    } finally {
+      this.state.pendingSoundProfile = null; this.soundChanging = null;
+    }
   }
 
   setManualBpm(bpm) {

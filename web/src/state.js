@@ -4,6 +4,7 @@ export function createState() { return {
   experienceMode: 'conduct',
   controlResponse: config.defaultResponseProfile,
   soundProfile: config.defaultSoundProfile,
+  pendingSoundProfile: null,
   coronaEnabled: false,
   coronaActive: false,
   coronaArmed: false,

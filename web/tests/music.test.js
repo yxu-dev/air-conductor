@@ -205,25 +205,59 @@ test('sound palette switches retain playing, paused and Corona position and are 
   const events = [];
   const { session, state, backend } = setupSession({ onEvent: (...event) => events.push(event) });
   assert.equal(state.soundProfile, 'ensemble');
-  session.setSoundProfile('classic'); await session.play();
+  await session.setSoundProfile('classic'); await session.play();
   assert.equal(state.soundProfile, 'classic');
   backend.tick = 650.75; backend.calls.length = 0;
-  session.setSoundProfile('ensemble'); session.tick();
+  await session.setSoundProfile('ensemble'); session.tick();
   assert.equal(backend.tick, 650.75);
   assert.deepEqual(backend.calls, [['sound-profile', 'ensemble']]);
   assert.equal(state.playbackState, 'playing');
   session.enterCorona(); backend.calls.length = 0;
-  session.setSoundProfile('classic'); session.tick();
+  await session.setSoundProfile('classic'); session.tick();
   assert.equal(state.coronaActive, true); assert.equal(backend.tick, 650.75);
   assert.deepEqual(backend.calls, [['sound-profile', 'classic']]);
   session.pause(); backend.calls.length = 0;
-  session.setSoundProfile('ensemble'); session.tick();
+  await session.setSoundProfile('ensemble'); session.tick();
   assert.equal(state.playbackState, 'paused'); assert.equal(backend.tick, 650.75);
   assert.deepEqual(backend.calls, [['sound-profile', 'ensemble']]);
   assert.ok(events.some(([kind, data]) => kind === 'SOUND_PROFILE' && data.profile === 'classic' && data.tick === 650.75));
   assert.throws(() => session.setSoundProfile('unknown'), /Unknown sound/);
   assert.equal(state.soundProfile, 'ensemble');
   session.dispose();
+});
+
+test('rapid sound requests coalesce while fading, preserve state and recover from a failed replacement', async () => {
+  const events = [];
+  const { session, state, backend } = setupSession({ onEvent: (...event) => events.push(event) });
+  await session.play(); backend.tick = 650.75;
+  let finish;
+  backend.setSoundProfile = (profile, context) => {
+    backend.calls.push(['palette', profile, context.mode, context.tick]);
+    if (profile === 'chamber') return new Promise(resolve => { finish = resolve; });
+    if (profile === 'keys') throw new Error('Simulated construction failure');
+  };
+  const first = session.setSoundProfile('chamber'); await Promise.resolve();
+  assert.equal(state.soundProfile, 'chamber');
+  session.setSoundProfile('keys'); const last = session.setSoundProfile('woodwinds');
+  assert.equal(state.pendingSoundProfile, 'woodwinds');
+  finish(); await first; await last;
+  assert.equal(state.soundProfile, 'woodwinds'); assert.equal(state.pendingSoundProfile, null);
+  assert.equal(state.playbackState, 'playing'); assert.equal(backend.tick, 650.75);
+  assert.deepEqual(backend.calls.filter(c => c[0] === 'palette').map(c => c[1]), ['chamber', 'woodwinds']);
+  await assert.rejects(session.setSoundProfile('keys'), /Simulated construction/);
+  assert.equal(state.soundProfile, 'woodwinds'); assert.equal(state.playbackState, 'playing');
+  assert.ok(events.some(([kind, data]) => kind === 'SOUND_PROFILE_FAILED' && data.success === false));
+  session.dispose();
+});
+
+test('sound selection cannot survive session disposal and trigger a later bank change', async () => {
+  const { session, state, backend } = setupSession(); await session.play();
+  let finish;
+  backend.setSoundProfile = () => new Promise(resolve => { finish = resolve; });
+  const pending = session.setSoundProfile('chamber'); await Promise.resolve();
+  session.setSoundProfile('keys'); session.dispose(); finish(); await pending;
+  assert.equal(state.soundProfile, 'chamber'); assert.equal(state.pendingSoundProfile, null);
+  assert.equal(state.playbackState, 'stopped');
 });
 
 test('response switching preserves music position, uses the selected ramp and holds tempo while remeasuring', async () => {
