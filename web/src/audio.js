@@ -45,9 +45,10 @@ export class ToneBackend {
   createBank(bank, holding = false) {
     for (const track of this.score.tracks) {
       const path = this.paths.get(track.trackIndex);
-      const { cutoff, ...options } = trackSound(this.soundProfile, path.index);
+      const { volume, cutoff, ...options } = trackSound(this.soundProfile, path.index);
+      // Apply track gain once, at the same output used by live palette switches.
       const synth = new Tone.PolySynth({ context: this.context, voice: Tone.Synth,
-        options });
+        volume, options });
       if (holding) {
         // Separate per-track gates preserve instrument routing during Corona.
         const gate = new Tone.Gain({ context: this.context, gain: 0 }).connect(path.input);
