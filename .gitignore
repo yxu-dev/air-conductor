@@ -1,0 +1,29 @@
+# Frontend dependencies and generated build output
+web/node_modules/
+web/dist/
+web/test-results/
+web/playwright-report/
+
+# Python and local environments
+__pycache__/
+*.py[cod]
+.venv/
+.conda/
+
+# Arduino build products
+arduino/**/build/
+
+# Local documentation and captures
+/docs/
+/recordings/
+*.md
+!/README.md
+!/diagnostics/README.md
+
+# Local-only files
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+Thumbs.db

@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><title>Sound palette regression</title>
+<body><button id="run">Run muted sound checks</button><pre id="results" data-status="waiting">Ready.</pre>
+<script type="module">
+import * as Tone from 'tone';
+import { ToneBackend } from '../src/audio.js';
+import { MusicPlayer } from '../src/music-player.js';
+import { compileScore } from '../src/midi-score.js';
+const output = document.querySelector('#results'), reports = [];
+const check = (value, message) => { if (!value) throw new Error(message); };
+const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+function score() {
+  return compileScore({ header: { ppq: 480, timeSignatures: [{ timeSignature: [4, 4] }] }, durationTicks: 7680,
+    tracks: [0, 1].map(() => ({ instrument: {}, notes: [{ ticks: 0, durationTicks: 3840, midi: 69, velocity: .8 }] })) });
+}
+function rms(data) { return Math.sqrt(data.reduce((sum, value) => sum + value * value, 0) / data.length); }
+function segment(buffer, start, end) { return buffer.getChannelData(0).slice(Math.floor(start * buffer.sampleRate), Math.floor(end * buffer.sampleRate)); }
+function harmonic(buffer, hz) {
+  const data = segment(buffer, .4, .9); let re = 0, im = 0;
+  for (let i = 0; i < data.length; i++) { const phase = 2 * Math.PI * hz * i / buffer.sampleRate; re += data[i] * Math.cos(phase); im += data[i] * Math.sin(phase); }
+  return Math.hypot(re, im) / data.length;
+}
+async function render(profile, track, bpm, initialProfile = profile) {
+  let player;
+  const buffer = await Tone.Offline(context => {
+    const value = score();
+    value.notes = value.notes.filter(note => note.trackIndex === track);
+    value.events = value.events.map(event => ({ ...event, attacks: event.attacks.filter(note => note.trackIndex === track), releases: event.releases.filter(note => note.trackIndex === track) }));
+    player = new MusicPlayer({ score: value, backend: new ToneBackend(value, { context, soundProfile: initialProfile }) });
+    player.setTempo(bpm); player.play();
+    player.setSoundProfile(profile);
+  }, 1.3, 1, 44100);
+  player.dispose(); return buffer.get();
+}
+document.querySelector('#run').onclick = async () => {
+  document.querySelector('#run').disabled = true; output.dataset.status = 'running';
+  const context = new Tone.Context({ lookAhead: .05 });
+  try {
+    await context.resume();
+    const spectra = {};
+    for (const profile of ['classic', 'ensemble']) for (const track of [0, 1]) {
+      const slow = await render(profile, track, 60), fast = await render(profile, track, 150);
+      const fundamental = harmonic(slow, 440);
+      check(fundamental > harmonic(slow, 430) * 5 && fundamental > harmonic(slow, 450) * 5, 'Fundamental pitch moved');
+      check(harmonic(fast, 440) > harmonic(fast, 430) * 5, 'Tempo changed pitch');
+      const peak = Math.max(...segment(slow, .2, 1.1).map(Math.abs));
+      check(peak < .4 && rms(segment(slow, .4, .9)) > .003, `Invalid level ${profile}/${track}`);
+      const switched = await render(profile, track, 60, profile === 'classic' ? 'ensemble' : 'classic');
+      const switchedLevel = rms(segment(switched, .4, .9)) / rms(segment(slow, .4, .9));
+      check(Math.abs(switchedLevel - 1) < .05, `Switching changes the palette level ${profile}/${track}: ${switchedLevel}`);
+      spectra[`${profile}-${track}`] = { second: harmonic(slow, 880) / fundamental, third: harmonic(slow, 1320) / fundamental, peak,
+        sustainRms: rms(segment(slow, .4, .9)), fastSustainRms: rms(segment(fast, .4, .9)), switchedLevel };
+    }
+    check(Math.abs(spectra['classic-0'].third - spectra['classic-1'].third) < .005, 'Classic tracks changed');
+    check(spectra['ensemble-0'].second > spectra['ensemble-1'].second * 2, 'Ensemble tracks are not distinct');
+    check(spectra['ensemble-1'].third > spectra['classic-1'].third * 2, 'Keys lost their harmonic character');
+    check(spectra['ensemble-0'].second < .35 && spectra['ensemble-0'].third < .25, 'Lead has excessive upper harmonics');
+    for (const level of ['sustainRms', 'fastSustainRms']) {
+      const balance = spectra['ensemble-1'][level] / spectra['ensemble-0'][level];
+      check(balance > .1 && balance < .45, `Accompaniment overwhelms the lead: ${balance}`);
+    }
+    reports.push({ check: 'soft lead, quieter accompaniment, consistent switched levels and pitch at two tempi', pass: true, spectra });
+
+    const silent = new Tone.Gain({ context, gain: 0 }).toDestination();
+    const analyser = new Tone.Analyser({ context, type: 'waveform', size: 2048 }).connect(silent);
+    const value = score(), backend = new ToneBackend(value, { context, destination: analyser });
+    const player = new MusicPlayer({ score: value, backend });
+    player.setTempo(60); player.play(); await wait(250);
+    const voices = [...backend.voices.values()];
+    for (const profile of ['classic', 'ensemble', 'classic', 'ensemble']) {
+      const at = player.snapshot().tick; player.setSoundProfile(profile); await wait(100);
+      check(player.snapshot().tick > at && player.state === 'playing', 'Palette restarted/stopped transport');
+      check(voices.every((voice, index) => voice === [...backend.voices.values()][index]), 'Palette recreated scheduled voices');
+      check(rms(analyser.getValue()) > .001, 'Palette switch lost sound');
+    }
+    reports.push({ check: 'live switches retain active voices and progressing musical time', pass: true });
+    player.enterCorona(); const frozen = player.snapshot().tick;
+    const held = [...backend.holdVoices.values()];
+    for (const profile of ['classic', 'ensemble']) {
+      player.setSoundProfile(profile); await wait(180);
+      check(player.snapshot().tick === frozen && player.coronaActive, 'Palette disturbed frozen time');
+      check(held.every((voice, index) => voice === [...backend.holdVoices.values()][index]), 'Palette recreated hold voices');
+      check(rms(analyser.getValue()) > .001, 'Hold became silent while switching');
+    }
+    reports.push({ check: 'Corona sound palette switches retain sustain and exact frozen tick', pass: true });
+    player.pause(); await wait(120);
+    check(rms(analyser.getValue()) < .00001, 'Pause leaked an ambience tail');
+    player.setSoundProfile('classic'); await wait(80);
+    check(player.state === 'paused' && player.snapshot().tick === frozen && rms(analyser.getValue()) < .00001, 'Paused palette auto-resumed');
+    player.play(); await wait(180);
+    check(player.snapshot().tick > frozen, 'Paused position did not resume');
+    player.setSoundProfile('ensemble'); await wait(120); player.stop(); await wait(100);
+    check(rms(analyser.getValue()) < .00001 && player.snapshot().tick === 0, 'Stop leaked sound');
+    player.dispose();
+    check(backend.voices.size === 0 && backend.holdVoices.size === 0 && backend.paths.size === 0 && backend.holdGates.size === 0, 'Nodes leaked');
+    analyser.dispose(); silent.dispose();
+    reports.push({ check: 'pause, resume, stop and dispose clear both palettes and ambience', pass: true });
+    output.dataset.status = 'passed'; output.textContent = JSON.stringify({ passed: reports.length, reports }, null, 2);
+  } catch (error) {
+    output.dataset.status = 'failed'; output.textContent = JSON.stringify({ passed: reports.length, reports, error: error.stack }, null, 2);
+  } finally { await context.close(); context.dispose(); }
+};
+</script></body></html>

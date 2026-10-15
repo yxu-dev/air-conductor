@@ -1,0 +1,10 @@
+# Existing environment may be activated directly; do not recreate it for setup.
+name: infosci201-physical
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - pip
+  - pip:
+      - pyserial==3.5

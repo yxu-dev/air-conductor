@@ -1,0 +1,33 @@
+{
+  "name": "air-conductor-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "predev": "npm run sync:wasm",
+    "dev": "vite",
+    "test": "node --test tests/*.test.js",
+    "test:browser": "playwright test",
+    "check:live": "node scripts/profile-rendering.mjs",
+    "pretest:production": "npm run build",
+    "test:production": "node scripts/check-production.mjs",
+    "sync:wasm": "node scripts/sync-wasm.mjs",
+    "prebuild": "npm run sync:wasm",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "5.3.0",
+    "@mediapipe/tasks-vision": "1.0.1",
+    "@tonejs/midi": "2.0.28",
+    "three": "0.186.1",
+    "tone": "15.1.22"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@playwright/test": "^1.64.0",
+    "@tailwindcss/vite": "4.3.3",
+    "tailwindcss": "4.3.3",
+    "vite": "8.3.2"
+  }
+}

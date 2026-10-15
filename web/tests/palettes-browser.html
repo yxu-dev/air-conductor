@@ -1,0 +1,149 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Five sound palette checks</title>
+<button id="run">Run muted palette checks</button><pre id="results" data-status="waiting">Ready.</pre>
+<script type="module">
+import * as Tone from 'tone';
+import { Midi } from '@tonejs/midi';
+import { ToneBackend } from '../src/audio.js';
+import { MusicPlayer } from '../src/music-player.js';
+import { compileScore } from '../src/midi-score.js';
+import { soundProfiles } from '../src/sound-profiles.js';
+const profiles = Object.keys(soundProfiles), output = document.querySelector('#results'), reports = [];
+const liveContext = new Tone.Context({ lookAhead: .08 });
+const check = (value, message) => { if (!value) throw new Error(message); };
+const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+async function audioWait(context, seconds) {
+  const target = context.currentTime + seconds, deadline = performance.now() + 10000;
+  while (context.currentTime < target) {
+    check(performance.now() < deadline, 'Muted browser audio clock stalled');
+    await wait(20);
+  }
+}
+const rms = data => Math.sqrt(data.reduce((sum, v) => sum + v * v, 0) / data.length);
+const segment = (buffer, from, to) => buffer.getChannelData(0).slice(from * buffer.sampleRate, to * buffer.sampleRate);
+const peak = data => data.reduce((max, v) => Math.max(max, Math.abs(v)), 0);
+const note = (ticks, durationTicks, midi = 69) => ({ ticks, durationTicks, midi, velocity: .8 });
+const score = (notes = [note(0, 3840)], length = 7680) => compileScore({ header: { ppq: 480, timeSignatures: [{ timeSignature: [4, 4] }] },
+  durationTicks: length, tracks: [0, 1].map(() => ({ instrument: {}, notes })) });
+function harmonic(buffer, hz) {
+  const data = segment(buffer, .4, .9); let re = 0, im = 0;
+  for (let i = 0; i < data.length; i++) { const phase = 2 * Math.PI * hz * i / buffer.sampleRate; re += data[i] * Math.cos(phase); im += data[i] * Math.sin(phase); }
+  return Math.hypot(re, im) / data.length;
+}
+async function render(profile, value, bpm, seconds, actions = () => {}) {
+  output.textContent = JSON.stringify({ passed: reports.length, reports, rendering: { profile, bpm, seconds } }, null, 2);
+  let player, backend, offlineContext;
+  const buffer = await Tone.Offline(context => {
+    offlineContext = context;
+    backend = new ToneBackend(value, { context, soundProfile: profile });
+    player = new MusicPlayer({ score: value, backend }); player.setTempo(bpm); player.play(); actions(context, player, backend);
+  }, seconds, 1, 44100);
+  player.dispose(); check(backend.retiring.size === 0 && backend.pendingEvents.length === 0, 'Offline bank leak');
+  offlineContext.dispose();
+  return buffer.get();
+}
+document.querySelector('#run').onclick = async () => {
+  document.querySelector('#run').disabled = true; output.dataset.status = 'running';
+  let context;
+  const owned = [];
+  try {
+    context = liveContext; await context.resume();
+    if (!location.search.includes('live')) {
+    const spectra = {};
+    for (const profile of profiles) for (const bpm of [60, 100, 150]) {
+      const buffer = await render(profile, score(), bpm, 1.2);
+      const level = rms(segment(buffer, .4, .9));
+      const centre = harmonic(buffer, 440);
+      check(level > .0005 && peak(segment(buffer, .1, 1.1)) < .8, `Invalid audio level ${profile}/${bpm}: ${level}`);
+      check(centre > harmonic(buffer, 420) * 3 && centre > harmonic(buffer, 460) * 3, `Pitch moved ${profile}/${bpm}`);
+      if (bpm === 100) spectra[profile] = { rms: level, peak: peak(segment(buffer, .1, 1.1)), second: harmonic(buffer, 880) / centre, third: harmonic(buffer, 1320) / centre };
+    }
+    check(spectra.woodwinds.third < spectra.chamber.third, 'Strings and winds have identical spectral character');
+    check(Math.abs(spectra.keys.third - spectra.ensemble.third) > .02, 'Keys do not differ from Ensemble');
+    reports.push({ check: 'five local synth palettes have bounded levels, distinct spectra and tempo-independent pitch', pass: true, spectra });
+
+    const midi = new Midi(await (await fetch('/midi/ode.mid')).arrayBuffer()), real = compileScore(midi);
+    check(real.tracks.length === 2 && real.notes.length === 238 && real.bars === 16 && real.ppq === 384, 'MIDI changed');
+    const loops = {};
+    for (const profile of profiles) {
+      const seconds = real.loopTicks / real.ppq * 60 / 180 + .5;
+      const buffer = await render(profile, real, 180, seconds, (context, player, backend) => {
+        // Tone's offline GC discards references without disposing old LFO/filter
+        // voices before render. Disable this GC only in the test, then dispose
+        // the complete bank after rendering; live production GC stays unchanged.
+        for (const synth of backend.voices.values()) context.clearInterval(synth._gcTimeout);
+      });
+      loops[profile] = { peak: peak(buffer.getChannelData(0)), first: rms(segment(buffer, 1, 5)), restarted: rms(segment(buffer, seconds - .35, seconds - .05)) };
+      check(loops[profile].peak < .95 && loops[profile].first > .0005 && loops[profile].restarted > .0005, `Real MIDI failed ${profile}`);
+    }
+    reports.push({ check: 'unchanged real MIDI completes and restarts a fast loop in every palette without clipping', pass: true, loops });
+    }
+
+    // A muted source lets headless Chrome warm its audio device before timing checks.
+    const keepAlive = new Tone.Oscillator({ context, volume: -Infinity }).toDestination().start(context.currentTime);
+    owned.push(keepAlive);
+    const mute = new Tone.Gain({ context, gain: 0 }).toDestination();
+    const analyser = new Tone.Analyser({ context, type: 'waveform', size: 2048 }).connect(mute);
+    owned.push(mute, analyser);
+    const make = value => { const backend = new ToneBackend(value, { context, destination: analyser }); const player = new MusicPlayer({ score: value, backend }); owned.push(player); return { backend, player }; };
+    const level = () => rms(analyser.getValue());
+    const { backend, player } = make(score());
+    player.setTempo(100); player.play(); await audioWait(context, .22);
+    for (const profile of [...profiles, ...profiles]) {
+      const at = player.snapshot().tick; await player.setSoundProfile(profile); await audioWait(context, .12);
+      check(player.snapshot().tick > at && player.state === 'playing', `Switch clock failed ${profile}: ${at} -> ${player.snapshot().tick}, context ${context.state}/${context.currentTime}, transport ${backend.transport.state}/${backend.transport.bpm.value}`);
+      check(level() > .0005 && backend.retiring.size === 0, `Live switch lost sound/resources ${profile}`);
+    }
+    // Force an already-issued future attack/release across an asynchronous bank change.
+    player.stop(); player.setSoundProfile('ensemble'); player.play(); await wait(120);
+    const time = context.currentTime + .06, queued = { trackIndex: 0, midi: 81, startTick: 480, endTick: 720, velocity: .8 };
+    backend.attack(queued, time); backend.release(queued, time + .2);
+    const captured = [], emit = backend.emit.bind(backend);
+    backend.emit = (bank, event) => { if (bank.profile === 'keys' && event.note === queued) captured.push([event.kind, event.time]); emit(bank, event); };
+    await player.setSoundProfile('keys'); backend.emit = emit;
+    check(captured.some(e => e[0] === 'attack' && e[1] === time) && captured.some(e => e[0] === 'release' && e[1] === time + .2), 'Lookahead events were not transferred');
+    reports.push({ check: 'ten live switches keep musical time, reclaim banks and transfer lookahead attacks and releases', pass: true });
+
+    player.enterCorona(); const frozen = player.snapshot().tick;
+    for (const profile of profiles) {
+      await player.setSoundProfile(profile); await wait(220);
+      check(player.coronaActive && player.snapshot().tick === frozen && level() > .0005, `Corona failed ${profile}`);
+      const loud = level(); player.setVolume(-24); await wait(240); const soft = level(); player.setVolume(-18); await wait(240);
+      check(soft / loud > .35 && soft / loud < .65, `Hold volume failed ${profile}: ${loud} -> ${soft} (${soft / loud})`);
+    }
+    await wait(1000); check(player.snapshot().tick === frozen && level() > .0005, 'Sustain expired');
+    player.exitCorona(); await wait(150); check(player.snapshot().tick > frozen, 'Corona resume lost position');
+    reports.push({ check: 'every palette sustains Corona, changes while frozen and follows master volume', pass: true });
+
+    // Constructor failure must leave the old bank and audible palette intact.
+    const before = backend.soundProfile, oldBank = backend.normalBank, originalMake = backend.makeBank.bind(backend);
+    backend.makeBank = () => { throw new Error('Simulated bank failure'); };
+    let failed = false;
+    try { player.setSoundProfile(before === 'chamber' ? 'keys' : 'chamber'); } catch { failed = true; }
+    backend.makeBank = originalMake;
+    check(failed && backend.normalBank === oldBank && backend.soundProfile === before && level() > .0005, 'Failed construction replaced working bank');
+    player.pause(); const paused = player.snapshot().tick; await wait(120);
+    for (const profile of profiles) {
+      await player.setSoundProfile(profile);
+      check(player.state === 'paused' && player.snapshot().tick === paused && level() < .00001, 'Paused selection played music');
+    }
+    player.play(); await wait(150); check(player.snapshot().tick > paused, 'Paused tick did not resume');
+    player.setSoundProfile('woodwinds'); player.pause(); await wait(120);
+    check(level() < .00001 && backend.retiring.size === 0, 'Pause during fade leaked sound/banks');
+    player.play(); await wait(100); player.setSoundProfile('keys'); player.stop(); await wait(120);
+    check(level() < .00001 && backend.retiring.size === 0 && backend.pendingEvents.length === 0, 'Stop during fade leaked');
+    for (const profile of profiles) { player.setSoundProfile(profile); check(player.state === 'stopped' && level() < .00001, 'Stopped selection played music'); }
+    player.dispose();
+    check(backend.paths.size === 0 && backend.voices.size === 0 && backend.holdVoices.size === 0 && backend.retiring.size === 0, 'Dispose leaked nodes');
+    reports.push({ check: 'failed replacements retain music; silent paused/stopped selection and cleanup during fades', pass: true });
+
+    const rest = make(score([note(0, 120), note(2400, 240)], 7680));
+    rest.player.setTempo(180); rest.player.play(); await wait(400); rest.player.enterCorona(); await wait(300);
+    const restTick = rest.player.snapshot().tick;
+    for (const profile of profiles) { await rest.player.setSoundProfile(profile); await wait(120); check(rest.player.snapshot().tick === restTick && level() < .00001, 'Palette invented notes in a frozen rest'); }
+    rest.player.dispose();
+    reports.push({ check: 'frozen rests stay silent through all five palette changes', pass: true });
+    output.dataset.status = 'passed'; output.textContent = JSON.stringify({ passed: reports.length, reports }, null, 2);
+  } catch (error) { output.dataset.status = 'failed'; output.textContent = JSON.stringify({ passed: reports.length, reports, error: error.stack }, null, 2); }
+  finally { for (const item of owned.reverse()) item.dispose(); if (context) { await context.close(); context.dispose(); } }
+};
+</script></html>

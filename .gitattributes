@@ -1,0 +1,8 @@
+# Preserve bundled upstream loaders verbatim and exclude their formatting from checks.
+web/public/mediapipe/wasm/*.js -text -whitespace linguist-vendored
+web/public/mediapipe/wasm/*.wasm binary linguist-vendored
+web/public/midi/*.mid binary
+web/public/models/*.task binary
+
+# Preserve raw development captures and metadata verbatim.
+recordings/** -text -whitespace
